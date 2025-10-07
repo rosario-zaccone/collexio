@@ -20,16 +20,17 @@ public class Plant extends LivingItem {
 
     @Override
     public String description() {
+        // TODO
         return "";
     }
 
     @Override
     public void addPhoto(String path) {
-
+    // TODO
     }
 
     @Override
     public void showPhotos() {
-
+    // TODO
     }
 }

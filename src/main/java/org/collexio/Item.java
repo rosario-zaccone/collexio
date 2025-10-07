@@ -1,6 +1,8 @@
 package org.collexio;
 
 
+import java.util.Objects;
+
 public abstract class Item {
     private final String id; //I-001
     private String name;
@@ -51,4 +53,15 @@ public abstract class Item {
     }
 
     public abstract String description();
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Item item)) return false;
+        return Objects.equals(id, item.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
