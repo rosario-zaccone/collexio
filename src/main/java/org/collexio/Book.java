@@ -7,14 +7,14 @@ public class Book extends InanimateItem {
 
     @Override
     public double getAvgPrice() {
-        SubitoScraper scraper = new SubitoScraper(getName());
-        return scraper.getAvgPrice();
+        SubitoScraper scraper = new SubitoScraper();
+        return scraper.getAvgPrice(getName());
     }
 
     @Override
     public String description() {
-        // TODO
-        return "";
+        InfoGenerator generator = new GeminiInfoGenerator();
+        return generator.generateDescription(getName());
     }
 
     @Override

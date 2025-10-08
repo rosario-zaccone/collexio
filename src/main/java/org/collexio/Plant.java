@@ -20,8 +20,8 @@ public class Plant extends LivingItem {
 
     @Override
     public String description() {
-        // TODO
-        return "";
+        InfoGenerator generator = new PFAFInfoGenerator();
+        return generator.generateDescription(scientificName.toLowerCase());
     }
 
     @Override

@@ -7,14 +7,14 @@ public class TechItem extends InanimateItem {
 
     @Override
     public double getAvgPrice() {
-       SubitoScraper scraper = new SubitoScraper(getName());
-       return scraper.getAvgPrice();
+       SubitoScraper scraper = new SubitoScraper();
+       return scraper.getAvgPrice(getName());
     }
 
     @Override
     public String description() {
-        // TODO
-        return "";
+        WikipediaInfoGenerator generator = new WikipediaInfoGenerator();
+        return generator.generateDescription(getName());
     }
 
     @Override
