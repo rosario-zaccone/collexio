@@ -1,8 +1,8 @@
 package org.collexio;
 
-public class TechItem extends InanimateItem {
-    public TechItem(String id, String name, int quantity, String creator) {
-        super(id, name, quantity, creator);
+public class TechItem extends Item implements Priceable{
+    public TechItem(String id, String name, int quantity) {
+        super(id, name, quantity);
     }
 
     @Override
@@ -22,8 +22,7 @@ public class TechItem extends InanimateItem {
         return "TechItem{" +
                 "id='" + getId() + '\'' +
                 ", name='" + getName() + '\'' +
-                ", quantity=" + getQuantity() +
-                ", creator='" + getCreator() + '\'' +
+                ", quantity=" + getQuantity() + '\'' +
                 '}';
     }
 

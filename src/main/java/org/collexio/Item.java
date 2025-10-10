@@ -9,24 +9,15 @@ public abstract class Item {
     private int quantity;
 
     public Item(String id, String name, int quantity) {
-        if (!validateId(id))
-            throw new IllegalArgumentException("Id must be in the format I-###, where ### is a number (001, 010, 124...)");
-
+        if (!Utilities.validateId("I-", id))
+            throw new IllegalArgumentException("Id must be in the format I-###, where ### is a natural number");
         if (quantity <= 0)
             throw new IllegalArgumentException("Quantity must be positive");
+        if (name.isEmpty())
+            throw new IllegalArgumentException("Name can't be empty");
         this.id = id;
         this.name = name;
         this.quantity = quantity;
-    }
-
-    private boolean validateId(String value) {
-        if (value.length() != 5 || !value.substring(0, 2).equals("I-") )
-            return false;
-        String suffix = value.substring(2, 5);
-        for (Character c: suffix.toCharArray())
-            if (!Character.isDigit(c))
-                return false;
-        return true;
     }
 
     public String getId() {
@@ -34,6 +25,8 @@ public abstract class Item {
     }
 
     public void setName(String name) {
+        if (name.isEmpty())
+            throw new IllegalArgumentException("Name can't be empty");
         this.name = name;
     }
 

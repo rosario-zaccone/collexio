@@ -1,7 +1,11 @@
 package org.collexio;
 
-public class Plant extends LivingItem {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Plant extends Item implements Growable {
     private final String scientificName;
+    private final List<String> photos = new ArrayList<>();
 
     public Plant (String id, String name, int quantity, String scientificName) {
         super(id, name, quantity);
@@ -18,19 +22,24 @@ public class Plant extends LivingItem {
         return scientificName;
     }
 
+    public List<String> getPhotos() {
+        return List.copyOf(photos); //immutable
+    }
+
     @Override
     public String description() {
         InfoGenerator generator = new PFAFInfoGenerator();
-        return generator.generateDescription(scientificName.toLowerCase());
+        return generator.generateDescription(getScientificName().toLowerCase());
     }
 
     @Override
-    public void addPhoto(String path) {
-    // TODO
+    public void addPhoto(String photo) {
+        photos.add(photo);
+        // add to the cloud also
     }
 
     @Override
-    public void showPhotos() {
-    // TODO
+    public String showPhotos() {
+        return "TODO";
     }
 }
