@@ -1,4 +1,4 @@
-package org.collexio;
+package org.collexio.utilities;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

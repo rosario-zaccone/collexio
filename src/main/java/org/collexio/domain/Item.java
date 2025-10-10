@@ -1,5 +1,7 @@
-package org.collexio;
+package org.collexio.domain;
 
+
+import org.collexio.utilities.Utilities;
 
 import java.util.Objects;
 

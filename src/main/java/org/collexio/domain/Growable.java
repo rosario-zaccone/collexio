@@ -1,4 +1,4 @@
-package org.collexio;
+package org.collexio.domain;
 
 public interface Growable {
     void addPhoto(String photo);

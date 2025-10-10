@@ -1,4 +1,4 @@
-package org.collexio;
+package org.collexio.utilities;
 
 public class Utilities {
     public static boolean validateId(String prefix, String id) {

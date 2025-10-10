@@ -1,4 +1,8 @@
-package org.collexio;
+package org.collexio.domain;
+
+import org.collexio.utilities.GeminiInfoGenerator;
+import org.collexio.utilities.InfoGenerator;
+import org.collexio.utilities.SubitoScraper;
 
 public class Book extends Item implements Priceable {
     public Book(String id, String name, int quantity) {

@@ -1,4 +1,5 @@
-package org.collexio;
+package org.collexio.domain;
+
 import java.util.TreeSet;
 
 public class Wallet {

@@ -1,10 +1,11 @@
 package org.collexio;
 
+import org.collexio.domain.Book;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class BookTest {
-    private static  Book itemA;
+    private static Book itemA;
     private static  Book itemB;
     private static  Book itemC;
     private static  Book itemD;

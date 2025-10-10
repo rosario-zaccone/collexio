@@ -1,5 +1,6 @@
 package org.collexio;
 
+import org.collexio.domain.Plant;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package org.collexio;
+package org.collexio.utilities;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
@@ -12,7 +12,7 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class PFAFInfoGenerator implements InfoGenerator{
+public class PFAFInfoGenerator implements InfoGenerator {
     private static final String baseUrl = "https://pfaf.org/user/Plant.aspx?LatinName=";
 
     @Override

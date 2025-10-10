@@ -1,4 +1,7 @@
-package org.collexio;
+package org.collexio.domain;
+
+import org.collexio.utilities.InfoGenerator;
+import org.collexio.utilities.PFAFInfoGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,7 @@
-package org.collexio;
+package org.collexio.domain;
+
+import org.collexio.utilities.SubitoScraper;
+import org.collexio.utilities.WikipediaInfoGenerator;
 
 public class TechItem extends Item implements Priceable{
     public TechItem(String id, String name, int quantity) {

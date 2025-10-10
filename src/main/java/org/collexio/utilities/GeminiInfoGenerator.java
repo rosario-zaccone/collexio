@@ -1,4 +1,4 @@
-package org.collexio;
+package org.collexio.utilities;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
