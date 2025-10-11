@@ -4,6 +4,16 @@ import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 
 public class GeminiInfoGenerator implements InfoGenerator {
+    private final String model;
+
+    public GeminiInfoGenerator (String model) {
+        this.model = model;
+    }
+
+    public GeminiInfoGenerator () {
+        this("gemini-2.5-flash");
+    }
+
     @Override
     public String generateDescription(String itemName) {
         try (Client geminiClient = new Client()) {
@@ -13,7 +23,7 @@ public class GeminiInfoGenerator implements InfoGenerator {
                     "For example: DragonBall is a manga written by Toriyama and illustrate the adventure of Goku, the protegonist...";
 
             GenerateContentResponse responseGemini = geminiClient.models.generateContent(
-                    "gemini-2.5-flash",
+                    model,
                     prompt,
                     null);
 

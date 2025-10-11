@@ -12,10 +12,10 @@ public class BookTest {
 
     @BeforeAll
     public static void setUp() {
-        itemA = new Book("I-001", "Attack on titan 1", 1);
-        itemB = new  Book("I-002", "Toradora 1", 1);
-        itemC = new  Book("I-003", "My Hero Academia 11", 1);
-        itemD = new  Book("I-004", "Death Note 10", 1);
+        itemA = new Book("I-1", "Attack on titan 1", 1);
+        itemB = new  Book("I-2", "Toradora 1", 1);
+        itemC = new  Book("I-3", "My Hero Academia 11", 1);
+        itemD = new  Book("I-4", "Death Note 10", 1);
     }
 
     @Test

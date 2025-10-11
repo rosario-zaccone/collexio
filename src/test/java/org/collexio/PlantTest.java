@@ -14,19 +14,21 @@ public class PlantTest {
 
     @BeforeAll
     public static void setUp() {
-        itemA = new Plant("I-001", "Primula", 1, "primula_vulgaris");
-        itemB = new Plant("I-002", "Lavender", 1, "lavandula_angustifolia");
-        itemC = new Plant("I-003", "Rosemary", 1, "rosmarinus_officinalis");
-        itemD = new Plant("I-004", "Chamomile", 1, "matricaria_chamomilla");
+        itemA = new Plant("I-1", "Primula", 1, "primula_vulgaris");
+        itemB = new Plant("I-2", "Lavender", 1, "lavandula_angustifolia");
+        itemC = new Plant("I-3", "Rosemary", 1, "rosmarinus_officinalis");
+        itemD = new Plant("I-4", "Chamomile", 1, "matricaria_chamomilla");
     }
 
     @Test
     void creationTest() {
-        assertDoesNotThrow(() -> new Plant("I-002", "Tarassaco", 1, "taraxacum_officinale"));
-        assertThrows(IllegalArgumentException.class, () -> new Plant("I-002", "Tarassaco", 1, "taraxacumofficinale"));
-        assertThrows(IllegalArgumentException.class, () -> new Plant("I-002", "Tarassaco", 1, "taraxacum__officinale"));
+        assertDoesNotThrow(() -> new Plant("I-2", "Tarassaco", 1, "taraxacum_officinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant("I-2", "Tarassaco", 1, "taraxacumofficinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant("I-2", "Tarassaco", 1, "taraxacum__officinale"));
         assertThrows(IllegalArgumentException.class, () -> new Plant("I-pippo", "Tarassaco", 1, "taraxacum_officinale"));
         assertThrows(IllegalArgumentException.class, () -> new Plant("A-pippo", "Tarassaco", 1, "taraxacum_officinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant("A-", "Tarassaco", 1, "taraxacum_officinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant("A-001", "Tarassaco", 1, "taraxacum_officinale"));
     }
 
 

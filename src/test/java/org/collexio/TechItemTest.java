@@ -13,10 +13,10 @@ public class TechItemTest {
 
     @BeforeAll
     public static void setUp() {
-        itemA = new TechItem("I-001", "nintendo ds lite", 1);
-        itemB = new TechItem("I-002", "pokemon heart gold", 1);
-        itemC = new TechItem("I-003", "pokewalker", 1);
-        itemD = new TechItem("I-004", "wrong wrong wrong wrong aopaapdk", 1);
+        itemA = new TechItem("I-1", "nintendo ds lite", 1);
+        itemB = new TechItem("I-2", "pokemon heart gold", 1);
+        itemC = new TechItem("I-3", "pokewalker", 1);
+        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1);
     }
 
     @Test
