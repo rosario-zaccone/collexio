@@ -2,13 +2,18 @@ package org.collexio.domain;
 
 import org.collexio.utilities.InfoGenerator;
 import org.collexio.utilities.PFAFInfoGenerator;
+import org.collexio.utilities.PhotoManager;
+import org.collexio.utilities.SystemPhotoManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Plant extends Item implements Growable {
     private final String scientificName;
-    private final List<String> photos = new ArrayList<>();
+    private final Set<ItemPhoto> photos = new TreeSet<>();
 
     public Plant (String id, String name, int quantity, String scientificName) {
         super(id, name, quantity);
@@ -25,8 +30,8 @@ public class Plant extends Item implements Growable {
         return scientificName;
     }
 
-    public List<String> getPhotos() {
-        return List.copyOf(photos); //immutable
+    public Set<ItemPhoto> getPhotos() {
+        return Set.copyOf(photos); //immutable
     }
 
     @Override
@@ -36,13 +41,19 @@ public class Plant extends Item implements Growable {
     }
 
     @Override
-    public void addPhoto(String photo) {
+    public void addPhoto(ItemPhoto photo) throws IOException {
         photos.add(photo);
-        // add to the cloud also
+        PhotoManager manager = new SystemPhotoManager("images/growable/");
+        manager.addPhoto(getId(), photo);
     }
 
     @Override
     public String showPhotos() {
-        return "TODO";
+        return "TODO (pdf document with all photos)";
+    }
+
+    @Override
+    public String toString() {
+        return "Plant{} " + super.toString();
     }
 }

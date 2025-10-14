@@ -1,6 +1,8 @@
 package org.collexio.domain;
 
+import java.io.IOException;
+
 public interface Growable {
-    void addPhoto(String photo);
-    String showPhotos(); //return the path of a documetn showing the item growth
+    void addPhoto(ItemPhoto photo) throws IOException;
+    String showPhotos();
 }

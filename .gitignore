@@ -23,4 +23,10 @@
 hs_err_pid*
 replay_pid*
 
-.env
+.en
+images/*
+
+/src/main/resources/*
+src/test/java/org/collexio/Quickstart.java
+
+!/src/main/resources/.gitkeep

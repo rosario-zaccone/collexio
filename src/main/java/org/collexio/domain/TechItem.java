@@ -3,7 +3,9 @@ package org.collexio.domain;
 import org.collexio.utilities.SubitoScraper;
 import org.collexio.utilities.WikipediaInfoGenerator;
 
-public class TechItem extends Item implements Priceable{
+import java.io.IOException;
+
+public class TechItem extends Item implements Priceable {
     public TechItem(String id, String name, int quantity) {
         super(id, name, quantity);
     }
@@ -19,14 +21,4 @@ public class TechItem extends Item implements Priceable{
         WikipediaInfoGenerator generator = new WikipediaInfoGenerator();
         return generator.generateDescription(getName());
     }
-
-    @Override
-    public String toString() {
-        return "TechItem{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", quantity=" + getQuantity() + '\'' +
-                '}';
-    }
-
 }
