@@ -1,6 +1,5 @@
 package org.collexio;
 
-import org.collexio.domain.ItemPhoto;
 import org.collexio.domain.TechItem;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +10,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TechItemTest {
@@ -33,11 +34,13 @@ public class TechItemTest {
     }
 
     @Test
-    void getAvgPriceTest() {
-        System.out.println(itemA.getAvgPrice());
-        System.out.println(itemB.getAvgPrice());
-        System.out.println(itemC.getAvgPrice());
-        System.out.println(itemD.getAvgPrice());
+    void getPriceTest() throws Exception {
+        System.out.println(itemA.getPrice());
+        System.out.println(itemB.getPrice());
+        System.out.println(itemC.getPrice());
+        assertThrows(NoSuchElementException.class, () -> {
+            itemD.getPrice();
+        });
 
     }
 

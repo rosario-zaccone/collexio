@@ -9,5 +9,5 @@ import java.util.Set;
 
 public interface PhotoManager {
     void addPhoto(String itemId, ItemPhoto photo) throws IOException;
-    Set<ItemPhoto> getPhotos(String itemId) throws IOException;
+    Set<ItemPhoto> getPhotos(String itemId);
 }

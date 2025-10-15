@@ -5,6 +5,8 @@ import com.google.genai.types.GenerateContentResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -60,11 +62,9 @@ public class PFAFInfoGenerator implements InfoGenerator {
 
             return responseGemini.text();
 
-        } catch(InterruptedException e) {
+        } catch(InterruptedException | IOException e) {
+            System.out.println("Error");
             Thread.currentThread().interrupt();
-            return "";
-        }catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
             return "";
         }
     }

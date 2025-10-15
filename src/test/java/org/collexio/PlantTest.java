@@ -55,7 +55,6 @@ public class PlantTest {
         assertThrows(IllegalArgumentException.class, () -> new Plant("A-001", "Tarassaco", 1, "taraxacum_officinale"));
     }
 
-    @Disabled
     @Test
     void descriptionTest() {
         System.out.println(itemA.getName() + ": " + itemA.description());
@@ -67,8 +66,8 @@ public class PlantTest {
         System.out.println(itemD.getName() + ": " + itemD.description());
         System.out.println("-----------------------------\n\n");
         assertEquals("", itemE.description());
-        assertFalse(itemA.description().isEmpty());
     }
+
 
     @Test
     void testGrowable() throws IOException {

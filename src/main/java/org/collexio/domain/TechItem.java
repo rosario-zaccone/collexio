@@ -1,9 +1,8 @@
 package org.collexio.domain;
 
+import org.collexio.utilities.PriceScraper;
 import org.collexio.utilities.SubitoScraper;
 import org.collexio.utilities.WikipediaInfoGenerator;
-
-import java.io.IOException;
 
 public class TechItem extends Item implements Priceable {
     public TechItem(String id, String name, int quantity) {
@@ -11,9 +10,9 @@ public class TechItem extends Item implements Priceable {
     }
 
     @Override
-    public double getAvgPrice() {
-       SubitoScraper scraper = new SubitoScraper();
-       return scraper.getAvgPrice(getName());
+    public double getPrice() {
+       PriceScraper scraper = new SubitoScraper();
+       return scraper.computePrice(getName());
     }
 
     @Override

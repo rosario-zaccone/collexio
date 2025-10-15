@@ -8,16 +8,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.NoSuchElementException;
 
-public class SubitoScraper {
+public class SubitoScraper implements PriceScraper {
     private static final String url = "https://www.subito.it/annunci-italia/vendita/usato/?q=";
 
-    private String computeUrl(String name) {
-        return url + name.toLowerCase().replace(" ", "+");
-    }
 
-
-    public double getAvgPrice(String itemName) {
+    public double computePrice(String itemName) {
         int value;
         int count;
         HttpClient client = HttpClient.newHttpClient();
@@ -55,11 +52,10 @@ public class SubitoScraper {
                 }
             }
         }
-        // selezionare solo le cards che hanno il nome articolo nei titoli, il titolo si trova dentro il div dentro un h2 dentro uno span
-        double avg = (double)value / count;
         if (count == 0)
-            avg = -1; // exception ??
-        return avg;
+            throw new NoSuchElementException("Item not found");
+        // selezionare solo le cards che hanno il nome articolo nei titoli, il titolo si trova dentro il div dentro un h2 dentro uno span
+        return (double)value / count;
     }
 
 

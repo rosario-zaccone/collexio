@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -62,11 +63,9 @@ public class WikipediaInfoGenerator implements InfoGenerator {
                     null);
             return responseGemini.text();
 
-        } catch(InterruptedException e) {
+        } catch(InterruptedException | IOException e) {
+            System.out.println("Error");
             Thread.currentThread().interrupt();
-            return "";
-        }catch (Exception e) {
-            System.out.println(e.getMessage());
             return "";
         }
     }
