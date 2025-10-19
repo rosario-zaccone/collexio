@@ -17,6 +17,7 @@ public abstract class Item {
     private String name;
     private int quantity;
     private ItemPhoto photo;
+    private String description;
 
     public Item(String id, String name, int quantity) {
         if (!Utilities.validateId("I-", id))
@@ -28,16 +29,12 @@ public abstract class Item {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
+        description = "NO DESCRIPTION";
     }
+
 
     public String getId() {
         return id;
-    }
-
-    public void setName(String name) {
-        if (name.isEmpty())
-            throw new IllegalArgumentException("Name can't be empty");
-        this.name = name;
     }
 
 
@@ -45,17 +42,19 @@ public abstract class Item {
         return name;
     }
 
-    public void setQuantity(int quantity) {
-        if (quantity <= 0)
-            throw new IllegalArgumentException("Quantity must be positive");
-        this.quantity = quantity;
-    }
-
     public int getQuantity() {
         return quantity;
     }
 
-    public abstract String description();
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public abstract void generateDescription();
 
     public ItemPhoto getPhoto() {
         return photo;

@@ -16,8 +16,8 @@ public class TechItem extends Item implements Priceable {
     }
 
     @Override
-    public String description() {
+    public void generateDescription() {
         WikipediaInfoGenerator generator = new WikipediaInfoGenerator();
-        return generator.generateDescription(getName());
+        setDescription(generator.generateDescription(getName()));
     }
 }

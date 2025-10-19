@@ -35,9 +35,9 @@ public class Plant extends Item implements Growable {
     }
 
     @Override
-    public String description() {
+    public void generateDescription() {
         InfoGenerator generator = new PFAFInfoGenerator();
-        return generator.generateDescription(getScientificName().toLowerCase());
+        setDescription(generator.generateDescription(getScientificName().toLowerCase()));
     }
 
     @Override

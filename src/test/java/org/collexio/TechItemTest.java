@@ -46,15 +46,23 @@ public class TechItemTest {
 
     @Test
     void descriptionTest() {
-        System.out.println(itemA.getName() + ": " + itemA.description());
+        itemA.generateDescription();
+        System.out.println(itemA.getName() + ": " + itemA.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemB.getName() + ": " + itemB.description());
+
+        itemB.generateDescription();
+        System.out.println(itemB.getName() + ": " + itemB.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemC.getName() + ": " + itemC.description());
+
+        itemC.generateDescription();
+        System.out.println(itemC.getName() + ": " + itemC.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemD.getName() + ": " + itemD.description());
+
+        itemD.generateDescription();
+        System.out.println(itemD.getName() + ": " + itemD.getDescription());
         System.out.println("-----------------------------\n\n");
     }
+
 
     @AfterAll
     static void deleteImages() {

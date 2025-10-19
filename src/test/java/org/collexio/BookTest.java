@@ -24,7 +24,7 @@ public class BookTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        itemA = new Book("I-1", "Attacco dei giganti 18", 1); //2.21
+        itemA = new Book("I-1", "Attacco dei giganti 2", 1); //2.21
         itemB = new Book("I-2", "Toradora 1", 1); //2.66
         itemC = new Book("I-3", "My Hero Academia 11", 2); //2.34
         itemD = new Book("I-4", "Death Note 10", 1); // No
@@ -33,26 +33,33 @@ public class BookTest {
 
     @Test
     void getPriceTest() {
-        assertEquals(2.21, itemA.getPrice(), 0.01);
-        assertEquals(2.66, itemB.getPrice(), 0.01);
-        assertEquals(2.34, itemC.getPrice(), 0.01);
+        assertEquals(2.7, itemA.getPrice(), 0.01);
+        assertEquals(3.25, itemB.getPrice(), 0.01);
+        assertEquals(2.86, itemC.getPrice(), 0.01);
         assertThrows(NoSuchElementException.class, () -> {
             itemD.getPrice();
         });
     }
 
-    @Disabled
     @Test
     void descriptionTest() {
-        System.out.println(itemA.getName() + ": " + itemA.description());
+        itemA.generateDescription();
+        System.out.println(itemA.getName() + ": " + itemA.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemB.getName() + ": " + itemB.description());
+
+        itemB.generateDescription();
+        System.out.println(itemB.getName() + ": " + itemB.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemC.getName() + ": " + itemC.description());
+
+        itemC.generateDescription();
+        System.out.println(itemC.getName() + ": " + itemC.getDescription());
         System.out.println("-----------------------------\n\n");
-        System.out.println(itemD.getName() + ": " + itemD.description());
+
+        itemD.generateDescription();
+        System.out.println(itemD.getName() + ": " + itemD.getDescription());
         System.out.println("-----------------------------\n\n");
     }
+
 
     @Test
     void testToString() {

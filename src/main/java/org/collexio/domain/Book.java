@@ -14,9 +14,9 @@ public class Book extends Item implements Priceable {
     }
 
     @Override
-    public String description() {
+    public void generateDescription() {
         InfoGenerator generator = new GeminiInfoGenerator();
-        return generator.generateDescription(getName());
+        setDescription(generator.generateDescription(getName()));
     }
 
 }
