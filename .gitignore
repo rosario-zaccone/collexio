@@ -30,3 +30,7 @@ images/*
 src/test/java/org/collexio/Quickstart.java
 
 !/src/main/resources/.gitkeep
+
+target/
+
+.env
