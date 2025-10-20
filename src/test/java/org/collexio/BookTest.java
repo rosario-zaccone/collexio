@@ -1,6 +1,7 @@
 package org.collexio;
 
 import org.collexio.domain.Book;
+import org.collexio.domain.ItemPhoto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -24,10 +25,10 @@ public class BookTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        itemA = new Book("I-1", "Attacco dei giganti 2", 1); //2.21
-        itemB = new Book("I-2", "Toradora 1", 1); //2.66
-        itemC = new Book("I-3", "My Hero Academia 11", 2); //2.34
-        itemD = new Book("I-4", "Death Note 10", 1); // No
+        itemA = new Book("I-1", "Attacco dei giganti 2", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"))); //2.21
+        itemB = new Book("I-2", "Toradora 1", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"))); //2.66
+        itemC = new Book("I-3", "My Hero Academia 11", 2, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"))); //2.34
+        itemD = new Book("I-4", "Death Note 10", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"))); // No
 
     }
 

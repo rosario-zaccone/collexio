@@ -15,8 +15,8 @@ public class Plant extends Item implements Growable {
     private final String scientificName;
     private final Set<ItemPhoto> photos = new TreeSet<>();
 
-    public Plant (String id, String name, int quantity, String scientificName) {
-        super(id, name, quantity);
+    public Plant (String id, String name, int quantity, ItemPhoto photo, String scientificName) throws IOException {
+        super(id, name, quantity, photo);
         if (!validateScientificName(scientificName))
             throw new IllegalArgumentException("Invalid scientific name");
         this.scientificName = scientificName;

@@ -14,6 +14,11 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         this.timestamp = timestamp;
     }
 
+    public ItemPhoto(Path path) {
+        this.path = path;
+        this.timestamp = LocalDateTime.MIN;
+    }
+
     public Path getPath() {
         return path;
     }

@@ -32,9 +32,7 @@ public class ItemCollectionTest {
             else
                 quantity = 2;
 
-            Book book = new Book(id, name, quantity);
-            ItemPhoto photo = new ItemPhoto(imagePath, LocalDateTime.now());
-            book.setPhoto(photo, 100, 100);
+            Book book = new Book(id, name, quantity, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
 
             collection.addItem(book);
         }

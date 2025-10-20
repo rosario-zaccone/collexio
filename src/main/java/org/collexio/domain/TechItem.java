@@ -4,9 +4,11 @@ import org.collexio.utilities.PriceScraper;
 import org.collexio.utilities.SubitoScraper;
 import org.collexio.utilities.WikipediaInfoGenerator;
 
+import java.io.IOException;
+
 public class TechItem extends Item implements Priceable {
-    public TechItem(String id, String name, int quantity) {
-        super(id, name, quantity);
+    public TechItem(String id, String name, int quantity, ItemPhoto photo) throws IOException {
+        super(id, name, quantity, photo);
     }
 
     @Override

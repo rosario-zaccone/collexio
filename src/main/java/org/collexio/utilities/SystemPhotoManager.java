@@ -30,7 +30,12 @@ public class SystemPhotoManager implements PhotoManager {
 
     @Override
     public void addPhoto(String itemId, ItemPhoto photo) throws IOException { // only one photo a day
-        String ext = photo.getPath().getFileName().toString().split("\\.")[1];
+        String fileName = photo.getPath().getFileName().toString();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex == -1) {
+            throw new IOException("File extension not found");
+        }
+        String ext = fileName.substring(dotIndex + 1).toLowerCase();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy-HH-mm");
         Files.copy(photo.getPath(), Paths.get(folderPath + itemId + "_" + photo.getTimestamp().format(formatter) + "." + ext));
     }

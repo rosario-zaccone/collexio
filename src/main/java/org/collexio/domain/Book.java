@@ -2,9 +2,11 @@ package org.collexio.domain;
 
 import org.collexio.utilities.*;
 
+import java.io.IOException;
+
 public class Book extends Item implements Priceable {
-    public Book(String id, String name, int quantity) {
-        super(id, name, quantity);
+    public Book(String id, String name, int quantity, ItemPhoto photo) throws IOException {
+        super(id, name, quantity, photo);
     }
 
     @Override

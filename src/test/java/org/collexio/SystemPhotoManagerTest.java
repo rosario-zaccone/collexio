@@ -20,7 +20,7 @@ public class SystemPhotoManagerTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        itemA = new Plant("I-1", "Primula", 1, "primula_vulgaris");
+        itemA = new Plant("I-1", "Primula", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/primula.jpg")), "primula_vulgaris");
     }
 
     @Test

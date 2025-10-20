@@ -34,3 +34,5 @@ src/test/java/org/collexio/Quickstart.java
 target/
 
 .env
+
+data/*

@@ -1,5 +1,6 @@
 package org.collexio;
 
+import org.collexio.domain.ItemPhoto;
 import org.collexio.domain.TechItem;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,10 +26,10 @@ public class TechItemTest {
     public static void setUp() throws IOException {
         String imagePath = "/home/rosario/Downloads/test.png";
 
-        itemA = new TechItem("I-1", "nintendo ds lite", 1);
-        itemB = new TechItem("I-2", "pokemon heart gold", 1);
-        itemC = new TechItem("I-3", "pokewalker", 1);
-        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1);
+        itemA = new TechItem("I-1", "nintendo ds lite", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/dslite.jpg")));
+        itemB = new TechItem("I-2", "pokemon heart gold", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/pokewalker.jpg")));
+        itemC = new TechItem("I-3", "pokewalker", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/pokemon.jpg")));
+        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
 
 
     }
