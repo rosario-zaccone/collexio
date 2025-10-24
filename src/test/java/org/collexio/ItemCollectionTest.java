@@ -3,6 +3,7 @@ package org.collexio;
 import org.collexio.domain.Book;
 import org.collexio.domain.ItemCollection;
 import org.collexio.domain.ItemPhoto;
+import org.collexio.domain.PhotoType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ public class ItemCollectionTest {
             else
                 quantity = 2;
 
-            Book book = new Book(id, name, quantity, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
+            Book book = new Book(id, name, quantity, new ItemPhoto("P-2",Paths.get("/home/rosario/Downloads/collexio_test/test.png"), PhotoType.PROPIC));
 
             collection.addItem(book);
         }

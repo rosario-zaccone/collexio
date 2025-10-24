@@ -8,6 +8,6 @@ import java.io.IOException;
 import java.util.Set;
 
 public interface PhotoManager {
-    void addPhoto(String itemId, ItemPhoto photo) throws IOException;
-    Set<ItemPhoto> getPhotos(String itemId);
+    void addPhoto(ItemPhoto photo) throws IOException;
+    Set<ItemPhoto> getPhotos();
 }

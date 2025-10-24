@@ -22,4 +22,9 @@ public class TechItem extends Item implements Priceable {
         WikipediaInfoGenerator generator = new WikipediaInfoGenerator();
         setDescription(generator.generateDescription(getName()));
     }
+
+    @Override
+    public TechItem copy() throws IOException {
+        return new TechItem(getId(), getName(), getQuantity(), getPhoto());
+    }
 }

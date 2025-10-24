@@ -21,5 +21,9 @@ public class Book extends Item implements Priceable {
         setDescription(generator.generateDescription(getName()));
     }
 
+    @Override
+    public Book copy() throws IOException {
+        return new Book(getId(), getName(), getQuantity(), getPhoto());
+    }
 }
 

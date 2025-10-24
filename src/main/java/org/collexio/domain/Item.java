@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public abstract class Item {
     private final String id; //I-001
@@ -18,6 +21,9 @@ public abstract class Item {
     private int quantity;
     private ItemPhoto photo;
     private String description;
+
+    private final Set<Transaction> transactions = new TreeSet<>();
+
 
     public Item(String id, String name, int quantity, ItemPhoto photo) throws IOException {
         if (!Utilities.validateId("I-", id))
@@ -31,7 +37,7 @@ public abstract class Item {
         this.quantity = quantity;
         uploadPhoto(photo);
         this.photo = photo;
-        description = "NO DESCRIPTION";
+        this.description = "NO DESCRIPTION";
     }
 
 
@@ -67,10 +73,6 @@ public abstract class Item {
 
     public abstract void generateDescription();
 
-    public ItemPhoto getPhoto() {
-        return photo;
-    }
-
     private void uploadPhoto(ItemPhoto photo) throws IOException {
         try (InputStream is = Files.newInputStream(photo.getPath())) {
             BufferedImage originalImage = ImageIO.read(is);
@@ -92,6 +94,20 @@ public abstract class Item {
         uploadPhoto(photo);
         this.photo = photo;
     }
+
+    public ItemPhoto getPhoto() {
+        return photo;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
+
+    public Set<Transaction> getTransactions() {
+        return Collections.unmodifiableSet(transactions);
+    }
+
+    public abstract Item copy() throws IOException;
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,7 @@
 package org.collexio;
 
 import org.collexio.domain.ItemPhoto;
+import org.collexio.domain.PhotoType;
 import org.collexio.domain.TechItem;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,19 +27,19 @@ public class TechItemTest {
     public static void setUp() throws IOException {
         String imagePath = "/home/rosario/Downloads/test.png";
 
-        itemA = new TechItem("I-1", "nintendo ds lite", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/dslite.jpg")));
-        itemB = new TechItem("I-2", "pokemon heart gold", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/pokewalker.jpg")));
-        itemC = new TechItem("I-3", "pokewalker", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/pokemon.jpg")));
-        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
+        itemA = new TechItem("I-1", "nintendo ds lite", 1, new ItemPhoto("P-20",Paths.get("/home/rosario/Downloads/collexio_test/dslite.jpg"), PhotoType.PROPIC));
+        itemB = new TechItem("I-2", "pokemon heart gold", 1, new ItemPhoto("P-22",Paths.get("/home/rosario/Downloads/collexio_test/pokewalker.jpg"), PhotoType.PROPIC));
+        itemC = new TechItem("I-3", "pokewalker", 1, new ItemPhoto("P-24",Paths.get("/home/rosario/Downloads/collexio_test/pokemon.jpg"), PhotoType.PROPIC));
+        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1, new ItemPhoto("P-25",Paths.get("/home/rosario/Downloads/collexio_test/test.png"), PhotoType.PROPIC));
 
 
     }
 
     @Test
     void getPriceTest() throws Exception {
-        System.out.println(itemA.getPrice());
-        System.out.println(itemB.getPrice());
-        System.out.println(itemC.getPrice());
+        System.out.println("price for " + itemA.getName() + ": " + itemA.getPrice());
+        System.out.println("price for " + itemB.getName() + ": " +itemB.getPrice());
+        System.out.println("price for " + itemC.getName() + ": " +itemC.getPrice());
         assertThrows(NoSuchElementException.class, () -> {
             itemD.getPrice();
         });

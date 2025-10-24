@@ -31,13 +31,13 @@ public class SubitoScraper implements PriceScraper {
                     .thenApply(HttpResponse::body)
                     .join();  // Wait and get the response body as String
             Document doc = Jsoup.parseBodyFragment(responseBody);
-            Elements items = doc.select("div.SmallCard-module_card__3hfzu.items__item.item-card.item-card--small");
+            Elements items = doc.select("div article"); // to improve
             if (items.isEmpty())
                 break;
             for (Element item : items) {
-                String title = item.select("a div h2").text();
+                String title = item.select("section.AdItemCardResponsive_details__ZxI0t h3").text();
                 if (title.length() <= itemName.length() + 4) { // considera gli annunci il cui titolo non supera di tanto la lunghezza del nome dell'articolo
-                    String price = item.select("a div div div div div div p").text();
+                    String price = item.select("section div section  div p").text();
                     StringBuilder nPrice = new StringBuilder();
                     // price extraction
                     for (int i = 0; i < price.length(); i++) {
@@ -55,7 +55,7 @@ public class SubitoScraper implements PriceScraper {
         if (count == 0)
             throw new NoSuchElementException("Item not found");
         // selezionare solo le cards che hanno il nome articolo nei titoli, il titolo si trova dentro il div dentro un h2 dentro uno span
-        return (double)value / count;
+        return (double) Math.round(((double) value / count * 100)) /100;
     }
 
 

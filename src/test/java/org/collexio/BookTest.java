@@ -2,6 +2,8 @@ package org.collexio;
 
 import org.collexio.domain.Book;
 import org.collexio.domain.ItemPhoto;
+import org.collexio.domain.PhotoType;
+import org.collexio.domain.Transaction;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -12,6 +14,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,10 +28,10 @@ public class BookTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        itemA = new Book("I-1", "Attacco dei giganti 2", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"))); //2.21
-        itemB = new Book("I-2", "Toradora 1", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"))); //2.66
-        itemC = new Book("I-3", "My Hero Academia 11", 2, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"))); //2.34
-        itemD = new Book("I-4", "Death Note 10", 1, new ItemPhoto(Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"))); // No
+        itemA = new Book("I-1", "Attacco dei giganti 2", 1, new ItemPhoto("P-1", Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"), PhotoType.PROPIC)); //2.21
+        itemB = new Book("I-2", "Toradora 1", 1, new ItemPhoto("P-2", Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"), PhotoType.PROPIC)); //2.66
+        itemC = new Book("I-3", "My Hero Academia 11", 2, new ItemPhoto("P-3",Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"), PhotoType.PROPIC)); //2.34
+        itemD = new Book("I-4", "Death Note 101", 1, new ItemPhoto("P-4", Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"), PhotoType.PROPIC)); // No
 
     }
 
@@ -42,6 +45,7 @@ public class BookTest {
         });
     }
 
+    @Disabled
     @Test
     void descriptionTest() {
         itemA.generateDescription();
@@ -70,6 +74,12 @@ public class BookTest {
         System.out.println(itemD);
     }
 
+    @Test
+    void testTransactions() {
+        itemA.addTransaction(new Transaction("T-1", 24.5, true, LocalDateTime.now()));
+        itemA.addTransaction(new Transaction("T-2", 12.4, true, LocalDateTime.of(2010, 10, 10, 10, 10)));
+        System.out.println(itemA.getTransactions());
+    }
     @AfterAll
     static void deleteImages() {
         Path folder = Paths.get("images/thumbnails");

@@ -3,27 +3,23 @@ package org.collexio.domain;
 import org.collexio.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Transaction implements Comparable <Transaction> {
-    private final String id;
-    private final double price;
-    private final boolean income; // è un'entrata o un'uscita?
-    private final String itemId;
-    private final LocalDate date;
+public class Transaction implements Comparable<Transaction> {
+    private String id;
+    private double amount;
+    private boolean income;
+    private LocalDateTime date;
 
-    public Transaction(String id, double price, boolean income, String itemId, LocalDate date) {
+    public Transaction(String id, double amount, boolean income, LocalDateTime date) {
         if (!Utilities.validateId("T-", id))
-            throw new IllegalArgumentException("Invalid id: the id must be in the format T-X where X is a natural number");
-        if (!Utilities.validateId("I-", itemId))
-            throw new IllegalArgumentException("Invalid id: the id must be in the format I-X where X is a natural number");
-        if (price < 0)
-            throw new IllegalArgumentException("Price must be positive or zero");
+            throw new IllegalArgumentException("Id must be in the format T-###, where ### is a natural number");
+        if (amount < 0)
+            throw new IllegalArgumentException("Amount must be non negative");
         this.id = id;
-        this.price = price;
+        this.amount = amount;
         this.income = income;
-        this.itemId = itemId;
         this.date = date;
     }
 
@@ -31,36 +27,41 @@ public class Transaction implements Comparable <Transaction> {
         return id;
     }
 
-    public double getPrice() {
-        return price;
+    public double getAmount() {
+        return amount;
     }
 
     public boolean isIncome() {
         return income;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public String getItemId() {
-        return itemId;
-    }
-
     @Override
-    public int compareTo(@NotNull Transaction o) {
-        return date.compareTo(o.getDate());
+    public String toString() {
+        return "Transaction{" +
+                "id='" + id + '\'' +
+                ", amount=" + amount +
+                ", income=" + income +
+                ", date=" + date +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
+        if (!(o instanceof Transaction that)) return false;
         return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public int compareTo(@NotNull Transaction o) {
+        return date.compareTo(o.date);
     }
 }

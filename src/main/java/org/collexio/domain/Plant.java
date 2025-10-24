@@ -2,18 +2,11 @@ package org.collexio.domain;
 
 import org.collexio.utilities.InfoGenerator;
 import org.collexio.utilities.PFAFInfoGenerator;
-import org.collexio.utilities.PhotoManager;
-import org.collexio.utilities.SystemPhotoManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-public class Plant extends Item implements Growable {
+public class Plant extends Item  { // add growable in future
     private final String scientificName;
-    private final Set<ItemPhoto> photos = new TreeSet<>();
+    //private final Set<ItemPhoto> photos = new TreeSet<>();
 
     public Plant (String id, String name, int quantity, ItemPhoto photo, String scientificName) throws IOException {
         super(id, name, quantity, photo);
@@ -30,9 +23,6 @@ public class Plant extends Item implements Growable {
         return scientificName;
     }
 
-    public Set<ItemPhoto> getPhotos() {
-        return Set.copyOf(photos); //immutable
-    }
 
     @Override
     public void generateDescription() {
@@ -41,19 +31,12 @@ public class Plant extends Item implements Growable {
     }
 
     @Override
-    public void addPhoto(ItemPhoto photo) throws IOException {
-        photos.add(photo);
-        PhotoManager manager = new SystemPhotoManager("images/growable/");
-        manager.addPhoto(getId(), photo);
-    }
-
-    @Override
-    public String showPhotos() {
-        return "TODO (pdf document with all photos)";
-    }
-
-    @Override
     public String toString() {
         return "Plant{} " + super.toString();
+    }
+
+    @Override
+    public Plant copy() throws IOException {
+        return new Plant(getId(), getName(), getQuantity(), getPhoto(), getScientificName());
     }
 }
