@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
@@ -25,7 +26,7 @@ public abstract class Item {
     private final Set<Transaction> transactions = new TreeSet<>();
 
 
-    public Item(String id, String name, int quantity, ItemPhoto photo) throws IOException {
+    public Item(String id, String name, int quantity, ItemPhoto photo) {
         if (!Utilities.validateId("I-", id))
             throw new IllegalArgumentException("Id must be in the format I-###, where ### is a natural number");
         if (quantity <= 0)
@@ -35,7 +36,6 @@ public abstract class Item {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
-        uploadPhoto(photo);
         this.photo = photo;
         this.description = "NO DESCRIPTION";
     }
@@ -73,25 +73,7 @@ public abstract class Item {
 
     public abstract void generateDescription();
 
-    private void uploadPhoto(ItemPhoto photo) throws IOException {
-        try (InputStream is = Files.newInputStream(photo.getPath())) {
-            BufferedImage originalImage = ImageIO.read(is);
-            BufferedImage resizedImage = new BufferedImage(100, 100, originalImage.getType());
-            Graphics2D g = resizedImage.createGraphics();
-            g.drawImage(originalImage, 0, 0, 100, 100, null);
-            g.dispose();
-            String fileName = photo.getPath().getFileName().toString();
-            int dotIndex = fileName.lastIndexOf('.');
-            if (dotIndex == -1) {
-                throw new IOException("File extension not found");
-            }
-            String ext = fileName.substring(dotIndex + 1).toLowerCase();
-            ImageIO.write(resizedImage, ext, Paths.get("images/thumbnails/" + id + "." + ext).toFile());
-        }
-    }
-
-    public void setPhoto(ItemPhoto photo) throws IOException {
-        uploadPhoto(photo);
+    public void setPhoto(ItemPhoto photo) {
         this.photo = photo;
     }
 

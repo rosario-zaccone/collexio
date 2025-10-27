@@ -1,9 +1,16 @@
 package org.collexio.utilities;
 
+import org.collexio.domain.ItemPhoto;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,16 +32,25 @@ public class Utilities {
         return true;
     }
 
-    public static Connection getConnection() throws SQLException, IOException {
-        var props = new Properties();
-        try (Reader in = Files.newBufferedReader(
-                Path.of("src/main/resources/"))) {
-            props.load(in);
-        }
-        String drivers = props.getProperty("jdbc.drivers");
-        if (drivers != null) System.setProperty("jdbc.drivers", drivers);
 
-        String url = props.getProperty("jdbc.url");
-        return DriverManager.getConnection(url);
+    public static void uploadPhoto(ItemPhoto photo) throws IOException { // da spostare in service in caso di refactor
+        String fileName = photo.getPath().getFileName().toString();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex == -1) {
+            throw new IOException("File extension not found");
+        }
+        String ext = fileName.substring(dotIndex + 1).toLowerCase();
+        Path outputPath = Paths.get("images/thumbnails/" + photo.getId() + "." + ext);
+        if (Files.exists(outputPath)) {
+            return;
+        }
+        try (InputStream is = Files.newInputStream(photo.getPath())) {
+            BufferedImage originalImage = ImageIO.read(is);
+            BufferedImage resizedImage = new BufferedImage(100, 100, originalImage.getType());
+            Graphics2D g = resizedImage.createGraphics();
+            g.drawImage(originalImage, 0, 0, 100, 100, null);
+            g.dispose();
+            ImageIO.write(resizedImage, ext, outputPath.toFile());
+        }
     }
 }

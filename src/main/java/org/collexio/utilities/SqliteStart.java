@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class SqliteStart {
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:my.db";
+        String url = "jdbc:sqlite:data/collexio.db";
         String seedFile = "data/seed.sql";
 
         try (Connection conn = DriverManager.getConnection(url)) {

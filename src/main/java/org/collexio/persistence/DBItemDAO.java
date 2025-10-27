@@ -2,19 +2,19 @@ package org.collexio.persistence;
 
 import org.collexio.domain.Item;
 import org.collexio.domain.ItemPhoto;
-import org.collexio.domain.Plant;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class SqliteItemDAO implements ItemDAO {
+public class DBItemDAO implements ItemDAO {
     private final Connection connection;
 
     private static final String selectAllSql = "SELECT * FROM item";
 
-    public SqliteItemDAO(Connection connection) { // DI, life of connection managed externally
-        this.connection = connection;
+    public DBItemDAO(Connection connection) throws SQLException, IOException { // DI, life of connection managed externally
+        this.connection = ConnectionFactory.getConnection();
     }
 
     @Override
@@ -52,8 +52,8 @@ public class SqliteItemDAO implements ItemDAO {
                 String secondName = rs.getString("second_name");
                 String id = "I-" + rawId; String collectionId = "C-" + rawCollectionId;
                 ItemPhoto photo = null; // da sistemare
-                var result = switch(type) {
-                    case 0 -> 0;
+                var result = switch(type) { // QUI USARE LA SIMPLE FACTORY DESCRITTA QUI: https://refactoring.guru/design-patterns/factory-comparison
+                    case 0 -> 0; //  // Simple factory consiste in uan classe con un metodo createItem, che prende un valore e dentor ha uno switch che in base al valore crea l'item concreto giusto
                     case 1 -> 1; // conviene fare prima itemphotodao
                     case 2 -> 2;
                     default -> throw new SQLException(); //da siustemare

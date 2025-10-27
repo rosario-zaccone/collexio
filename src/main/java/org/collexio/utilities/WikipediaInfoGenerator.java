@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +19,10 @@ public class WikipediaInfoGenerator implements InfoGenerator {
     @Override
     public String generateDescription(String itemName) {
         String id;
-        try (Client geminiClient = new Client()) {
+        Dotenv dotenv = Dotenv.load();
+        try (Client geminiClient = Client.builder()
+                .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
+                .build()) {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(baseUrl.replace("{ITEM_NAME}", itemName.replace(" ", "%20"))))

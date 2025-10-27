@@ -8,7 +8,7 @@ public class Plant extends Item  { // add growable in future
     private final String scientificName;
     //private final Set<ItemPhoto> photos = new TreeSet<>();
 
-    public Plant (String id, String name, int quantity, ItemPhoto photo, String scientificName) throws IOException {
+    public Plant (String id, String name, int quantity, ItemPhoto photo, String scientificName) {
         super(id, name, quantity, photo);
         if (!validateScientificName(scientificName))
             throw new IllegalArgumentException("Invalid scientific name");
@@ -36,7 +36,7 @@ public class Plant extends Item  { // add growable in future
     }
 
     @Override
-    public Plant copy() throws IOException {
+    public Plant copy()  {
         return new Plant(getId(), getName(), getQuantity(), getPhoto(), getScientificName());
     }
 }

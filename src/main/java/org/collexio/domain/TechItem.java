@@ -7,7 +7,7 @@ import org.collexio.utilities.WikipediaInfoGenerator;
 import java.io.IOException;
 
 public class TechItem extends Item implements Priceable {
-    public TechItem(String id, String name, int quantity, ItemPhoto photo) throws IOException {
+    public TechItem(String id, String name, int quantity, ItemPhoto photo){
         super(id, name, quantity, photo);
     }
 
@@ -24,7 +24,7 @@ public class TechItem extends Item implements Priceable {
     }
 
     @Override
-    public TechItem copy() throws IOException {
+    public TechItem copy() {
         return new TechItem(getId(), getName(), getQuantity(), getPhoto());
     }
 }

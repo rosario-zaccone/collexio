@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Transaction implements Comparable<Transaction> {
-    private String id;
-    private double amount;
-    private boolean income;
-    private LocalDateTime date;
+    private final String id;
+    private final double amount;
+    private final boolean income;
+    private final LocalDateTime date;
 
     public Transaction(String id, double amount, boolean income, LocalDateTime date) {
         if (!Utilities.validateId("T-", id))

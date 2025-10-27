@@ -39,8 +39,11 @@ public class ItemCollection <T extends Item> {
         return name;
     }
 
-    public List<T> getData() {
-        return Collections.unmodifiableList(data); // no deep copy, to be improved
+    public List<T> getData() throws IOException {
+        List<T> res = new ArrayList<>();
+        for (Item item: data)
+            res.add((T) item.copy());
+        return res;
     }
 
     public void addItem(T item) {

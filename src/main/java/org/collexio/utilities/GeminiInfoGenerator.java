@@ -2,6 +2,9 @@ package org.collexio.utilities;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import io.github.cdimascio.dotenv.Dotenv;
+
+import java.util.Optional;
 
 public class GeminiInfoGenerator implements InfoGenerator {
     private final String model;
@@ -16,7 +19,11 @@ public class GeminiInfoGenerator implements InfoGenerator {
 
     @Override
     public String generateDescription(String itemName) {
-        try (Client geminiClient = new Client()) {
+        Dotenv dotenv = Dotenv.load();
+        System.out.println(dotenv.get("PIPPO"));
+        try (Client geminiClient = Client.builder()
+                .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
+                .build()) {
             String prompt = "Generate a concise description of the book/comic/manga " + itemName +", maximum 150 words." +
                     "Provide the output as plain text without any special formatting or markup. " +
                     "This content will be used as a Java String for a description of a item in an inventory." +

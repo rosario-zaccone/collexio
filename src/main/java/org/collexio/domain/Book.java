@@ -5,7 +5,7 @@ import org.collexio.utilities.*;
 import java.io.IOException;
 
 public class Book extends Item implements Priceable {
-    public Book(String id, String name, int quantity, ItemPhoto photo) throws IOException {
+    public Book(String id, String name, int quantity, ItemPhoto photo) {
         super(id, name, quantity, photo);
     }
 
@@ -22,7 +22,7 @@ public class Book extends Item implements Priceable {
     }
 
     @Override
-    public Book copy() throws IOException {
+    public Book copy()  {
         return new Book(getId(), getName(), getQuantity(), getPhoto());
     }
 }

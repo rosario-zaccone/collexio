@@ -2,6 +2,7 @@ package org.collexio.utilities;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,7 +20,10 @@ public class PFAFInfoGenerator implements InfoGenerator {
 
     @Override
     public String generateDescription(String itemName) {
-        try (Client geminiClient = new Client()) {
+        Dotenv dotenv = Dotenv.load();
+        try (Client geminiClient = Client.builder()
+                .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
+                .build()) {
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
