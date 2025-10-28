@@ -21,18 +21,16 @@ public class ItemCollectionTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        collection = new ItemCollection<>("C-1", "My Hero Academia Collection");
+        collection = new ItemCollection<>(1, "My Hero Academia Collection");
         Path baseImagePath = Paths.get("/home/rosario/Downloads/collexio_test/test.png");
 
         int quantity;
         for (int i = 1; i <= 10; i++) {
-            String id = "I-" + i; // I-1, I-2, ...
             String name = "My Hero Academia " + i;
             quantity = (i % 2 == 0) ? 1 : 2;
-            String photoId = "P-" + i;
             Path photoPath = Paths.get("/home/rosario/Downloads/collexio_test/test_" + i + ".png");
-            ItemPhoto photo = new ItemPhoto(photoId, photoPath);
-            Book book = new Book(id, name, quantity, photo);
+            ItemPhoto photo = new ItemPhoto(i, photoPath);
+            Book book = new Book(i, name, quantity, photo);
             collection.addItem(book);
         }
     }

@@ -14,28 +14,28 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 public class ItemPhoto implements Comparable<ItemPhoto> {
-    private final String id;
+    private final int id;
     private final Path path;
     private final LocalDateTime timestamp;
 
-    public ItemPhoto(String id, Path path, LocalDateTime timestamp) {
-        if (!Utilities.validateId("P-", id))
-            throw new IllegalArgumentException("Id must be in the format I-###, where ### is a natural number");
+    public ItemPhoto(int id, Path path, LocalDateTime timestamp) {
+        if (id <= 0)
+            throw new IllegalArgumentException("Id must be positive");
         this.id = id;
         this.path = path;
         this.timestamp = timestamp;
     }
 
 
-    public ItemPhoto(String id, Path path) {
-        if (!Utilities.validateId("P-", id))
-            throw new IllegalArgumentException("Id must be in the format I-###, where ### is a natural number");
-        this.id = id;
-        this.path = path;
-        this.timestamp = LocalDateTime.MIN;
+    public ItemPhoto(int id, Path path) {
+        this(id, path, LocalDateTime.MIN);
     }
 
-    public String getId() {
+    public ItemPhoto(Path path, LocalDateTime timestamp) {
+        this(1, path, timestamp);
+    }
+
+    public int getId() {
         return id;
     }
 

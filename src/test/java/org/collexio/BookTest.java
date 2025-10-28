@@ -28,21 +28,21 @@ public class BookTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        ItemPhoto photoA = new ItemPhoto("P-1", Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"));
+        ItemPhoto photoA = new ItemPhoto(1, Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"));
         Utilities.uploadPhoto(photoA);
-        itemA = new Book("I-1", "Attacco dei giganti 2", 1, photoA);
+        itemA = new Book(1, "Attacco dei giganti 2", 1, photoA);
 
-        ItemPhoto photoB = new ItemPhoto("P-2", Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"));
+        ItemPhoto photoB = new ItemPhoto(2, Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"));
         Utilities.uploadPhoto(photoB);
-        itemB = new Book("I-2", "Toradora 1", 1, photoB);
+        itemB = new Book(2, "Toradora 1", 1, photoB);
 
-        ItemPhoto photoC = new ItemPhoto("P-3", Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"));
+        ItemPhoto photoC = new ItemPhoto(3, Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"));
         Utilities.uploadPhoto(photoC);
-        itemC = new Book("I-3", "My Hero Academia 11", 2, photoC);
+        itemC = new Book(3, "My Hero Academia 11", 2, photoC);
 
-        ItemPhoto photoD = new ItemPhoto("P-4", Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"));
+        ItemPhoto photoD = new ItemPhoto(4, Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"));
         Utilities.uploadPhoto(photoD);
-        itemD = new Book("I-4", "Death Note 101", 1, photoD);
+        itemD = new Book(4, "Death Note 101", 1, photoD);
     }
 
 
@@ -86,8 +86,8 @@ public class BookTest {
 
     @Test
     void testTransactions() {
-        itemA.addTransaction(new Transaction("T-1", 24.5, true, LocalDateTime.now()));
-        itemA.addTransaction(new Transaction("T-2", 12.4, true, LocalDateTime.of(2010, 10, 10, 10, 10)));
+        itemA.addTransaction(new Transaction(1, 24.5, true, LocalDateTime.now()));
+        itemA.addTransaction(new Transaction(2, 12.4, true, LocalDateTime.of(2010, 10, 10, 10, 10)));
         System.out.println(itemA.getTransactions());
     }
 

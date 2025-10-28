@@ -4,12 +4,18 @@ import org.collexio.utilities.InfoGenerator;
 import org.collexio.utilities.PFAFInfoGenerator;
 
 import java.io.IOException;
-public class Plant extends Item  { // add growable in future
+public class Plant extends Item  {
     private final String scientificName;
-    //private final Set<ItemPhoto> photos = new TreeSet<>();
 
-    public Plant (String id, String name, int quantity, ItemPhoto photo, String scientificName) {
+    public Plant (int id, String name, int quantity, ItemPhoto photo, String scientificName) {
         super(id, name, quantity, photo);
+        if (!validateScientificName(scientificName))
+            throw new IllegalArgumentException("Invalid scientific name");
+        this.scientificName = scientificName;
+    }
+
+    public Plant (String name, int quantity, ItemPhoto photo, String scientificName) {
+        super(name, quantity, photo);
         if (!validateScientificName(scientificName))
             throw new IllegalArgumentException("Invalid scientific name");
         this.scientificName = scientificName;

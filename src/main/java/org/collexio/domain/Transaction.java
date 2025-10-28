@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Transaction implements Comparable<Transaction> {
-    private final String id;
+    private final int id;
     private final double amount;
     private final boolean income;
     private final LocalDateTime date;
 
-    public Transaction(String id, double amount, boolean income, LocalDateTime date) {
-        if (!Utilities.validateId("T-", id))
-            throw new IllegalArgumentException("Id must be in the format T-###, where ### is a natural number");
+    public Transaction(int id, double amount, boolean income, LocalDateTime date) {
+        if (id <= 0)
+            throw new IllegalArgumentException("Id must be positive");
         if (amount < 0)
             throw new IllegalArgumentException("Amount must be non negative");
         this.id = id;
@@ -23,7 +23,13 @@ public class Transaction implements Comparable<Transaction> {
         this.date = date;
     }
 
-    public String getId() {
+    public Transaction(double amount, boolean income, LocalDateTime date) {
+        this(1, amount, income, date);
+    }
+
+
+
+    public int getId() {
         return id;
     }
 

@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemPhotoDAO {
-    void add(ItemPhoto photo);
-    Optional<ItemPhoto> get(String id) throws SQLException;
-    void update(ItemPhoto photo);
-    void delete(String id);
+    void add(ItemPhoto photo, int itemId) throws SQLException;
+    Optional<ItemPhoto> get(int id) throws SQLException;
+    void update(ItemPhoto photo) throws SQLException;
+    //void delete(String id);
     List<ItemPhoto> getAll() throws SQLException;
 }

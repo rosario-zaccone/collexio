@@ -27,7 +27,11 @@ replay_pid*
 images/*
 
 /src/main/resources/*
-src/test/java/org/collexio/Quickstart.java
+src/test/java/org/collexio/DBAnimalDAOTest.java
+
+/src/main/java/org/collexio/domain/Animal.java
+/src/main/java/org/collexio/persistence/AnimalDAO.java
+/src/main/java/org/collexio/persistence/DBAnimalDAO.java
 
 !/src/main/resources/.gitkeep
 

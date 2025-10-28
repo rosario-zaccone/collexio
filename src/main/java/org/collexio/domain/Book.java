@@ -5,8 +5,12 @@ import org.collexio.utilities.*;
 import java.io.IOException;
 
 public class Book extends Item implements Priceable {
-    public Book(String id, String name, int quantity, ItemPhoto photo) {
+    public Book(int id, String name, int quantity, ItemPhoto photo) {
         super(id, name, quantity, photo);
+    }
+
+    public Book(String name, int quantity, ItemPhoto photo) {
+        super(name, quantity, photo);
     }
 
     @Override

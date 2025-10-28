@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public abstract class Item {
-    private final String id; //I-001
+    private final int id; //I-001
     private String name;
     private int quantity;
     private ItemPhoto photo;
@@ -26,9 +26,9 @@ public abstract class Item {
     private final Set<Transaction> transactions = new TreeSet<>();
 
 
-    public Item(String id, String name, int quantity, ItemPhoto photo) {
-        if (!Utilities.validateId("I-", id))
-            throw new IllegalArgumentException("Id must be in the format I-###, where ### is a natural number");
+    public Item(int id, String name, int quantity, ItemPhoto photo) {
+        if (id <= 0)
+            throw new IllegalArgumentException("Id must be positive");
         if (quantity <= 0)
             throw new IllegalArgumentException("Quantity must be positive");
         if (name.isEmpty() || !name.matches("[\\p{L}\\p{N} ]+"))
@@ -40,8 +40,13 @@ public abstract class Item {
         this.description = "NO DESCRIPTION";
     }
 
+    public Item(String name, int quantity, ItemPhoto photo) {
+        this(1, name, quantity, photo);
+    }
 
-    public String getId() {
+
+
+    public int getId() {
         return id;
     }
 

@@ -15,19 +15,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class ItemCollection <T extends Item> {
-    private final String id;
+    private final int id;
     private String name;
     private final List<T> data;
 
-    public ItemCollection(String id, String name) {
-        if (!Utilities.validateId("C-", id))
-            throw new IllegalArgumentException("Id must be in the format C-###, where ### is a natural number");
+    public ItemCollection(int id, String name) {
+        if (id <= 0)
+            throw new IllegalArgumentException("Id must be positive");
         this.id = id;
         this.name = name;
         this.data = new ArrayList<>();
     }
 
-    public String getId() {
+    public ItemCollection(String name) {
+        this(1, name);
+    }
+
+    public int getId() {
         return id;
     }
 

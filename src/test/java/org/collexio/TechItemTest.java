@@ -26,10 +26,10 @@ public class TechItemTest {
     public static void setUp() throws IOException {
         String imagePath = "/home/rosario/Downloads/test.png";
 
-        itemA = new TechItem("I-1", "nintendo ds lite", 1, new ItemPhoto("P-20",Paths.get("/home/rosario/Downloads/collexio_test/dslite.jpg")));
-        itemB = new TechItem("I-2", "pokemon heart gold", 1, new ItemPhoto("P-22",Paths.get("/home/rosario/Downloads/collexio_test/pokewalker.jpg")));
-        itemC = new TechItem("I-3", "pokewalker", 1, new ItemPhoto("P-24",Paths.get("/home/rosario/Downloads/collexio_test/pokemon.jpg")));
-        itemD = new TechItem("I-4", "wrong wrong wrong wrong aopaapdk", 1, new ItemPhoto("P-25",Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
+        itemA = new TechItem(1, "nintendo ds lite", 1, new ItemPhoto(20,Paths.get("/home/rosario/Downloads/collexio_test/dslite.jpg")));
+        itemB = new TechItem(2, "pokemon heart gold", 1, new ItemPhoto(22,Paths.get("/home/rosario/Downloads/collexio_test/pokewalker.jpg")));
+        itemC = new TechItem(3, "pokewalker", 1, new ItemPhoto(24,Paths.get("/home/rosario/Downloads/collexio_test/pokemon.jpg")));
+        itemD = new TechItem(4, "wrong wrong wrong wrong aopaapdk", 1, new ItemPhoto(25,Paths.get("/home/rosario/Downloads/collexio_test/test.png")));
 
 
     }

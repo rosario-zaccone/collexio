@@ -4,11 +4,12 @@ import org.collexio.domain.Item;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemDAO {
-    void add(Item item);
-    Item get(String id);
+    void add(Item item, int collectionId) throws SQLException;
+    Optional<Item> get(int id);
     void update(Item item);
-    void delete(String id);
+    void delete(int id);
     List<Item> getAll() throws SQLException;
 }

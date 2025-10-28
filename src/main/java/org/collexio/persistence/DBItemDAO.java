@@ -1,30 +1,60 @@
 package org.collexio.persistence;
 
+import org.collexio.domain.Book;
 import org.collexio.domain.Item;
 import org.collexio.domain.ItemPhoto;
+import org.collexio.domain.TechItem;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-public class DBItemDAO implements ItemDAO {
+/*
+CREATE TABLE items(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    type INTEGER NOT NULL, -- 0 for PLant, 1 for tech, 2 for book
+    item_collection_id INTEGER,
+    FOREIGN KEY(item_collection_id) REFERENCES item_collections(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+ */
+public class DBItemDAO implements ItemDAO{
     private final Connection connection;
 
-    private static final String selectAllSql = "SELECT * FROM item";
+    private final static String insertSql = "INSERT INTO items(name, quantity, description, type, item_collection_id)"
+            + "VALUES(?,?,?,?,?)";
 
-    public DBItemDAO(Connection connection) throws SQLException, IOException { // DI, life of connection managed externally
-        this.connection = ConnectionFactory.getConnection();
+    public DBItemDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+
+    @Override
+    public void add(Item item, int collectionId) throws SQLException {
+        // -- 0 for PLant, 1 for tech, 2 for book
+        int type = 0;
+        if (item.getClass() == TechItem.class)
+            type = 1;
+        else if (item.getClass() == Book.class)
+            type = 2;
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+            stmt.setString(1, item.getName());
+            stmt.setInt(2, item.getQuantity());
+            stmt.setString(3, item.getDescription());
+            stmt.setInt(4, type);
+            stmt.setInt(5, collectionId);
+            stmt.executeUpdate();
+        }
     }
 
     @Override
-    public void add(Item item) {
-
-    }
-
-    @Override
-    public Item get(String id) {
-        return null;
+    public Optional<Item> get(int id) {
+        return Optional.empty();
     }
 
     @Override
@@ -33,34 +63,12 @@ public class DBItemDAO implements ItemDAO {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(int id) {
 
     }
 
     @Override
-    //id, name, description, quantity, type, collection_id, second_name
     public List<Item> getAll() throws SQLException {
-        try (var stmt = connection.createStatement();
-             var rs = stmt.executeQuery(selectAllSql)) {
-            while (rs.next()) {
-                int rawId = rs.getInt("id");
-                String name = rs.getString("name");
-                String description = rs.getString("description");
-                int quantity = rs.getInt("quantity");
-                int type = rs.getInt("type"); // 0 for plants, 1 for tech, 2 for book
-                int rawCollectionId = rs.getInt("collection_id");
-                String secondName = rs.getString("second_name");
-                String id = "I-" + rawId; String collectionId = "C-" + rawCollectionId;
-                ItemPhoto photo = null; // da sistemare
-                var result = switch(type) { // QUI USARE LA SIMPLE FACTORY DESCRITTA QUI: https://refactoring.guru/design-patterns/factory-comparison
-                    case 0 -> 0; //  // Simple factory consiste in uan classe con un metodo createItem, che prende un valore e dentor ha uno switch che in base al valore crea l'item concreto giusto
-                    case 1 -> 1; // conviene fare prima itemphotodao
-                    case 2 -> 2;
-                    default -> throw new SQLException(); //da siustemare
-                };
-
-            }
-        }
-        return null;
+        return List.of();
     }
 }
