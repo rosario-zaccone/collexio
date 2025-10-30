@@ -114,6 +114,7 @@ public abstract class Item {
                 ", name='" + name + '\'' +
                 ", quantity=" + quantity +
                 ", photo=" + photo +
+                ", transactions=" + transactions +
                 '}';
     }
 }

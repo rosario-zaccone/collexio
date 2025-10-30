@@ -29,5 +29,10 @@ public class Book extends Item implements Priceable {
     public Book copy()  {
         return new Book(getId(), getName(), getQuantity(), getPhoto());
     }
+
+    @Override
+    public String toString() {
+        return "Book{} " + super.toString();
+    }
 }
 

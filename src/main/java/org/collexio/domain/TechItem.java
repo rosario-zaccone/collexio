@@ -30,4 +30,9 @@ public class TechItem extends Item implements Priceable {
     public TechItem copy() {
         return new TechItem(getId(), getName(), getQuantity(), getPhoto());
     }
+
+    @Override
+    public String toString() {
+        return "TechItem{} " + super.toString();
+    }
 }

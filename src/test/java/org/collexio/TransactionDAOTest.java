@@ -65,7 +65,7 @@ public class TransactionDAOTest {
         Transaction transaction = new Transaction(200.0, true, LocalDateTime.now());
         transactionDAO.add(transaction, 1);
         transaction = new Transaction(1, 300.0, false, LocalDateTime.now());
-        transactionDAO.update(transaction);
+        transactionDAO.update(transaction, false);
         Optional<Transaction> result = transactionDAO.get(1);
         assertTrue(result.isPresent());
         assertEquals(300.0, result.get().getAmount());

@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface TransactionDAO {
     void add(Transaction transaction, int itemId) throws SQLException;
     Optional<Transaction> get(int id) throws SQLException;
-    void update(Transaction transaction) throws SQLException;
+    void update(Transaction transaction, boolean noItem) throws SQLException;
     void delete(int id) throws SQLException;
     List<Transaction> getAll() throws SQLException;
+    List<Transaction> getByItemId(int itemId) throws SQLException;
 }
