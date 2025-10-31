@@ -12,14 +12,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class ItemPhoto implements Comparable<ItemPhoto> {
-    private final int id;
+    private final Long id;
     private final Path path;
     private final LocalDateTime timestamp;
 
-    public ItemPhoto(int id, Path path, LocalDateTime timestamp) {
-        if (id <= 0)
+    public ItemPhoto(Long id, Path path, LocalDateTime timestamp) {
+        if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive");
         this.id = id;
         this.path = path;
@@ -27,15 +28,15 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
     }
 
 
-    public ItemPhoto(int id, Path path) {
-        this(id, path, LocalDateTime.MIN);
+    public ItemPhoto(Long id, Path path) {
+        this(null, path, LocalDateTime.MIN);
     }
 
     public ItemPhoto(Path path, LocalDateTime timestamp) {
-        this(1, path, timestamp);
+        this(null, path, timestamp);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -58,8 +59,27 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
                 '}';
     }
 
+    public String toStringNoId() {
+        return "ItemPhoto{" +
+                "path=" + path +
+                ", timestamp=" + timestamp +
+                '}';
+    }
     @Override
     public int compareTo(@NotNull ItemPhoto o) {
         return timestamp.compareTo(o.getTimestamp());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPhoto itemPhoto = (ItemPhoto) o;
+        return Objects.equals(path, itemPhoto.path) && Objects.equals(timestamp, itemPhoto.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, timestamp);
     }
 }

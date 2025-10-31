@@ -28,18 +28,18 @@ public class PlantTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        itemA = new Plant(1, "Primula", 1, new ItemPhoto(1,Paths.get("/home/rosario/Downloads/collexio_test/primula.jpg")), "primula_vulgaris");
-        itemB = new Plant(2, "Lavender", 1, new ItemPhoto(2,Paths.get("/home/rosario/Downloads/collexio_test/lavander.jpg")), "lavandula_angustifolia");
-        itemC = new Plant(3, "Rosemary", 1, new ItemPhoto(3,Paths.get("/home/rosario/Downloads/collexio_test/rosemary.jpg")), "rosmarinus_officinalis");
-        itemD = new Plant(4, "Chamomile", 1, new ItemPhoto(4,Paths.get("/home/rosario/Downloads/collexio_test/camomilla.jpg")), "matricaria_chamomilla");
-        itemE = new Plant(5, "Chamomile", 1, new ItemPhoto(5,Paths.get("/home/rosario/Downloads/collexio_test/test.png")), "wrong_name");
+        itemA = new Plant(1L, "Primula", 1, new ItemPhoto(1L,Paths.get("/home/rosario/Downloads/collexio_test/primula.jpg")), "primula_vulgaris");
+        itemB = new Plant(2L, "Lavender", 1, new ItemPhoto(2L,Paths.get("/home/rosario/Downloads/collexio_test/lavander.jpg")), "lavandula_angustifolia");
+        itemC = new Plant(3L, "Rosemary", 1, new ItemPhoto(3L,Paths.get("/home/rosario/Downloads/collexio_test/rosemary.jpg")), "rosmarinus_officinalis");
+        itemD = new Plant(4L, "Chamomile", 1, new ItemPhoto(4L,Paths.get("/home/rosario/Downloads/collexio_test/camomilla.jpg")), "matricaria_chamomilla");
+        itemE = new Plant(5L, "Chamomile", 1, new ItemPhoto(5L,Paths.get("/home/rosario/Downloads/collexio_test/test.png")), "wrong_name");
     }
 
     @Test
     void creationTest() {
-        assertDoesNotThrow(() -> new Plant(100, "Tarassaco", 1,  new ItemPhoto(2, Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacum_officinale"));
-        assertThrows(IllegalArgumentException.class, () -> new Plant(-2, "Tarassaco", 1, new ItemPhoto(2,Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacumofficinale"));
-        assertThrows(IllegalArgumentException.class, () -> new Plant(2, "Tarassaco", 1, new ItemPhoto(2,Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacum__officinale"));
+        assertDoesNotThrow(() -> new Plant(100L, "Tarassaco", 1,  new ItemPhoto(2L, Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacum_officinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant(-2L, "Tarassaco", 1, new ItemPhoto(2L,Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacumofficinale"));
+        assertThrows(IllegalArgumentException.class, () -> new Plant(2L, "Tarassaco", 1, new ItemPhoto(2L,Paths.get("/home/rosario/Downloads/collexio_test/test.png")),"taraxacum__officinale"));
     }
 
     @Test

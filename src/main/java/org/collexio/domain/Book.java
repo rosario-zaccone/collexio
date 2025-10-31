@@ -5,7 +5,7 @@ import org.collexio.utilities.*;
 import java.io.IOException;
 
 public class Book extends Item implements Priceable {
-    public Book(int id, String name, int quantity, ItemPhoto photo) {
+    public Book(Long id, String name, int quantity, ItemPhoto photo) {
         super(id, name, quantity, photo);
     }
 
@@ -27,12 +27,24 @@ public class Book extends Item implements Priceable {
 
     @Override
     public Book copy()  {
-        return new Book(getId(), getName(), getQuantity(), getPhoto());
+        Book item =  new Book(getId(), getName(), getQuantity(), getPhoto());
+        item.setDescription(getDescription());
+        item.getTransactions().forEach(item::addTransaction);
+        return item;
     }
 
     @Override
     public String toString() {
-        return "Book{} " + super.toString();
+        return "Book{" + super.toString() + "}";
+    }
+
+    public String toStringNoId() {
+        return "Book{" + super.toStringNoId() + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 }
 

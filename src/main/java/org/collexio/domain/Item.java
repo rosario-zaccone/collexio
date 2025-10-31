@@ -15,9 +15,10 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public abstract class Item {
-    private final int id; //I-001
+    private final Long id; //I-001
     private String name;
     private int quantity;
     private ItemPhoto photo;
@@ -26,13 +27,13 @@ public abstract class Item {
     private final Set<Transaction> transactions = new TreeSet<>();
 
 
-    public Item(int id, String name, int quantity, ItemPhoto photo) {
-        if (id <= 0)
-            throw new IllegalArgumentException("Id must be positive");
+    public Item(Long id, String name, int quantity, ItemPhoto photo) {
+        if (id != null && id <= 0)
+            throw new IllegalArgumentException("Id must be positive or null");
         if (quantity <= 0)
             throw new IllegalArgumentException("Quantity must be positive");
-        if (name.isEmpty() || !name.matches("[\\p{L}\\p{N} ]+"))
-            throw new IllegalArgumentException("Name can't be empty and can contain only letters, number and spaces");
+        if (name.isEmpty())
+            throw new IllegalArgumentException("Name can't be empty");
         this.id = id;
         this.name = name;
         this.quantity = quantity;
@@ -41,12 +42,12 @@ public abstract class Item {
     }
 
     public Item(String name, int quantity, ItemPhoto photo) {
-        this(1, name, quantity, photo);
+        this(null, name, quantity, photo);
     }
 
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -94,17 +95,19 @@ public abstract class Item {
         return Collections.unmodifiableSet(transactions);
     }
 
-    public abstract Item copy() throws IOException;
+    public abstract Item copy();
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Item item)) return false;
-        return Objects.equals(id, item.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return quantity == item.quantity && Objects.equals(name, item.name) && Objects.equals(photo, item.photo) && Objects.equals(description, item.description) && Objects.equals(transactions, item.transactions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(name, quantity, photo, description, transactions);
     }
 
     @Override
@@ -114,7 +117,20 @@ public abstract class Item {
                 ", name='" + name + '\'' +
                 ", quantity=" + quantity +
                 ", photo=" + photo +
+                ", description=" + description +
                 ", transactions=" + transactions +
+                '}';
+    }
+
+    public String toStringNoId() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", quantity=" + quantity +
+                ", photo=" + photo.toStringNoId() +
+                ", description=" + description +
+                ", transactions=" +             transactions.stream()
+                .map(Transaction::toStringNoId)
+                .collect(Collectors.joining(", ")) + +
                 '}';
     }
 }

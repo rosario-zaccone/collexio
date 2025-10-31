@@ -36,6 +36,7 @@ public class CLI {
                     9: Show all transaction
                     10: Show collection wallet amount
                     11: Save and exit
+                    TODO update collection name, insert transaction, some business..., collection photo
                     """);
             String response = sc.nextLine().trim(); //se ci fosse un controller, andrebbe passata la risposta al controller, che come classe gestisce l'interpretazione dell'input utente, dell'aggiornamento del modello (se ad esempio c'è da afre un inserimento e dell'aggiornamwnto della view (se c'è da fare ad esempio uno show di tutti gli item
             switch (response) {

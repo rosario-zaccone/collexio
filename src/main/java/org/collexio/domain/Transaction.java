@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Transaction implements Comparable<Transaction> {
-    private final int id;
+    private final Long id;
     private final double amount;
     private final boolean income;
     private final LocalDateTime date;
 
-    public Transaction(int id, double amount, boolean income, LocalDateTime date) {
-        if (id <= 0)
+    public Transaction(Long id, double amount, boolean income, LocalDateTime date) {
+        if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive");
         if (amount < 0)
             throw new IllegalArgumentException("Amount must be non negative");
@@ -24,12 +24,12 @@ public class Transaction implements Comparable<Transaction> {
     }
 
     public Transaction(double amount, boolean income, LocalDateTime date) {
-        this(1, amount, income, date);
+        this(null, amount, income, date);
     }
 
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -55,15 +55,25 @@ public class Transaction implements Comparable<Transaction> {
                 '}';
     }
 
+    public String toStringNoId() {
+        return "Transaction{" +
+                "amount=" + amount +
+                ", income=" + income +
+                ", date=" + date +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Transaction that)) return false;
-        return Objects.equals(id, that.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Double.compare(amount, that.amount) == 0 && income == that.income && Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(amount, income, date);
     }
 
     @Override

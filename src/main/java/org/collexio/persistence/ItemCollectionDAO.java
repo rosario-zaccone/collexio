@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemCollectionDAO<T extends Item> {
-    void add(ItemCollection<T> collection);
-    Optional<ItemCollection<T>> get(String id);
+    void add(ItemCollection<T> collection) throws SQLException;
+    Optional<ItemCollection<T>> get(Long id) throws SQLException;
     void update(ItemCollection<T> collection);
-    void delete(String id);
+    void delete(Long id) throws SQLException;
     List<ItemCollection<T>> getAll() throws SQLException;
 }

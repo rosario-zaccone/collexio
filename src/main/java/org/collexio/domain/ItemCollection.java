@@ -13,25 +13,27 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ItemCollection <T extends Item> {
-    private final int id;
+    private final Long id;
     private String name;
     private final List<T> data;
 
-    public ItemCollection(int id, String name) {
-        if (id <= 0)
-            throw new IllegalArgumentException("Id must be positive");
+    public ItemCollection(Long id, String name) {
+        if (id != null && id <= 0)
+            throw new IllegalArgumentException("Id must be positive or null");
         this.id = id;
         this.name = name;
         this.data = new ArrayList<>();
     }
 
     public ItemCollection(String name) {
-        this(1, name);
+        this(null, name);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -43,7 +45,7 @@ public class ItemCollection <T extends Item> {
         return name;
     }
 
-    public List<T> getData() throws IOException {
+    public List<T> getData() {
         List<T> res = new ArrayList<>();
         for (Item item: data)
             res.add((T) item.copy());
@@ -113,5 +115,36 @@ public class ItemCollection <T extends Item> {
         content.close();
         doc.save(outputPath);
         doc.close();
+    }
+
+    @Override
+    public String toString() {
+        return "ItemCollection{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
+    public String toStringNoId() {
+        return "ItemCollection{" +
+                "name='" + name + '\'' +
+                ", data=" +  data.stream()
+                .map(Item::toStringNoId)
+                .collect(Collectors.joining(", ")) + +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemCollection<?> that = (ItemCollection<?>) o;
+        return Objects.equals(name, that.name) && Objects.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, data);
     }
 }

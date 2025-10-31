@@ -41,25 +41,25 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public void add(Transaction transaction, int itemId) throws SQLException {
+    public void add(Transaction transaction, Long itemId) throws SQLException {
         if (itemId <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(insertSql)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());
-            stmt.setInt(4, itemId);
+            stmt.setLong(4, itemId);
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public Optional<Transaction> get(int id) throws SQLException {
+    public Optional<Transaction> get(Long id) throws SQLException {
         Optional<Transaction> res = Optional.empty();
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(selectSql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 double amount = rs.getDouble("amount");
@@ -83,19 +83,19 @@ public class DBTransactionDAO implements TransactionDAO {
             stmt.setString(3, transaction.getDate().toString());
             if (noItem) {
                 stmt.setNull(4, Types.INTEGER);
-                stmt.setInt(5, transaction.getId());
+                stmt.setLong(5, transaction.getId());
             } else
-                stmt.setInt(4, transaction.getId());
+                stmt.setLong(4, transaction.getId());
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void delete(int id) throws SQLException{
+    public void delete(Long id) throws SQLException{
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(deleteSql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }
@@ -106,7 +106,7 @@ public class DBTransactionDAO implements TransactionDAO {
         try (var stmt = connection.createStatement();
              var rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
-                int id = rs.getInt("id");
+                long id = rs.getLong("id");
                 double amount = rs.getDouble("amount");
                 boolean income = rs.getInt("income") == 1;
                 LocalDateTime date = LocalDateTime.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
@@ -117,13 +117,13 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> getByItemId(int itemId) throws SQLException {
+    public List<Transaction> getByItemId(Long itemId) throws SQLException {
         List<Transaction> res = new ArrayList<>();
         try (var stmt = connection.prepareStatement(selectByItemIdSql)) {
-            stmt.setInt(1, itemId);
+            stmt.setLong(1, itemId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
+                    long id = rs.getLong("id");
                     double amount = rs.getDouble("amount");
                     boolean income = rs.getInt("income") == 1;
                     LocalDateTime date = LocalDateTime.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres

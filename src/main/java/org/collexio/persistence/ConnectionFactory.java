@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 public class ConnectionFactory {
@@ -22,6 +23,10 @@ public class ConnectionFactory {
         String url = props.getProperty("jdbc.url");
         String user = props.getProperty("jdbc.username");
         String password = props.getProperty("jdbc.password");
-        return DriverManager.getConnection(url, user, password);
+        Connection connection =  DriverManager.getConnection(url, user, password);
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON");
+        }
+        return  connection;
     }
 }

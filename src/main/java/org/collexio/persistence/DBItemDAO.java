@@ -19,18 +19,21 @@ public class DBItemDAO implements ItemDAO{
 
     private final static String selectSql = "SELECT * FROM items WHERE id=?";
     private final static String selectAllSql = "SELECT * FROM items";
+    private final static String selectByCollectionId = "SELECT * FROM items WHERE item_collection_id=?";
     private final static String insertSql = "INSERT INTO items(name, quantity, description, type, second_name, item_collection_id)"
             + "VALUES(?,?,?,?,?,?)";
     private final static String deleteSql = "DELETE FROM items WHERE id=?";
     private static final String updateSqlNoCollection = "UPDATE items SET name = ? , "
             + "quantity = ? ,"
             + "description = ? ,"
-            + "item_collection_id = ? "
+            + "second_name=?,"
+            + "item_collection_id = ?"
             + "WHERE id = ?";
     private static final String updateSql = "UPDATE items SET name = ? , "
             + "quantity = ? ,"
-            + "description = ? "
-            + "WHERE id = ?"; // ci sarebbe da aggiungere il second_name....
+            + "description = ? ,"
+            + "second_name=?"
+            + "WHERE id = ?";
 
     public DBItemDAO(Connection connection) {
         this.connection = connection;
@@ -38,13 +41,17 @@ public class DBItemDAO implements ItemDAO{
 
 
     @Override
-    public void add(Item item, int collectionId) throws SQLException {
+    public void add(Item item, Long collectionId) throws SQLException {
+        boolean transactionOwner = false;
         int type = 0;
         if (item.getClass() == TechItem.class)
             type = 1;
         else if (item.getClass() == Book.class)
             type = 2;
-        connection.setAutoCommit(false);
+        if (connection.getAutoCommit()) {
+            connection.setAutoCommit(false);
+            transactionOwner = true;
+        }
         try {
             try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, item.getName());
@@ -55,12 +62,12 @@ public class DBItemDAO implements ItemDAO{
                     stmt.setString(5, ((Plant)(item)).getScientificName());
                 else
                     stmt.setNull(5, Types.VARCHAR);
-                stmt.setInt(6, collectionId);
+                stmt.setLong(6, collectionId);
                 stmt.executeUpdate();
 
                 try (ResultSet keys = stmt.getGeneratedKeys()) {
                     if (keys.next()) {
-                        int itemId = Math.toIntExact(keys.getLong(1));
+                        long itemId = Math.toIntExact(keys.getLong(1));
                         DBItemPhotoDAO itemPhotoDAO = new DBItemPhotoDAO(connection);
                         itemPhotoDAO.add(item.getPhoto(), itemId);
                         DBTransactionDAO transactionDAO = new DBTransactionDAO(connection);
@@ -70,22 +77,28 @@ public class DBItemDAO implements ItemDAO{
                     }
                 }
             }
-            connection.commit();
+            if (transactionOwner) {
+                connection.commit();
+            }
         } catch (SQLException ex) {
-            connection.rollback();
+            if (transactionOwner) {
+                connection.rollback();
+            }
             throw ex;
         } finally {
-            connection.setAutoCommit(true);
+            if (transactionOwner) {
+                connection.setAutoCommit(true);
+            }
         }
     }
 
     @Override
-    public Optional<Item> get(int id) throws SQLException {
+    public Optional<Item> get(Long id) throws SQLException {
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
         Optional<Item> res = Optional.empty();
         try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     int type = rs.getInt("type");
@@ -94,11 +107,36 @@ public class DBItemDAO implements ItemDAO{
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getAll();
+                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, second_name);
                     item.setDescription(description);
                     transactions.forEach(item::addTransaction);
                     res = Optional.of(item);
+                }
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public List<Item> getByCollectionId(Long collectionId) throws SQLException {
+        List<Item> res = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(selectByCollectionId)) {
+            stmt.setLong(1, collectionId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    long id = rs.getLong("id");
+                    int type = rs.getInt("type");
+                    String name = rs.getString("name");
+                    int quantity = rs.getInt("quantity");
+                    String description = rs.getString("description");
+                    String second_name = rs.getString("second_name");
+                    ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, second_name);
+                    item.setDescription(description);
+                    transactions.forEach(item::addTransaction);
+                    res.add(item);
                 }
             }
         }
@@ -114,21 +152,25 @@ public class DBItemDAO implements ItemDAO{
             stmt.setString(1, item.getName());
             stmt.setInt(2, item.getQuantity());
             stmt.setString(3, item.getDescription());
+            if (item.getClass() == Plant.class)
+                stmt.setString(4, ((Plant) item).getScientificName());
+            else
+                stmt.setNull(4, Types.VARCHAR);
             if (noCollection) {
-                stmt.setNull(4, Types.INTEGER);
-                stmt.setInt(5, item.getId());
+                stmt.setNull(5, Types.INTEGER);
+                stmt.setLong(6, item.getId());
             } else
-                stmt.setInt(4, item.getId());
+                stmt.setLong(5, item.getId());
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void delete(int id) throws SQLException {
+    public void delete(Long id) throws SQLException {
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(deleteSql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }
@@ -139,7 +181,7 @@ public class DBItemDAO implements ItemDAO{
         try (Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(selectAllSql)) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
+                    long id = rs.getLong("id");
                     int type = rs.getInt("type");
                     String name = rs.getString("name");
                     int quantity = rs.getInt("quantity");

@@ -32,12 +32,12 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     }
 
     @Override
-    public Optional<ItemPhoto> get(int id) throws SQLException {
+    public Optional<ItemPhoto> get(Long id) throws SQLException {
         Optional<ItemPhoto> res = Optional.empty();
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(selectSql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             var rs = stmt.executeQuery();
             while (rs.next()) {
                 Path path = Paths.get(rs.getString("path"));
@@ -50,15 +50,15 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     }
 
     @Override
-    public Optional<ItemPhoto> getByItemId(int itemId) throws SQLException {
+    public Optional<ItemPhoto> getByItemId(Long itemId) throws SQLException {
         Optional<ItemPhoto> res = Optional.empty();
         if (itemId <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(selectByItemIdSql)) {
-            stmt.setInt(1, itemId);
+            stmt.setLong(1, itemId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
+                    long id = rs.getLong("id");
                     Path path = Paths.get(rs.getString("path"));
                     LocalDateTime date = LocalDateTime.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                     res = Optional.of(new ItemPhoto(id, path, date));
@@ -71,7 +71,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     @Override
     public void update(ItemPhoto photo) throws SQLException {
         try (var stmt = connection.prepareStatement(updateSql)) {
-            stmt.setInt(3, photo.getId());
+            stmt.setLong(3, photo.getId());
             stmt.setString(1, photo.getPath().toString());
             stmt.setString(2, photo.getTimestamp().toString());
             stmt.executeUpdate();
@@ -85,7 +85,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
         try (var stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
-                int id = rs.getInt("id");
+                long id = rs.getLong("id");
                 Path path = Paths.get(rs.getString("path"));
                 LocalDateTime date = LocalDateTime.parse(rs.getString("photo_date"));
                 res.add(new ItemPhoto(id, path, date));
@@ -95,13 +95,13 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     }
 
     @Override
-    public void add(ItemPhoto photo, int itemId) throws SQLException {
+    public void add(ItemPhoto photo, Long itemId) throws SQLException {
         if (itemId <= 0)
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(insertSql)) {
             stmt.setString(1, photo.getPath().toString());
             stmt.setString(2, photo.getTimestamp().toString());
-            stmt.setInt(3, itemId);
+            stmt.setLong(3, itemId);
             stmt.executeUpdate();
         }
     }
