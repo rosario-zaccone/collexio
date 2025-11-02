@@ -39,7 +39,7 @@ public class DBItemPhotoDAOTest {
             stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','transactions')");
         }
         ItemPhoto p = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
-        book = new Book("Clean Code", 3, p);
+        book = new Book("Clean Code", 3, p, "cs book");
         for (int i = 0; i < 4; i++) {
             book.addTransaction(new Transaction(50.0 + i * 10, i % 2 == 0, LocalDateTime.now()));
         }

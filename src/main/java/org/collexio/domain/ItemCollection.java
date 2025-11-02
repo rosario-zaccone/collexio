@@ -24,6 +24,8 @@ public class ItemCollection <T extends Item> {
     public ItemCollection(Long id, String name) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive or null");
+        if (name.isEmpty())
+            throw new IllegalArgumentException("Name can't be empty");
         this.id = id;
         this.name = name;
         this.data = new ArrayList<>();

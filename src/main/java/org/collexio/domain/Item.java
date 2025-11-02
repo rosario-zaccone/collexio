@@ -27,7 +27,7 @@ public abstract class Item {
     private final Set<Transaction> transactions = new TreeSet<>();
 
 
-    public Item(Long id, String name, int quantity, ItemPhoto photo) {
+    public Item(Long id, String name, int quantity, ItemPhoto photo, String description) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive or null");
         if (quantity <= 0)
@@ -38,11 +38,15 @@ public abstract class Item {
         this.name = name;
         this.quantity = quantity;
         this.photo = photo;
-        this.description = "NO DESCRIPTION";
+        this.description = description;
     }
 
-    public Item(String name, int quantity, ItemPhoto photo) {
-        this(null, name, quantity, photo);
+    public Item(Long id, String name, int quantity, ItemPhoto photo) {
+        this(id, name, quantity, photo, "no description");
+    }
+
+    public Item(String name, int quantity, ItemPhoto photo, String description) {
+        this(null, name, quantity, photo, description);
     }
 
 

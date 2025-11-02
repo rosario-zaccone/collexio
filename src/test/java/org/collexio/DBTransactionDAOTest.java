@@ -34,7 +34,7 @@ public class DBTransactionDAOTest {
             stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','item_transactions')");
         }
         ItemPhoto p = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
-        Item book = new Book("Clean Code", 3, p);
+        Item book = new Book("Clean Code", 3, p, "cs book");
         for (int i = 0; i < 4; i++) {
             book.addTransaction(new Transaction(50.0 + i * 10, i % 2 == 0, LocalDateTime.now()));
         }

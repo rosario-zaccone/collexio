@@ -108,8 +108,7 @@ public class DBItemDAO implements ItemDAO{
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
-                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, second_name);
-                    item.setDescription(description);
+                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res = Optional.of(item);
                 }
@@ -133,8 +132,7 @@ public class DBItemDAO implements ItemDAO{
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
-                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, second_name);
-                    item.setDescription(description);
+                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
                 }
@@ -189,8 +187,7 @@ public class DBItemDAO implements ItemDAO{
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
-                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, second_name);
-                    item.setDescription(description);
+                    Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
                 }

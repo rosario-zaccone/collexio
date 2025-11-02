@@ -30,7 +30,7 @@ public class ItemCollectionTest {
             quantity = (i % 2 == 0) ? 1 : 2;
             Path photoPath = Paths.get("/home/rosario/Downloads/collexio_test/test_" + i + ".png");
             ItemPhoto photo = new ItemPhoto(i, photoPath);
-            Book book = new Book(i, name, quantity, photo);
+            Book book = new Book(i, name, quantity, photo, "manga");
             collection.addItem(book);
         }
     }

@@ -30,19 +30,19 @@ public class BookTest {
     public static void setUp() throws IOException {
         ItemPhoto photoA = new ItemPhoto(1L, Paths.get("/home/rosario/Downloads/collexio_test/aot2.jpg"));
         Utilities.uploadPhoto(photoA);
-        itemA = new Book(1L, "Attacco dei giganti 2", 1, photoA);
+        itemA = new Book(1L, "Attacco dei giganti 2", 1, photoA, "attacco");
 
         ItemPhoto photoB = new ItemPhoto(2L, Paths.get("/home/rosario/Downloads/collexio_test/toradora.jpg"));
         Utilities.uploadPhoto(photoB);
-        itemB = new Book(2L, "Toradora 1", 1, photoB);
+        itemB = new Book(2L, "Toradora 1", 1, photoB, "amore");
 
         ItemPhoto photoC = new ItemPhoto(3L, Paths.get("/home/rosario/Downloads/collexio_test/mha.jpg"));
         Utilities.uploadPhoto(photoC);
-        itemC = new Book(3L, "My Hero Academia 11", 2, photoC);
+        itemC = new Book(3L, "My Hero Academia 11", 2, photoC, "eroi bla bla");
 
         ItemPhoto photoD = new ItemPhoto(4L, Paths.get("/home/rosario/Downloads/collexio_test/note.jpg"));
         Utilities.uploadPhoto(photoD);
-        itemD = new Book(4L, "Death Note 101", 1, photoD);
+        itemD = new Book(4L, "Death Note 101", 1, photoD, "robe bla bla");
     }
 
 

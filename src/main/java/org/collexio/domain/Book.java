@@ -5,12 +5,16 @@ import org.collexio.utilities.*;
 import java.io.IOException;
 
 public class Book extends Item implements Priceable {
-    public Book(Long id, String name, int quantity, ItemPhoto photo) {
-        super(id, name, quantity, photo);
+    public Book(Long id, String name, int quantity, ItemPhoto photo, String description) {
+        super(id, name, quantity, photo, description);
     }
 
-    public Book(String name, int quantity, ItemPhoto photo) {
-        super(name, quantity, photo);
+    public Book(Long id, String name, int quantity, ItemPhoto photo) {
+        this(id, name, quantity, photo, "no description");
+    }
+
+    public Book(String name, int quantity, ItemPhoto photo, String description) {
+        this(null, name, quantity, photo, description);
     }
 
     @Override
@@ -27,8 +31,7 @@ public class Book extends Item implements Priceable {
 
     @Override
     public Book copy()  {
-        Book item =  new Book(getId(), getName(), getQuantity(), getPhoto());
-        item.setDescription(getDescription());
+        Book item =  new Book(getId(), getName(), getQuantity(), getPhoto(), getDescription());
         item.getTransactions().forEach(item::addTransaction);
         return item;
     }

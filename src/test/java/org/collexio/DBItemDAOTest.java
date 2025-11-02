@@ -52,9 +52,9 @@ public class DBItemDAOTest {
         ItemPhoto p2 = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
         ItemPhoto p3 = new ItemPhoto(Paths.get("tech.jpg"), LocalDateTime.now());
 
-        Plant plant = new Plant("Rose", 5, p1, "rosa_canina");
-        Book book = new Book("Clean Code", 3, p2);
-        TechItem tech = new TechItem("Laptop", 2, p3);
+        Plant plant = new Plant("Rose", 5, p1, "flower plant", "rosa_canina");
+        Book book = new Book("Clean Code", 3, p2, "cs book");
+        TechItem tech = new TechItem("Laptop", 2, p3, "laptop for studying");
 
         for (Item item : List.of(plant, book, tech)) {
             for (int i = 0; i < 4; i++) {
@@ -77,24 +77,24 @@ public class DBItemDAOTest {
     @Test
     public void testUpdateItems() throws SQLException {
         ItemPhoto p1 = new ItemPhoto(Paths.get("plant.jpg"), LocalDateTime.now());
-        Item plant = new Plant("Tulip", 5, p1, "tulipa_gesneriana");
+        Item plant = new Plant("Tulip", 5, p1, "flower plant", "tulipa_gesneriana" );
         itemDAO.add(plant, 1L);
         Long plantId = itemDAO.getAll().get(0).getId();
 
         ItemPhoto p2 = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
-        Item book = new Book("Clean Code", 3, p2);
+        Item book = new Book("Clean Code", 3, p2, "cs book");
         itemDAO.add(book, 1L);
         Long bookId = itemDAO.getAll().get(1).getId();
 
         ItemPhoto p3 = new ItemPhoto(Paths.get("tech.jpg"), LocalDateTime.now());
-        Item tech = new TechItem("Laptop", 2, p3);
+        Item tech = new TechItem("Laptop", 2, p3, "laptop fr studying");
         itemDAO.add(tech, 1L);
         Long techId = itemDAO.getAll().get(2).getId();
 
 
-        plant = new Plant(plantId, "Tulip Updated", 10, p1, "tulipa_gesnerianaUPDATE");
-        book = new Book(bookId, "Clean Code v2", 5, p2);
-        tech = new TechItem(techId, "Laptop Pro", 3, p3);
+        plant = new Plant(plantId, "Tulip Updated", 10, p1, "plant with red flowers", "tulipa_gesnerianaUPDATE");
+        book = new Book(bookId, "Clean Code v2", 5, p2, "computer science book");
+        tech = new TechItem(techId, "Laptop Pro", 3, p3, "laptop");
 
         itemDAO.update(plant, false);
         itemDAO.update(book, false);
@@ -109,12 +109,12 @@ public class DBItemDAOTest {
     @Test
     public void testDeleteItems() throws SQLException {
         ItemPhoto p1 = new ItemPhoto(Paths.get("plant.jpg"), LocalDateTime.now());
-        Plant plant = new Plant("Cactus", 2, p1, "opuntia_ficus");
+        Plant plant = new Plant("Cactus", 2, p1, "succulent plant", "opuntia_ficus");
         itemDAO.add(plant, 1L);
         Long plantId = itemDAO.getAll().get(0).getId();
 
         ItemPhoto p2 = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
-        Book book = new Book("Effective Java", 1, p2);
+        Book book = new Book("Effective Java", 1, p2, "java book for pro");
         itemDAO.add(book, 1L);
         Long bookId = itemDAO.getAll().get(1).getId();
 

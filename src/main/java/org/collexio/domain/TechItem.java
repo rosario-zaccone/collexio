@@ -7,11 +7,16 @@ import org.collexio.utilities.WikipediaInfoGenerator;
 import java.io.IOException;
 
 public class TechItem extends Item implements Priceable {
-    public TechItem(Long id, String name, int quantity, ItemPhoto photo){
-        super(id, name, quantity, photo);
+    public TechItem(Long id, String name, int quantity, ItemPhoto photo, String description){
+        super(id, name, quantity, photo, description);
     }
-    public TechItem(String name, int quantity, ItemPhoto photo){
-        super(name, quantity, photo);
+
+    public TechItem(Long id, String name, int quantity, ItemPhoto photo) {
+        this(id, name, quantity, photo, "no description");
+    }
+
+    public TechItem(String name, int quantity, ItemPhoto photo, String description){
+        this(null, name, quantity, photo, description);
     }
 
     @Override
@@ -28,8 +33,7 @@ public class TechItem extends Item implements Priceable {
 
     @Override
     public TechItem copy() {
-        TechItem item =  new TechItem(getId(), getName(), getQuantity(), getPhoto());
-        item.setDescription(getDescription());
+        TechItem item =  new TechItem(getId(), getName(), getQuantity(), getPhoto(), getDescription());
         getTransactions().forEach(item::addTransaction);
         return item;
     }
