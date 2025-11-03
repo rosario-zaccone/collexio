@@ -13,6 +13,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -73,7 +74,7 @@ public class TechItemTest {
     @Test
     void testCopy() {
         for (int i = 0; i < 4; i++)
-            itemA.addTransaction(new Transaction(350 + i * 20, i % 2 == 0, LocalDateTime.now()));
+            itemA.addTransaction(new Transaction(350 + i * 20, i % 2 == 0, LocalDate.now()));
         itemA.setDescription("Test");
         assertTrue(itemA.copy().toString().equals(itemA.toString()));
     }

@@ -6,7 +6,7 @@ import org.collexio.utilities.ItemFactory;
 import java.sql.*;
 import java.util.*;
 
-public class DBItemCollectionDAO<T extends Item> implements ItemCollectionDAO<T> {
+public class DBItemCollectionDAO implements ItemCollectionDAO {
     private final Connection connection;
 
     private final static String selectSql = "SELECT * FROM item_collections WHERE id=?";
@@ -22,7 +22,7 @@ public class DBItemCollectionDAO<T extends Item> implements ItemCollectionDAO<T>
     }
 
     @Override
-    public void add(ItemCollection<T> collection) throws SQLException {
+    public void add(ItemCollection collection) throws SQLException {
         connection.setAutoCommit(false);
         try {
             try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -49,19 +49,19 @@ public class DBItemCollectionDAO<T extends Item> implements ItemCollectionDAO<T>
     }
 
     @Override
-    public Optional<ItemCollection<T>> get(Long id) throws SQLException {
+    public Optional<ItemCollection> get(Long id) throws SQLException {
         if (id <= 0)
             throw new IllegalArgumentException("Invalid id");
-        Optional<ItemCollection<T>> res = Optional.empty();
+        Optional<ItemCollection> res = Optional.empty();
         try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String name = rs.getString("name");
                     List<Item> items = (new DBItemDAO(connection)).getByCollectionId(id);
-                    ItemCollection<T> collection = new ItemCollection<>(id, name);
+                    ItemCollection collection = new ItemCollection(id, name);
                     for (Item item: items) {
-                        collection.addItem((T) item);
+                        collection.addItem(item);
                     }
                     res = Optional.of(collection);
                 }
@@ -71,7 +71,7 @@ public class DBItemCollectionDAO<T extends Item> implements ItemCollectionDAO<T>
     }
 
     @Override
-    public void update(ItemCollection<T> collection) {
+    public void update(ItemCollection collection) {
 
     }
 
@@ -86,17 +86,17 @@ public class DBItemCollectionDAO<T extends Item> implements ItemCollectionDAO<T>
     }
 
     @Override
-    public List<ItemCollection<T>> getAll() throws SQLException {
-        List<ItemCollection<T>> res = new ArrayList<>();
+    public List<ItemCollection> getAll() throws SQLException {
+        List<ItemCollection> res = new ArrayList<>();
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String name = rs.getString("name");
                 List<Item> items = (new DBItemDAO(connection)).getByCollectionId(id);
-                ItemCollection<T> collection = new ItemCollection<>(name);
+                ItemCollection collection = new ItemCollection(id, name);
                 for (Item item: items) {
-                    collection.addItem((T) item);
+                    collection.addItem(item);
                 }
                 res.add(collection);
             }

@@ -1,39 +1,31 @@
 package org.collexio.domain;
 
-import org.collexio.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class ItemPhoto implements Comparable<ItemPhoto> {
     private final Long id;
     private final Path path;
-    private final LocalDateTime timestamp;
+    private final LocalDate date;
 
-    public ItemPhoto(Long id, Path path, LocalDateTime timestamp) {
+    public ItemPhoto(Long id, Path path, LocalDate date) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive");
         this.id = id;
         this.path = path;
-        this.timestamp = timestamp;
+        this.date = date;
     }
 
 
     public ItemPhoto(Long id, Path path) {
-        this(null, path, LocalDateTime.MIN);
+        this(null, path, LocalDate.MIN);
     }
 
-    public ItemPhoto(Path path, LocalDateTime timestamp) {
-        this(null, path, timestamp);
+    public ItemPhoto(Path path, LocalDate date) {
+        this(null, path, date);
     }
 
     public Long getId() {
@@ -45,8 +37,8 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         return path;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDate getDate() {
+        return date;
     }
 
 
@@ -55,19 +47,19 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         return "ItemPhoto{" +
                 "id='" + id + '\'' +
                 ", path=" + path +
-                ", timestamp=" + timestamp +
+                ", date=" + date +
                 '}';
     }
 
     public String toStringNoId() {
         return "ItemPhoto{" +
                 "path=" + path +
-                ", timestamp=" + timestamp +
+                ", date=" + date +
                 '}';
     }
     @Override
     public int compareTo(@NotNull ItemPhoto o) {
-        return timestamp.compareTo(o.getTimestamp());
+        return date.compareTo(o.getDate());
     }
 
     @Override
@@ -75,11 +67,11 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemPhoto itemPhoto = (ItemPhoto) o;
-        return Objects.equals(path, itemPhoto.path) && Objects.equals(timestamp, itemPhoto.timestamp);
+        return Objects.equals(path, itemPhoto.path) && Objects.equals(date, itemPhoto.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, timestamp);
+        return Objects.hash(path, date);
     }
 }

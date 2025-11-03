@@ -12,10 +12,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 public class DBTransactionDAO implements TransactionDAO {
@@ -64,7 +63,7 @@ public class DBTransactionDAO implements TransactionDAO {
             while (rs.next()) {
                 double amount = rs.getDouble("amount");
                 boolean income = rs.getInt("income") == 1;
-                LocalDateTime date = LocalDateTime.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                 res = Optional.of(new Transaction(id, amount, income, date));
             }
             rs.close();
@@ -101,15 +100,15 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> getAll() throws SQLException{
-        List<Transaction> res = new ArrayList<>();
+    public Set<Transaction> getAll() throws SQLException{
+        Set<Transaction> res = new TreeSet<>();
         try (var stmt = connection.createStatement();
              var rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 double amount = rs.getDouble("amount");
                 boolean income = rs.getInt("income") == 1;
-                LocalDateTime date = LocalDateTime.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                 res.add(new Transaction(id, amount, income, date));
             }
         }
@@ -117,8 +116,8 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> getByItemId(Long itemId) throws SQLException {
-        List<Transaction> res = new ArrayList<>();
+    public Set<Transaction> getByItemId(Long itemId) throws SQLException {
+        Set<Transaction> res = new TreeSet<>();
         try (var stmt = connection.prepareStatement(selectByItemIdSql)) {
             stmt.setLong(1, itemId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -126,7 +125,7 @@ public class DBTransactionDAO implements TransactionDAO {
                     long id = rs.getLong("id");
                     double amount = rs.getDouble("amount");
                     boolean income = rs.getInt("income") == 1;
-                    LocalDateTime date = LocalDateTime.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                    LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                     res.add(new Transaction(id, amount, income, date));
                 }
             }

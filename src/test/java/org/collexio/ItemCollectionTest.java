@@ -3,6 +3,7 @@ package org.collexio;
 import org.collexio.domain.Book;
 import org.collexio.domain.ItemCollection;
 import org.collexio.domain.ItemPhoto;
+import org.collexio.domain.TechItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ItemCollectionTest {
 
-    private ItemCollection<Book> collection;
+    private ItemCollection collection;
     private Path imagePath;
 
     @BeforeEach
     public void setUp() throws Exception {
-        collection = new ItemCollection<>(1L, "My Hero Academia Collection");
+        collection = new ItemCollection(1L, "My Hero Academia Collection");
         Path baseImagePath = Paths.get("/home/rosario/Downloads/collexio_test/test.png");
 
         int quantity;
@@ -33,6 +34,10 @@ public class ItemCollectionTest {
             Book book = new Book(i, name, quantity, photo, "manga");
             collection.addItem(book);
         }
+
+        TechItem t = new TechItem(100L, "mha cover", 2, null, "prova");
+        collection.addItem(t);
+        System.out.println(collection);
     }
 
 

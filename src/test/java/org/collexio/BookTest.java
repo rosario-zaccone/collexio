@@ -14,6 +14,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -86,8 +87,8 @@ public class BookTest {
 
     @Test
     void testTransactions() {
-        itemA.addTransaction(new Transaction(1L, 24.5, true, LocalDateTime.now()));
-        itemA.addTransaction(new Transaction(2L, 12.4, true, LocalDateTime.of(2010, 10, 10, 10, 10)));
+        itemA.addTransaction(new Transaction(1L, 24.5, true, LocalDate.now()));
+        itemA.addTransaction(new Transaction(2L, 12.4, true, LocalDate.of(2010, 10, 10)));
         System.out.println(itemA.getTransactions());
     }
 

@@ -3,6 +3,7 @@ package org.collexio.domain;
 import org.collexio.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -10,9 +11,9 @@ public class Transaction implements Comparable<Transaction> {
     private final Long id;
     private final double amount;
     private final boolean income;
-    private final LocalDateTime date;
+    private final LocalDate date;
 
-    public Transaction(Long id, double amount, boolean income, LocalDateTime date) {
+    public Transaction(Long id, double amount, boolean income, LocalDate date) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive");
         if (amount < 0)
@@ -23,7 +24,7 @@ public class Transaction implements Comparable<Transaction> {
         this.date = date;
     }
 
-    public Transaction(double amount, boolean income, LocalDateTime date) {
+    public Transaction(double amount, boolean income, LocalDate date) {
         this(null, amount, income, date);
     }
 
@@ -41,7 +42,7 @@ public class Transaction implements Comparable<Transaction> {
         return income;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 

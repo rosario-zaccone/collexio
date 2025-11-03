@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ItemCollection <T extends Item> {
+public class ItemCollection {
     private final Long id;
     private String name;
-    private final List<T> data;
+    private final List<Item> data;
 
     public ItemCollection(Long id, String name) {
         if (id != null && id <= 0)
@@ -47,18 +47,18 @@ public class ItemCollection <T extends Item> {
         return name;
     }
 
-    public List<T> getData() {
-        List<T> res = new ArrayList<>();
+    public List<Item> getData() {
+        List<Item> res = new ArrayList<>();
         for (Item item: data)
-            res.add((T) item.copy());
+            res.add((Item) item.copy());
         return res;
     }
 
-    public void addItem(T item) {
+    public void addItem(Item item) {
         data.add(item);
     }
 
-    public void removeItem(T item) {
+    public void removeItem(Item item) {
         data.remove(item);
     }
 
@@ -66,7 +66,7 @@ public class ItemCollection <T extends Item> {
         return data.stream().map(e -> e.getQuantity()).mapToInt(Integer::intValue).sum();
     }
 
-    public void buildPhoto() throws IOException {
+    public String buildPhoto() throws IOException {
         String outputPath = "images/collections/all_" + id;
         List<Path> imagePaths = data.stream().map(e -> e.getPhoto().getPath()).toList();
         List<String> labels = data.stream().map(e -> getName()).toList();
@@ -117,6 +117,7 @@ public class ItemCollection <T extends Item> {
         content.close();
         doc.save(outputPath);
         doc.close();
+        return outputPath;
     }
 
     @Override
@@ -141,7 +142,7 @@ public class ItemCollection <T extends Item> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemCollection<?> that = (ItemCollection<?>) o;
+        ItemCollection that = (ItemCollection) o;
         return Objects.equals(name, that.name) && Objects.equals(data, that.data);
     }
 

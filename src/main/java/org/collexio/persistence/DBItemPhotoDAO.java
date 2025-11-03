@@ -1,19 +1,15 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.Item;
 import org.collexio.domain.ItemPhoto;
-import org.collexio.utilities.Utilities;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class DBItemPhotoDAO implements ItemPhotoDAO {
@@ -21,15 +17,19 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
 
     private static final String selectAllSql = "SELECT * FROM item_photos";
     private static final String selectSql = "SELECT * FROM item_photos WHERE id=?";
+    private static final String selectMaxIdSql =
+            "SELECT * FROM item_photos ORDER BY id DESC LIMIT 1";
     private static final String selectByItemIdSql = "SELECT * FROM item_photos WHERE item_id=?";
     private static final String insertSql = "INSERT INTO item_photos(path, photo_date, item_id) VALUES (?,?,?)";
     private static final String updateSql = "UPDATE item_photos SET path = ? , "
-            + "photo_date = ? ,"
+            + "photo_date = ? "
             + "WHERE id = ?";
 
     public DBItemPhotoDAO(Connection connection) {
         this.connection = connection; // DI
     }
+
+
 
     @Override
     public Optional<ItemPhoto> get(Long id) throws SQLException {
@@ -41,7 +41,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
             var rs = stmt.executeQuery();
             while (rs.next()) {
                 Path path = Paths.get(rs.getString("path"));
-                LocalDateTime date = LocalDateTime.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                 res = Optional.of(new ItemPhoto(id, path, date));
             }
             rs.close();
@@ -60,7 +60,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
                 while (rs.next()) {
                     long id = rs.getLong("id");
                     Path path = Paths.get(rs.getString("path"));
-                    LocalDateTime date = LocalDateTime.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                    LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                     res = Optional.of(new ItemPhoto(id, path, date));
                 }
             }
@@ -73,7 +73,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
         try (var stmt = connection.prepareStatement(updateSql)) {
             stmt.setLong(3, photo.getId());
             stmt.setString(1, photo.getPath().toString());
-            stmt.setString(2, photo.getTimestamp().toString());
+            stmt.setString(2, photo.getDate().toString());
             stmt.executeUpdate();
         }
     }
@@ -87,10 +87,24 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 Path path = Paths.get(rs.getString("path"));
-                LocalDateTime date = LocalDateTime.parse(rs.getString("photo_date"));
+                LocalDate date = LocalDate.parse(rs.getString("photo_date"));
                 res.add(new ItemPhoto(id, path, date));
             }
         }
+        return res;
+    }
+
+    @Override
+    public Optional<ItemPhoto> getLast() throws SQLException {
+        Optional<ItemPhoto> res = Optional.empty();
+        try (var stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(selectMaxIdSql)){
+                while (rs.next()) {
+                    Path path = Paths.get(rs.getString("path"));
+                    LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                    res = Optional.of(new ItemPhoto(rs.getLong("id"), path, date));
+                }
+            }
         return res;
     }
 
@@ -100,7 +114,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
             throw new IllegalArgumentException("Invalid id");
         try (var stmt = connection.prepareStatement(insertSql)) {
             stmt.setString(1, photo.getPath().toString());
-            stmt.setString(2, photo.getTimestamp().toString());
+            stmt.setString(2, photo.getDate().toString());
             stmt.setLong(3, itemId);
             stmt.executeUpdate();
         }

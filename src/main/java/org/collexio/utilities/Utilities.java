@@ -1,20 +1,19 @@
 package org.collexio.utilities;
 
 import org.collexio.domain.ItemPhoto;
+import org.collexio.persistence.DBItemPhotoDAO;
+import org.collexio.persistence.ItemPhotoDAO;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Utilities {
     public static boolean validateId(String prefix, String id) {
@@ -33,7 +32,7 @@ public class Utilities {
     }
 
 
-    public static void uploadPhoto(ItemPhoto photo) throws IOException { // da spostare in service in caso di refactor
+    public static void uploadPhoto(ItemPhoto photo, Connection connection) throws IOException, SQLException {
         String fileName = photo.getPath().getFileName().toString();
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex == -1) {
@@ -52,5 +51,9 @@ public class Utilities {
             g.dispose();
             ImageIO.write(resizedImage, ext, outputPath.toFile());
         }
+        ItemPhotoDAO dao = new DBItemPhotoDAO(connection); // update photo path in db, if the operation fails, delete also the photo on filesystem TODO
+        ItemPhoto nPhoto = new ItemPhoto(photo.getId(), outputPath, photo.getDate());
+        dao.update(nPhoto);
+
     }
 }

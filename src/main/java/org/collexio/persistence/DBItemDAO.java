@@ -8,10 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 
 public class DBItemDAO implements ItemDAO{
@@ -107,7 +104,7 @@ public class DBItemDAO implements ItemDAO{
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res = Optional.of(item);
@@ -131,7 +128,7 @@ public class DBItemDAO implements ItemDAO{
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
@@ -186,7 +183,7 @@ public class DBItemDAO implements ItemDAO{
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
                     ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    List<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);

@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,20 +32,20 @@ public class DBItemPhotoDAOTest {
     public void setupDatabase() throws SQLException, IOException {
         connection = ConnectionFactory.getConnection();
         dao = new DBItemPhotoDAO(connection);
-        DBItemCollectionDAO<Book> collectionDao = new DBItemCollectionDAO<>(connection);
+        DBItemCollectionDAO collectionDao = new DBItemCollectionDAO(connection);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM item_transactions");
             stmt.execute("DELETE FROM item_photos");
             stmt.execute("DELETE FROM items");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','transactions')");
         }
-        ItemPhoto p = new ItemPhoto(Paths.get("book.jpg"), LocalDateTime.now());
+        ItemPhoto p = new ItemPhoto(Paths.get("book.jpg"), LocalDate.now());
         book = new Book("Clean Code", 3, p, "cs book");
         for (int i = 0; i < 4; i++) {
-            book.addTransaction(new Transaction(50.0 + i * 10, i % 2 == 0, LocalDateTime.now()));
+            book.addTransaction(new Transaction(50.0 + i * 10, i % 2 == 0, LocalDate.now()));
         }
-        ItemCollection<Book> collection = new ItemCollection<>("books");
-        collection.addItem((Book) book);
+        ItemCollection collection = new ItemCollection("books");
+        collection.addItem(book);
         collectionDao.add(collection);
     }
 

@@ -14,4 +14,5 @@ public interface ItemPhotoDAO {
     void update(ItemPhoto photo) throws SQLException;
     //void delete(String id);
     List<ItemPhoto> getAll() throws SQLException;
+    Optional<ItemPhoto> getLast() throws SQLException;
 }

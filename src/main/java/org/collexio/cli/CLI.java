@@ -2,77 +2,81 @@ package org.collexio.cli;
 
 import org.checkerframework.checker.units.qual.C;
 import org.collexio.domain.*;
-import org.collexio.persistence.ConnectionFactory;
-import org.collexio.persistence.DBItemCollectionDAO;
-import org.collexio.persistence.DBItemDAO;
+import org.collexio.persistence.*;
+import org.collexio.utilities.Utilities;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 
 public class CLI {
     private static final Scanner sc = new Scanner(System.in);
-    private DBItemCollectionDAO<Plant> plantCollectionDAO;
-    private DBItemCollectionDAO<Book> bookCollectionDAO;
-    private DBItemCollectionDAO<TechItem> techCollectionDAO;
-    private DBItemDAO itemDAO;
-    private DateTimeFormatter formatter;
+    private final DBItemCollectionDAO collectionDAO;
+    private final DBTransactionDAO transactionDAO;
+    private final DBItemDAO itemDAO;
+    private final DBItemPhotoDAO itemPhotoDAO;
+    private final DateTimeFormatter formatter;
+    private  final Connection connection;
 
     public CLI (Connection connection) throws SQLException, IOException {
-        plantCollectionDAO = new DBItemCollectionDAO<>(connection);
-        bookCollectionDAO = new DBItemCollectionDAO<>(connection);
-        techCollectionDAO = new DBItemCollectionDAO<>(connection);
+        collectionDAO = new DBItemCollectionDAO(connection);
         itemDAO = new DBItemDAO(connection);
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        transactionDAO = new DBTransactionDAO(connection);
+        itemPhotoDAO = new DBItemPhotoDAO(connection);
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        this.connection = connection;
     }
 
-    public void showCollections(String type) {
-        // type indicates the collection type, it can be set on all type for show all collections
-        System.out.println("All collections");
-    }
-
-    public void addCollection() throws SQLException {
-        System.out.println("Enter the type of collection (0 for plant, 1 for tech item, 2 for books)");
-        int type = Integer.parseInt(sc.nextLine());
-        System.out.println("Enter the collection name");
-        String name = sc.nextLine().trim();
+    public void showCollections() {
         try {
-            switch (type) {
-                case 0 -> {
-                    plantCollectionDAO.add(new ItemCollection<Plant>(name));
-                }
-                case 1 -> {
-                    techCollectionDAO.add(new ItemCollection<TechItem>(name));
-                }
-                case 2 -> {
-                    bookCollectionDAO.add(new ItemCollection<Book>(name));
-                }
-                default -> {
-                    System.out.println("Collection not added: Invalid type");
-                    return;
-                }
-            }
-            System.out.println("Collection added!");
+            List<ItemCollection> collections = collectionDAO.getAll();
+            if (collections.isEmpty())
+                System.out.println("There are no collections");
+            else
+                collections.forEach(System.out::println);
         } catch (IllegalArgumentException e) {
-            System.out.println("Error while inserting the collection:" + e.getMessage());
+        System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
         }
     }
 
-    public void insertItem() throws SQLException {
+    public void addCollection() {
+        try {
+            System.out.println("Enter the collection name");
+            String name = sc.nextLine().trim();
+            collectionDAO.add(new ItemCollection(name));
+            System.out.println("Collection added!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void insertItem() { //TODO UPLOAD PHOTO
         try {
             System.out.print("Enter the collection id: ");
-            long collectionId = Long.parseLong(sc.nextLine());
+            long collectionId = Long.parseLong(sc.nextLine().trim());
+            Optional<ItemCollection> collection = collectionDAO.get(collectionId);
+            if (collection.isEmpty())
+                throw new IllegalArgumentException("Collection with this id doesn't exist");
             System.out.print("Enter the item type (0-Plant,1-TechItem,2-Book): ");
-            int type = Integer.parseInt(sc.nextLine());
+            int type = Integer.parseInt(sc.nextLine().trim());
             System.out.print("Enter the item name: ");
             String name = sc.nextLine().trim();
             System.out.print("Enter the item quantity: ");
-            int quantity = Integer.parseInt(sc.nextLine());
+            int quantity = Integer.parseInt(sc.nextLine().trim());
             System.out.print("Enter the item description: ");
             String description = sc.nextLine().trim();
             System.out.print("Enter the item scientific_name (not needed for tech items and books): ");
@@ -80,9 +84,9 @@ public class CLI {
 
             System.out.print("Enter the photo path: ");
             String path = sc.nextLine().trim();
-            System.out.print("Enter date and hour (ex. 2025-11-02 14:30): ");
+            System.out.print("Enter date and hour (ex. 2025-11-02): ");
             String input = sc.nextLine().trim();
-            LocalDateTime date = LocalDateTime.parse(input, formatter);
+            LocalDate date = LocalDate.parse(input, formatter);
 
             ItemPhoto photo = new ItemPhoto(Paths.get(path), date);
             Item item = switch (type) {
@@ -91,45 +95,166 @@ public class CLI {
                 case 2 -> new Book(name, quantity, photo, description);
                 default -> throw new IllegalArgumentException("Invalid item type");
             };
-            switch (type) {
-                case 0 -> {
-                    Optional<ItemCollection<Plant>> collection = plantCollectionDAO.get(collectionId);
-                    if (collection.isPresent()) {
-                        itemDAO.add(item, collectionId);
-                    } else {
-                        throw new IllegalArgumentException("Collection with this id does not exist");
-                    }
-                }
-                case 1 -> {
-                    Optional<ItemCollection<TechItem>> collection = techCollectionDAO.get(collectionId);
-                    if (collection.isPresent()) {
-                        itemDAO.add(item, collectionId);
-                    } else {
-                        throw new IllegalArgumentException("Collection with this id does not exist");
-                    }
-                }
-                case 3 -> {
-                    Optional<ItemCollection<Book>> collection = bookCollectionDAO.get(collectionId);
-                    if (collection.isPresent()) {
-                        itemDAO.add(item, collectionId);
-                    } else {
-                        throw new IllegalArgumentException("Collection with this id does not exist");
-                    }
-                }
-                default -> throw new IllegalArgumentException("Invalid item type");
-            }
-        } catch (IllegalArgumentException e ) {
-            System.out.println("Item not inserted: " + e.getMessage());
+            itemDAO.add(item, collectionId);
+            photo = itemPhotoDAO.getLast().get();
+            Utilities.uploadPhoto(photo, connection);
+            System.out.println("Item added!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        } catch (IOException e) {
+        System.out.println("IO error: " + e.getMessage());
+    }
+    }
+
+    public void showCollectionItems() {
+        try {
+            System.out.print("Enter the collection id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            ItemCollection collection = collectionDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Collection with this id doesn't exist"));
+            List<Item> items = collection.getData();
+            System.out.println("Collection " + id + ", name: " + collection.getName());
+            System.out.println("Total item: " + collection.getTotalQuantity());
+            System.out.println("Items:");
+            items.forEach(System.out::println);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
         }
-
     }
 
-    public void showCollectionItems(String collectionId) {
-        System.out.println("All items");
+    public void showItemInfo() {
+        try {
+            System.out.print("Enter the item id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            Item item = itemDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Item with this id doesn't exist"));
+            System.out.println("Item info:");
+            System.out.println(item);
+            if (item instanceof Priceable) {
+                Priceable o = (Priceable)item;
+                System.out.println(o.getPrice());
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
     }
 
-    public void showItemInfo(String itemId) {
-        System.out.println("Item info");
+    public void deleteCollection() {
+        try {
+            System.out.print("Enter the collection id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            ItemCollection collection = collectionDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Collection with this id doesn't exist"));
+            collectionDAO.delete(id);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void deleteItem() {
+        try {
+            System.out.print("Enter the item id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            Item item = itemDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Collection with this id doesn't exist"));
+            itemDAO.delete(id);
+            (item.getPhoto().getPath().toFile()).delete(); // if this operation fails, reset also the db TODO
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void updateItem() {
+    }
+
+    public void descriptionAI() {
+        try {
+            System.out.print("Enter the item id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            Item item = itemDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Collection with this id doesn't exist"));
+            item.generateDescription();
+            System.out.println("Description generated!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void showTransactions() {
+        try {
+            System.out.println("All transactions:");
+            Set<Transaction> set = transactionDAO.getAll();
+            set.forEach(System.out::println);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void showWallet() {
+        try {
+            Set<Transaction> set = transactionDAO.getAll();
+            double amount = 0.0;
+            for (Transaction transaction: set) {
+                if (transaction.isIncome())
+                    amount += transaction.getAmount();
+                else
+                    amount -= transaction.getAmount();
+            }
+            System.out.println("Wallet amount: " + amount + "euro");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void insertTransaction() {
+        try {
+            System.out.print("Enter the item id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            Optional<Item> item = itemDAO.get(id);
+            if (item.isEmpty())
+                throw new IllegalArgumentException("Item with this id doesn't exist");
+            System.out.print("Enter the amount: ");
+            double amount = Double.parseDouble(sc.nextLine().trim());
+            System.out.print("Enter the date (ex. 2025-11-02) : ");
+            String input = sc.nextLine().trim();
+            LocalDate date = LocalDate.parse(input, formatter);
+            System.out.print("Is an income? (1 for yes, 0 for no): ");
+            int num = Integer.parseInt(sc.nextLine().trim());
+            boolean income = (num == 1);
+            Transaction transaction = new Transaction(amount, income, date);
+            transactionDAO.add(transaction, id);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        }
+    }
+
+    public void generateAlbum() {
+        try {
+            System.out.print("Enter the collection id: ");
+            long id = Long.parseLong(sc.nextLine().trim());
+            ItemCollection collection = collectionDAO.get(id).orElseThrow(() -> new IllegalArgumentException("Collection with this id doesn't exist"));
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(Paths.get(collection.buildPhoto()).toFile());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("DB error: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void printMainMenu() {
@@ -139,47 +264,61 @@ public class CLI {
                     Select an option:
                     1: Show all collections
                     2: Show all item of a collection
-                    3: Item info (also photos for plant, price for tech...)
+                    3: Item info (also price for tech...)
                     4: Add a new collection
                     5: Remove a collection
                     6: Insert item in a collection
                     7: Update item of a collection
-                    8: Remove item of a collection
-                    9: Show all transaction
-                    10: Show collection wallet amount
-                    11: Save and exit
+                    8: Remove item
+                    9: Generate item description with AI
+                    10: Show all transactions
+                    11: Show collection wallet amount
+                    12: Add a transaction
+                    13: Generate collection photo album
+                    14: Exit
                     TODO update collection name, insert transaction, some business..., collection photo
                     """);
             String response = sc.nextLine().trim(); //se ci fosse un controller, andrebbe passata la risposta al controller, che come classe gestisce l'interpretazione dell'input utente, dell'aggiornamento del modello (se ad esempio c'è da afre un inserimento e dell'aggiornamwnto della view (se c'è da fare ad esempio uno show di tutti gli item
             switch (response) {
-                case "1" -> showCollections("");
+                case "1" -> showCollections();
                 case "2" -> {
-                    System.out.println("Enter the collection id");
-                    response = sc.nextLine().trim();
-                    showCollectionItems(response);
+                    showCollectionItems();
                 }
                 case "3" -> {
-                    System.out.println("Enter the item id");
-                    response = sc.nextLine().trim();
-                    showItemInfo(response);
+                    showItemInfo();
                 }
                 case "4" -> {
-                    try {
-                        addCollection();
-                    } catch (SQLException e) {
-                        System.out.println("DB error");
-                    }
+                    addCollection();
+                }
+                case "5" -> {
+                    deleteCollection();
                 }
                 case "6" -> {
-                    try {
-                        insertItem();
-                    } catch (SQLException e) {
-                        System.out.println("DB error");
-                    }
+                    insertItem();
+                }
+                case "7" -> {
+                    //TODO
+                }
+                case "8" -> {
+                    deleteItem();
+                }
+                case "9" -> {
+                    descriptionAI();
+                }
+                case "10" -> {
+                    showTransactions();
                 }
                 case "11" -> {
+                    showWallet();
+                }
+                case "12" -> {
+                    insertTransaction();
+                }
+                case "13" -> {
+                    generateAlbum();
+                }
+                case "14" -> {
                     System.out.println("Bye bye");
-                    // save state
                     flag = false;
                 }
             }
@@ -188,8 +327,6 @@ public class CLI {
 
     public void printWelcomeMenu() {
         System.out.println("Welcome to Collexio! Enter the storage modality");
-        // manage the json and db mode
-        // load the db or json file, load the state
         printMainMenu();
     }
 
@@ -198,4 +335,7 @@ public class CLI {
         CLI cli = new CLI(connection);
         cli.printWelcomeMenu();
     }
+
+    // upload photo item
+    // get price
 }
