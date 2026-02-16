@@ -84,7 +84,7 @@ public class CLI {
 
             System.out.print("Enter the photo path: ");
             String path = sc.nextLine().trim();
-            System.out.print("Enter date and hour (ex. 2025-11-02): ");
+            System.out.print("Enter photo date and hour (ex. 2025-11-02): ");
             String input = sc.nextLine().trim();
             LocalDate date = LocalDate.parse(input, formatter);
 

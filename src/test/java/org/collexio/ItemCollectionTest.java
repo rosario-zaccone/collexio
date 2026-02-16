@@ -43,12 +43,12 @@ public class ItemCollectionTest {
 
     @Test
     public void testItemsAdded() throws IOException {
-        assertEquals(10, collection.getData().size());
+        assertEquals(11, collection.getData().size());
     }
 
     @Test
     public void testTotalQuantity() {
-        assertEquals(15, collection.getTotalQuantity());
+        assertEquals(17, collection.getTotalQuantity());
     }
 
     @Test

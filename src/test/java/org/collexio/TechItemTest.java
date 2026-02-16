@@ -39,7 +39,6 @@ public class TechItemTest {
 
     }
 
-    @Disabled
     @Test
     void getPriceTest() throws Exception {
         System.out.println("price for " + itemA.getName() + ": " + itemA.getPrice());

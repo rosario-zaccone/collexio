@@ -57,7 +57,7 @@ public class DBTransactionDAOTest {
 
     @Test
     public void testAddGetTransaction() throws SQLException {
-        Transaction transaction = new Transaction(100.0, true, LocalDate.now());
+        Transaction transaction = new Transaction(1L, 100.0, true, LocalDate.now());
         dao.add(transaction, 1L);
         Optional<Transaction> result = dao.get(1L);
         assertTrue(result.isPresent());

@@ -54,8 +54,8 @@ public class ItemCollection {
         return res;
     }
 
-    public void addItem(Item item) {
-        data.add(item);
+    public void addItem(Item item) { //TODO: deep copy
+        data.add(item.copy());
     }
 
     public void removeItem(Item item) {

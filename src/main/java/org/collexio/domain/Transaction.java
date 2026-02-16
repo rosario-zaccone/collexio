@@ -66,19 +66,20 @@ public class Transaction implements Comparable<Transaction> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Double.compare(amount, that.amount) == 0 && income == that.income && Objects.equals(date, that.date);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount, income, date);
+        return Objects.hashCode(id);
     }
 
     @Override
     public int compareTo(@NotNull Transaction o) {
-        return date.compareTo(o.date);
+        int cmp = date.compareTo(o.date);
+        if (cmp != 0) return cmp;
+        return id == null || o.id == null ? 0 : id.compareTo(o.id);
     }
 }
