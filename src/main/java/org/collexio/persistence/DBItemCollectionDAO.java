@@ -1,13 +1,14 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.*;
-import org.collexio.utilities.ItemFactory;
+import org.collexio.business.domain.Item;
+import org.collexio.business.domain.ItemCollection;
 
 import java.sql.*;
 import java.util.*;
 
 public class DBItemCollectionDAO implements ItemCollectionDAO {
     private final Connection connection;
+    private final ItemDAO itemDAO;
 
     private final static String selectSql = "SELECT * FROM item_collections WHERE id=?";
     private final static String selectAllSql = "SELECT * FROM item_collections";
@@ -17,8 +18,9 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
     private static final String updateSql = "UPDATE item_collections SET name = ?"
             + "WHERE id = ?";
 
-    public DBItemCollectionDAO(Connection connection) {
+    public DBItemCollectionDAO(Connection connection, ItemDAO itemDAO) {
         this.connection = connection;
+        this.itemDAO = itemDAO;
     }
 
     @Override
@@ -32,7 +34,6 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
                 try (ResultSet keys = stmt.getGeneratedKeys()) {
                     if (keys.next()) {
                         long collectionId = Math.toIntExact(keys.getLong(1));
-                        DBItemDAO itemDAO = new DBItemDAO(connection);
                         for (Item item: collection.getData()) {
                             itemDAO.add(item, collectionId);
                         }
@@ -58,7 +59,7 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String name = rs.getString("name");
-                    List<Item> items = (new DBItemDAO(connection)).getByCollectionId(id);
+                    List<Item> items = itemDAO.getByCollectionId(id);
                     ItemCollection collection = new ItemCollection(id, name);
                     for (Item item: items) {
                         collection.addItem(item);
@@ -93,7 +94,7 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String name = rs.getString("name");
-                List<Item> items = (new DBItemDAO(connection)).getByCollectionId(id);
+                List<Item> items = itemDAO.getByCollectionId(id);
                 ItemCollection collection = new ItemCollection(id, name);
                 for (Item item: items) {
                     collection.addItem(item);

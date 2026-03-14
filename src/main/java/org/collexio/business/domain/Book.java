@@ -1,8 +1,6 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
 import org.collexio.utilities.*;
-
-import java.io.IOException;
 
 public class Book extends Item implements Priceable {
     public Book(Long id, String name, int quantity, ItemPhoto photo, String description) {

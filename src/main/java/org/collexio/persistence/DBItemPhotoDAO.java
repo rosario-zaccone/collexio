@@ -1,6 +1,6 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.ItemPhoto;
+import org.collexio.business.domain.ItemPhoto;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

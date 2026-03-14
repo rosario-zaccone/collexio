@@ -1,6 +1,6 @@
 package org.collexio.utilities;
 
-import org.collexio.domain.*;
+import org.collexio.business.domain.*;
 
 public class ItemFactory {
     public static Item getItem(int type, Long id, String name, int quantity, ItemPhoto photo, String description, String secondName) {

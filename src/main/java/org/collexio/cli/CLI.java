@@ -1,5 +1,5 @@
 package org.collexio.cli;
-
+/*
 import org.checkerframework.checker.units.qual.C;
 import org.collexio.domain.*;
 import org.collexio.persistence.*;
@@ -29,10 +29,10 @@ public class CLI {
     private  final Connection connection;
 
     public CLI (Connection connection) throws SQLException, IOException {
-        collectionDAO = new DBItemCollectionDAO(connection);
-        itemDAO = new DBItemDAO(connection);
         transactionDAO = new DBTransactionDAO(connection);
         itemPhotoDAO = new DBItemPhotoDAO(connection);
+        itemDAO = new DBItemDAO(connection, itemPhotoDAO, transactionDAO);
+        collectionDAO = new DBItemCollectionDAO(connection, itemDAO);
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.connection = connection;
     }
@@ -339,3 +339,4 @@ public class CLI {
     // upload photo item
     // get price
 }
+*/

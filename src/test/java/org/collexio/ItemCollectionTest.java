@@ -1,17 +1,15 @@
 package org.collexio;
 
-import org.collexio.domain.Book;
-import org.collexio.domain.ItemCollection;
-import org.collexio.domain.ItemPhoto;
-import org.collexio.domain.TechItem;
+import org.collexio.business.domain.Book;
+import org.collexio.business.domain.ItemCollection;
+import org.collexio.business.domain.ItemPhoto;
+import org.collexio.business.domain.TechItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.File;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 

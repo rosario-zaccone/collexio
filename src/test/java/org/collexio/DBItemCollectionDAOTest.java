@@ -1,8 +1,10 @@
 package org.collexio;
 
-import org.collexio.domain.*;
-import org.collexio.persistence.ConnectionFactory;
-import org.collexio.persistence.DBItemCollectionDAO;
+import org.collexio.business.domain.ItemCollection;
+import org.collexio.business.domain.ItemPhoto;
+import org.collexio.business.domain.TechItem;
+import org.collexio.business.domain.Transaction;
+import org.collexio.persistence.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -11,11 +13,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DBItemCollectionDAOTest {
 
@@ -32,7 +31,7 @@ public class DBItemCollectionDAOTest {
             stmt.execute("DELETE FROM item_transactions");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','item_transactions')");
         }
-        collectionDAO = new DBItemCollectionDAO(connection);
+        collectionDAO = new DBItemCollectionDAO(connection, new DBItemDAO(connection, new DBItemPhotoDAO(connection), new DBTransactionDAO(connection)));
     }
 
     @AfterEach

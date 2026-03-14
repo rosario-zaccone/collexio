@@ -1,4 +1,4 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
 import org.jetbrains.annotations.NotNull;
 

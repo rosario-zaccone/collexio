@@ -1,6 +1,6 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.Item;
+import org.collexio.business.domain.Item;
 
 import java.sql.SQLException;
 import java.util.List;

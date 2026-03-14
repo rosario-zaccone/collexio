@@ -1,10 +1,8 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
-import org.collexio.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Transaction implements Comparable<Transaction> {

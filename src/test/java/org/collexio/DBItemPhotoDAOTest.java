@@ -1,10 +1,7 @@
 package org.collexio;
 
-import org.collexio.domain.*;
-import org.collexio.persistence.ConnectionFactory;
-import org.collexio.persistence.DBItemCollectionDAO;
-import org.collexio.persistence.DBItemDAO;
-import org.collexio.persistence.DBItemPhotoDAO;
+import org.collexio.business.domain.*;
+import org.collexio.persistence.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +12,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -32,7 +27,7 @@ public class DBItemPhotoDAOTest {
     public void setupDatabase() throws SQLException, IOException {
         connection = ConnectionFactory.getConnection();
         dao = new DBItemPhotoDAO(connection);
-        DBItemCollectionDAO collectionDao = new DBItemCollectionDAO(connection);
+        DBItemCollectionDAO collectionDao = new DBItemCollectionDAO(connection, new DBItemDAO(connection, dao, new DBTransactionDAO(connection)));
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM item_transactions");
             stmt.execute("DELETE FROM item_photos");

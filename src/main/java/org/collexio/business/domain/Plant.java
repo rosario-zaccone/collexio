@@ -1,9 +1,8 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
 import org.collexio.utilities.InfoGenerator;
 import org.collexio.utilities.PFAFInfoGenerator;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class Plant extends Item  {

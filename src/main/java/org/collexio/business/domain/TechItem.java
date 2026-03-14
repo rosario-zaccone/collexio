@@ -1,10 +1,8 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
 import org.collexio.utilities.PriceScraper;
 import org.collexio.utilities.SubitoScraper;
 import org.collexio.utilities.WikipediaInfoGenerator;
-
-import java.io.IOException;
 
 public class TechItem extends Item implements Priceable {
     public TechItem(Long id, String name, int quantity, ItemPhoto photo, String description){

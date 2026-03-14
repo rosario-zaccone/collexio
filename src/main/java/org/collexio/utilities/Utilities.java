@@ -1,6 +1,6 @@
 package org.collexio.utilities;
 
-import org.collexio.domain.ItemPhoto;
+import org.collexio.business.domain.ItemPhoto;
 import org.collexio.persistence.DBItemPhotoDAO;
 import org.collexio.persistence.ItemPhotoDAO;
 

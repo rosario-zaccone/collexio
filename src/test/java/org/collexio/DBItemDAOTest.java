@@ -1,6 +1,6 @@
 package org.collexio;
 
-import org.collexio.domain.*;
+import org.collexio.business.domain.*;
 import org.collexio.persistence.*;
 import org.junit.jupiter.api.*;
 
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +20,8 @@ public class DBItemDAOTest {
     @BeforeEach
     public void setupDatabase() throws SQLException, IOException {
         connection = ConnectionFactory.getConnection();
-        itemDAO = new DBItemDAO(connection);
-        DBItemCollectionDAO collectionDao = new DBItemCollectionDAO(connection);
+        itemDAO = new DBItemDAO(connection, new DBItemPhotoDAO(connection), new DBTransactionDAO(connection));
+        DBItemCollectionDAO collectionDao = new DBItemCollectionDAO(connection, itemDAO);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM item_collections");
             stmt.execute("DELETE FROM item_transactions");

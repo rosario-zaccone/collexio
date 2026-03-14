@@ -1,11 +1,10 @@
 package org.collexio;
 
 
-import org.collexio.domain.ItemPhoto;
-import org.collexio.domain.Plant;
+import org.collexio.business.domain.ItemPhoto;
+import org.collexio.business.domain.Plant;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 

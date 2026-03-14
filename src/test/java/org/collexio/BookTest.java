@@ -1,12 +1,10 @@
 package org.collexio;
 
-import org.collexio.domain.Book;
-import org.collexio.domain.ItemPhoto;
-import org.collexio.domain.Transaction;
-import org.collexio.utilities.Utilities;
+import org.collexio.business.domain.Book;
+import org.collexio.business.domain.ItemPhoto;
+import org.collexio.business.domain.Transaction;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

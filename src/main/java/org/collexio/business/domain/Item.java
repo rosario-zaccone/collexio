@@ -1,16 +1,6 @@
-package org.collexio.domain;
+package org.collexio.business.domain;
 
 
-import org.collexio.utilities.Utilities;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;

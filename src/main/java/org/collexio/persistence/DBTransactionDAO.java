@@ -1,19 +1,12 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.Item;
-import org.collexio.domain.ItemPhoto;
-import org.collexio.domain.Transaction;
-import org.collexio.utilities.Utilities;
+import org.collexio.business.domain.Transaction;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 

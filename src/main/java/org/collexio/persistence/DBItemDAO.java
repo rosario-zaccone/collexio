@@ -1,18 +1,17 @@
 package org.collexio.persistence;
 
-import org.collexio.domain.*;
+import org.collexio.business.domain.*;
 import org.collexio.utilities.ItemFactory;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
 public class DBItemDAO implements ItemDAO{
     private final Connection connection;
+    private final ItemPhotoDAO itemPhotoDAO;
+    private final TransactionDAO transactionDAO;
 
     private final static String selectSql = "SELECT * FROM items WHERE id=?";
     private final static String selectAllSql = "SELECT * FROM items";
@@ -32,8 +31,10 @@ public class DBItemDAO implements ItemDAO{
             + "second_name=?"
             + "WHERE id = ?";
 
-    public DBItemDAO(Connection connection) {
+    public DBItemDAO(Connection connection, ItemPhotoDAO itemPhotoDAO, TransactionDAO transactionDAO) {
         this.connection = connection;
+        this.itemPhotoDAO = itemPhotoDAO;
+        this.transactionDAO = transactionDAO;
     }
 
 
@@ -65,9 +66,7 @@ public class DBItemDAO implements ItemDAO{
                 try (ResultSet keys = stmt.getGeneratedKeys()) {
                     if (keys.next()) {
                         long itemId = Math.toIntExact(keys.getLong(1));
-                        DBItemPhotoDAO itemPhotoDAO = new DBItemPhotoDAO(connection);
                         itemPhotoDAO.add(item.getPhoto(), itemId);
-                        DBTransactionDAO transactionDAO = new DBTransactionDAO(connection);
                         for (Transaction e : item.getTransactions()) {
                             transactionDAO.add(e, itemId);
                         }
@@ -103,8 +102,8 @@ public class DBItemDAO implements ItemDAO{
                     int quantity = rs.getInt("quantity");
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
-                    ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    ItemPhoto photo =  itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    Set<Transaction> transactions = transactionDAO.getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res = Optional.of(item);
@@ -127,8 +126,8 @@ public class DBItemDAO implements ItemDAO{
                     int quantity = rs.getInt("quantity");
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
-                    ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    ItemPhoto photo = itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    Set<Transaction> transactions = transactionDAO.getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
@@ -182,8 +181,8 @@ public class DBItemDAO implements ItemDAO{
                     int quantity = rs.getInt("quantity");
                     String description = rs.getString("description");
                     String second_name = rs.getString("second_name");
-                    ItemPhoto photo = (new DBItemPhotoDAO(connection)).getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
-                    Set<Transaction> transactions = (new DBTransactionDAO(connection)).getByItemId(id);
+                    ItemPhoto photo = itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    Set<Transaction> transactions = transactionDAO.getByItemId(id);
                     Item item = ItemFactory.getItem(type, id, name, quantity, photo, description, second_name);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
