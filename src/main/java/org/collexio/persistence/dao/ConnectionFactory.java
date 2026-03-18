@@ -1,4 +1,4 @@
-package org.collexio.persistence;
+package org.collexio.persistence.dao;
 
 import java.io.IOException;
 import java.io.Reader;

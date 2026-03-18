@@ -1,8 +1,8 @@
 package org.collexio.utilities;
 
 import org.collexio.business.domain.ItemPhoto;
-import org.collexio.persistence.DBItemPhotoDAO;
-import org.collexio.persistence.ItemPhotoDAO;
+import org.collexio.persistence.dao.DBItemPhotoDAO;
+import org.collexio.persistence.dao.ItemPhotoDAO;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -32,6 +32,7 @@ public class Utilities {
     }
 
 
+    /*
     public static void uploadPhoto(ItemPhoto photo, Connection connection) throws IOException, SQLException {
         String fileName = photo.getPath().getFileName().toString();
         int dotIndex = fileName.lastIndexOf('.');
@@ -56,4 +57,6 @@ public class Utilities {
         dao.update(nPhoto);
 
     }
+
+     */
 }

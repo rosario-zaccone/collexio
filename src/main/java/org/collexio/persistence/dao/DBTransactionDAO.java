@@ -1,11 +1,8 @@
-package org.collexio.persistence;
+package org.collexio.persistence.dao;
 
-import org.collexio.business.domain.Transaction;
+import org.collexio.persistence.model.TransactionEntity;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -13,8 +10,8 @@ import java.util.*;
 public class DBTransactionDAO implements TransactionDAO {
     private final Connection connection;
 
-    private static final String selectAllSql = "SELECT * FROM item_transactions";
-    private static final String selectByItemIdSql = "SELECT * FROM item_transactions WHERE item_id = ?";
+    private static final String selectAllSql = "SELECT * FROM item_transactions ORDER BY transaction_date";
+    private static final String selectByItemIdSql = "SELECT * FROM item_transactions WHERE item_id = ? ORDER BY transaction_date";
     private static final String selectSql = "SELECT * FROM item_transactions WHERE id=?";
     private static final String insertSql = "INSERT INTO item_transactions(amount, income, transaction_date, item_id) VALUES (?,?,?,?)";
     private static final String updateSqlNoItem = "UPDATE item_transactions SET amount = ? , "
@@ -24,7 +21,7 @@ public class DBTransactionDAO implements TransactionDAO {
             + "WHERE id = ?";
     private static final String updateSql = "UPDATE item_transactions SET amount = ? , "
             + "income = ? ,"
-            + "transaction_date = ?"
+            + "transaction_date = ? "
             + "WHERE id = ?";
     private static final String deleteSql = "DELETE FROM item_transactions WHERE id=?";
 
@@ -33,9 +30,7 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public void add(Transaction transaction, Long itemId) throws SQLException {
-        if (itemId <= 0)
-            throw new IllegalArgumentException("Invalid id");
+    public void add(TransactionEntity transaction, Long itemId) throws SQLException {
         try (var stmt = connection.prepareStatement(insertSql)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
@@ -46,18 +41,16 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public Optional<Transaction> get(Long id) throws SQLException {
-        Optional<Transaction> res = Optional.empty();
-        if (id <= 0)
-            throw new IllegalArgumentException("Invalid id");
-        try (var stmt = connection.prepareStatement(selectSql)) {
+    public Optional<TransactionEntity> get(Long id) throws SQLException {
+        Optional<TransactionEntity> res = Optional.empty();
+        try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 double amount = rs.getDouble("amount");
                 boolean income = rs.getInt("income") == 1;
-                LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
-                res = Optional.of(new Transaction(id, amount, income, date));
+                LocalDate date = LocalDate.parse(rs.getString("transaction_date"));
+                res = Optional.of(new TransactionEntity(id, amount, income, date));
             }
             rs.close();
         }
@@ -65,11 +58,11 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public void update(Transaction transaction, boolean noItem) throws SQLException{
+    public void update(TransactionEntity transaction, boolean noItem) throws SQLException{
         String prompt = updateSql;
         if (noItem)
             prompt = updateSqlNoItem;
-        try (var stmt = connection.prepareStatement(prompt)) {
+        try (PreparedStatement stmt = connection.prepareStatement(prompt)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());
@@ -84,34 +77,32 @@ public class DBTransactionDAO implements TransactionDAO {
 
     @Override
     public void delete(Long id) throws SQLException{
-        if (id <= 0)
-            throw new IllegalArgumentException("Invalid id");
-        try (var stmt = connection.prepareStatement(deleteSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(deleteSql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public Set<Transaction> getAll() throws SQLException{
-        Set<Transaction> res = new TreeSet<>();
-        try (var stmt = connection.createStatement();
-             var rs = stmt.executeQuery(selectAllSql)) {
+    public List<TransactionEntity> getAll() throws SQLException{
+        List<TransactionEntity> res = new ArrayList<>();
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 double amount = rs.getDouble("amount");
                 boolean income = rs.getInt("income") == 1;
                 LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
-                res.add(new Transaction(id, amount, income, date));
+                res.add(new TransactionEntity(id, amount, income, date));
             }
         }
         return res;
     }
 
     @Override
-    public Set<Transaction> getByItemId(Long itemId) throws SQLException {
-        Set<Transaction> res = new TreeSet<>();
-        try (var stmt = connection.prepareStatement(selectByItemIdSql)) {
+    public List<TransactionEntity> getByItemId(Long itemId) throws SQLException {
+        List<TransactionEntity> res = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(selectByItemIdSql)) {
             stmt.setLong(1, itemId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -119,7 +110,7 @@ public class DBTransactionDAO implements TransactionDAO {
                     double amount = rs.getDouble("amount");
                     boolean income = rs.getInt("income") == 1;
                     LocalDate date = LocalDate.parse(rs.getString("transaction_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
-                    res.add(new Transaction(id, amount, income, date));
+                    res.add(new TransactionEntity(id, amount, income, date));
                 }
             }
         }

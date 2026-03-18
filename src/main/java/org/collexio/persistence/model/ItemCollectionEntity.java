@@ -48,6 +48,13 @@ public class ItemCollectionEntity {
                 '}';
     }
 
+    public String toStringNoId() {
+        return "ItemCollectionEntity{" +
+                "name='" + name + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

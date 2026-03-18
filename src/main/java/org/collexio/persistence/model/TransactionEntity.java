@@ -47,6 +47,15 @@ public class TransactionEntity implements Comparable<TransactionEntity> {
                 '}';
     }
 
+    public String toStringNoId() {
+        return "Transaction{" +
+                "amount=" + amount +
+                ", income=" + income +
+                ", date=" + date +
+                '}';
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

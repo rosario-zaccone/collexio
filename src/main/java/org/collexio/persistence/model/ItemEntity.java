@@ -1,25 +1,19 @@
 package org.collexio.persistence.model;
 
-import org.collexio.business.domain.ItemPhoto;
-import org.collexio.business.domain.Transaction;
-
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ItemEntity {
     private final Long id;
     private final ItemType type;
     private final String name;
     private final int quantity;
-    private final ItemPhoto photo;
+    private final ItemPhotoEntity photo;
     private final String description;
 
-    private final Set<Transaction> transactions = new TreeSet<>();
+    private final List<TransactionEntity> transactions = new ArrayList<>();
 
 
-    public ItemEntity(Long id, ItemType type, String name, int quantity, ItemPhoto photo, String description) {
+    public ItemEntity(Long id, ItemType type, String name, int quantity, ItemPhotoEntity photo, String description) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -27,6 +21,7 @@ public class ItemEntity {
         this.photo = photo;
         this.description = description;
     }
+
 
     public Long getId() {
         return id;
@@ -48,16 +43,16 @@ public class ItemEntity {
         return description;
     }
 
-    public ItemPhoto getPhoto() {
+    public ItemPhotoEntity getPhoto() {
         return photo;
     }
 
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(TransactionEntity transaction) {
         transactions.add(transaction);
     }
 
-    public Set<Transaction> getTransactions() {
-        return Collections.unmodifiableSet(transactions);
+    public List<TransactionEntity> getTransactions() {
+        return Collections.unmodifiableList(transactions);
     }
 
     @Override
@@ -77,6 +72,18 @@ public class ItemEntity {
         final StringBuilder sb = new StringBuilder("ItemEntity{");
         sb.append("id=").append(id);
         sb.append(", type=").append(type);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", quantity=").append(quantity);
+        sb.append(", photo=").append(photo);
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", transactions=").append(transactions);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    public String toStringNoId() {
+        final StringBuilder sb = new StringBuilder("ItemEntity{");
+        sb.append("type=").append(type);
         sb.append(", name='").append(name).append('\'');
         sb.append(", quantity=").append(quantity);
         sb.append(", photo=").append(photo);

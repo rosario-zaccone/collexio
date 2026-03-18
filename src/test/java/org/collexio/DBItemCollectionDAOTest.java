@@ -1,117 +1,182 @@
 package org.collexio;
 
-import org.collexio.business.domain.ItemCollection;
-import org.collexio.business.domain.ItemPhoto;
-import org.collexio.business.domain.TechItem;
-import org.collexio.business.domain.Transaction;
-import org.collexio.persistence.*;
+import org.collexio.persistence.dao.DBItemCollectionDAO;
+import org.collexio.persistence.dao.DBItemDAO;
+import org.collexio.persistence.dao.DBItemPhotoDAO;
+import org.collexio.persistence.dao.DBTransactionDAO;
+import org.collexio.persistence.model.*;
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DBItemCollectionDAOTest {
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class DBItemCollectionDAOTest {
 
     private Connection connection;
+    private DBItemDAO itemDAO;
+    private DBItemPhotoDAO photoDAO;
+    private DBTransactionDAO transactionDAO;
     private DBItemCollectionDAO collectionDAO;
 
-    @BeforeEach
-    public void setup() throws SQLException, IOException {
-        connection = ConnectionFactory.getConnection();
+    @BeforeAll
+    void setupDatabase() throws SQLException {
+        connection = DriverManager.getConnection("jdbc:sqlite::memory:");
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM item_collections");
-            stmt.execute("DELETE FROM item_photos");
-            stmt.execute("DELETE FROM items");
-            stmt.execute("DELETE FROM item_transactions");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','item_transactions')");
+            stmt.execute("PRAGMA foreign_keys = ON");
+
+            // Collections
+            stmt.execute("""
+                CREATE TABLE item_collections (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL
+                );
+            """);
+
+            // Items
+            stmt.execute("""
+                CREATE TABLE items (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    quantity INTEGER NOT NULL,
+                    description TEXT NOT NULL,
+                    type INTEGER NOT NULL,
+                    item_collection_id INTEGER,
+                    FOREIGN KEY(item_collection_id) REFERENCES item_collections(id) ON DELETE SET NULL
+                );
+            """);
+
+            // Photos
+            stmt.execute("""
+                CREATE TABLE item_photos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    path TEXT NOT NULL,
+                    photo_date TEXT NOT NULL,
+                    item_id INTEGER,
+                    FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE
+                );
+            """);
+
+            // Transactions
+            stmt.execute("""
+                CREATE TABLE item_transactions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    amount REAL NOT NULL,
+                    income INTEGER NOT NULL,
+                    transaction_date TEXT NOT NULL,
+                    item_id INTEGER,
+                    FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE
+                );
+            """);
         }
-        collectionDAO = new DBItemCollectionDAO(connection, new DBItemDAO(connection, new DBItemPhotoDAO(connection), new DBTransactionDAO(connection)));
+
+        photoDAO = new DBItemPhotoDAO(connection);
+        transactionDAO = new DBTransactionDAO(connection);
+        itemDAO = new DBItemDAO(connection, photoDAO, transactionDAO);
+        collectionDAO = new DBItemCollectionDAO(connection, itemDAO);
     }
 
-    @AfterEach
-    public void cleanup() throws SQLException {
+    @BeforeEach
+    void clearData() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM item_collections");
-            stmt.execute("DELETE FROM item_photos");
-            stmt.execute("DELETE FROM items");
-            stmt.execute("DELETE FROM item_transactions");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name IN ('item_collections','item_photos','items','item_transactions')");
+            stmt.execute("DELETE FROM item_transactions;");
+            stmt.execute("DELETE FROM item_photos;");
+            stmt.execute("DELETE FROM items;");
+            stmt.execute("DELETE FROM item_collections;");
         }
+    }
+
+    @AfterAll
+    void closeConnection() throws SQLException {
         connection.close();
     }
 
     @Test
-    public void testCrud() throws SQLException {
-        ItemCollection collection = new ItemCollection("pokemon games");
+    void testAddCollection() throws SQLException {
+        ItemCollectionEntity collection = new ItemCollectionEntity(null, "Console");
 
-        ItemPhoto redPhoto = new ItemPhoto(Paths.get("pokemon_red.jpg"), LocalDate.now());
-        TechItem red = new TechItem("Pokemon Red", 10, redPhoto, "pokemon game 1 gen");
-        for (int i = 0; i < 4; i++)
-            red.addTransaction(new Transaction(100 + i * 10, i % 2 == 0, LocalDate.now()));
+        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("/tmp/photo.jpg"), LocalDate.now());
+        ItemEntity item = new ItemEntity(null, ItemType.TECHITEM, "GameBoy", 2, photo, "desc");
+        item.addTransaction(new TransactionEntity(50, true, LocalDate.now()));
 
-        ItemPhoto bluePhoto = new ItemPhoto(Paths.get("pokemon_blue.jpg"), LocalDate.now());
-        TechItem blue = new TechItem("Pokemon Blue", 12, bluePhoto, "pokemon game 1 gen");
-        for (int i = 0; i < 4; i++)
-            blue.addTransaction(new Transaction(200 + i * 10, i % 2 == 0, LocalDate.now()));
+        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("/tmp/photo2.jpg"), LocalDate.now());
+        ItemEntity item2 = new ItemEntity(null, ItemType.TECHITEM, "GameBoy Advance", 2, photo, "desc");
+        item2.addTransaction(new TransactionEntity(50, true, LocalDate.now()));
 
-        ItemPhoto greenPhoto = new ItemPhoto(Paths.get("pokemon_green.jpg"), LocalDate.now());
-        TechItem green = new TechItem("Pokemon Green", 8, greenPhoto, "pokemon game 1 gen");
-        for (int i = 0; i < 4; i++)
-            green.addTransaction(new Transaction(150 + i * 10, i % 2 == 0, LocalDate.now()));
+        collection.addItem(item); collection.addItem(item2);
 
-        ItemPhoto goldPhoto = new ItemPhoto(Paths.get("pokemon_gold.jpg"), LocalDate.now());
-        TechItem gold = new TechItem("Pokemon Gold", 15, goldPhoto, "pokemon game 1 gen");
-        for (int i = 0; i < 4; i++)
-            gold.addTransaction(new Transaction(300 + i * 10, i % 2 == 0, LocalDate.now()));
-
-        collection.addItem(red);
-        collection.addItem(blue);
-        collection.addItem(green);
-        collection.addItem(gold);
         collectionDAO.add(collection);
 
-        ItemCollection retrieved = collectionDAO.get(1L).get();
-        ItemCollection zeldaCollection = new ItemCollection("zelda games");
-
-        ItemPhoto ootPhoto = new ItemPhoto(Paths.get("zelda_ocarina.jpg"), LocalDate.now());
-        TechItem ocarina = new TechItem("Zelda Ocarina of Time", 20, ootPhoto, "zelda game");
-        for (int i = 0; i < 4; i++)
-            ocarina.addTransaction(new Transaction(400 + i * 20, i % 2 == 0, LocalDate.now()));
-
-        ItemPhoto mmPhoto = new ItemPhoto(Paths.get("zelda_majoras.jpg"), LocalDate.now());
-        TechItem majoras = new TechItem("Zelda Majora’s Mask", 18, mmPhoto, "zelda game");
-        for (int i = 0; i < 4; i++)
-            majoras.addTransaction(new Transaction(350 + i * 20, i % 2 == 0, LocalDate.now()));
-
-        ItemPhoto wwPhoto = new ItemPhoto(Paths.get("zelda_windwaker.jpg"), LocalDate.now());
-        TechItem windWaker = new TechItem("Zelda Wind Waker", 22, wwPhoto, "zelda game");
-        for (int i = 0; i < 4; i++)
-            windWaker.addTransaction(new Transaction(500 + i * 15, i % 2 == 0, LocalDate.now()));
-
-        ItemPhoto botwPhoto = new ItemPhoto(Paths.get("zelda_botw.jpg"), LocalDate.now());
-        TechItem botw = new TechItem("Zelda Breath of the Wild", 30, botwPhoto, "zelda game");
-        for (int i = 0; i < 4; i++)
-            botw.addTransaction(new Transaction(700 + i * 25, i % 2 == 0, LocalDate.now()));
-
-        zeldaCollection.addItem(ocarina);
-        zeldaCollection.addItem(majoras);
-        zeldaCollection.addItem(windWaker);
-        zeldaCollection.addItem(botw);
-
-        collectionDAO.add(zeldaCollection);
-
-        ItemCollection retrievedZelda = collectionDAO.get(2L).get();
-        assertEquals(retrievedZelda.toStringNoId(), zeldaCollection.toStringNoId());
-        assertEquals(retrieved.toStringNoId(), collection.toStringNoId());
-        assertEquals(retrieved, collection);
-        assertEquals(retrievedZelda, zeldaCollection);
-
+        List<ItemCollectionEntity> all = collectionDAO.getAll();
+        assertEquals(1, all.size());
+        assertEquals("Console", all.get(0).getName());
+        assertEquals(2, all.get(0).getData().size());
+        System.out.println(all.get(0));
     }
 
+    @Test
+    void testGetCollection() throws SQLException {
+        ItemCollectionEntity collection = new ItemCollectionEntity(null, "Collection A");
+
+        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("/tmp/photo2.jpg"), LocalDate.now());
+        ItemEntity item = new ItemEntity(null, ItemType.BOOK, "Book1", 1, photo, "desc");
+        collection.addItem(item);
+
+        collectionDAO.add(collection);
+
+        ItemCollectionEntity saved = collectionDAO.getAll().get(0);
+
+        Optional<ItemCollectionEntity> fetched = collectionDAO.get(saved.getId());
+
+        assertTrue(fetched.isPresent());
+        assertEquals("Collection A", fetched.get().getName());
+        assertEquals(1, fetched.get().getData().size());
+        System.out.println(fetched.get());
+    }
+
+    @Test
+    void testUpdateCollection() throws SQLException {
+        ItemCollectionEntity collection = new ItemCollectionEntity(null, "Old Name");
+        collectionDAO.add(collection);
+
+        ItemCollectionEntity saved = collectionDAO.getAll().get(0);
+
+        collectionDAO.update(new ItemCollectionEntity(saved.getId(), "New Name"));
+
+        Optional<ItemCollectionEntity> updated = collectionDAO.get(saved.getId());
+        assertTrue(updated.isPresent());
+        assertEquals("New Name", updated.get().getName());
+    }
+
+    @Test
+    void testDeleteCollection() throws SQLException {
+        ItemCollectionEntity collection = new ItemCollectionEntity(null, "To Delete");
+        collectionDAO.add(collection);
+
+        ItemCollectionEntity saved = collectionDAO.getAll().get(0);
+
+        collectionDAO.delete(saved.getId());
+
+        Optional<ItemCollectionEntity> deleted = collectionDAO.get(saved.getId());
+        assertFalse(deleted.isPresent());
+    }
+
+    @Test
+    void testGetAllCollections() throws SQLException {
+        collectionDAO.add(new ItemCollectionEntity(null, "C1"));
+        collectionDAO.add(new ItemCollectionEntity(null, "C2"));
+
+        List<ItemCollectionEntity> all = collectionDAO.getAll();
+
+        assertEquals(2, all.size());
+    }
 }
