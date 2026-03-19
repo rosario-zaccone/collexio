@@ -48,6 +48,13 @@ public class ItemPhotoEntity implements Comparable<ItemPhotoEntity> {
                 '}';
     }
 
+    public String toStringNoId() {
+        return "ItemPhoto{" +
+                "path=" + path +
+                ", date=" + date +
+                '}';
+    }
+
     @Override
     public int compareTo(@NotNull ItemPhotoEntity o) {
         return date.compareTo(o.getDate());

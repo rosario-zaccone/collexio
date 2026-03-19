@@ -32,7 +32,6 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         return id;
     }
 
-
     public Path getPath() {
         return path;
     }

@@ -1,5 +1,4 @@
 package org.collexio.persistence.dao;
-
 import org.collexio.persistence.model.ItemPhotoEntity;
 
 import java.nio.file.Path;
@@ -32,15 +31,15 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     @Override
     public Optional<ItemPhotoEntity> get(Long id) throws SQLException {
         Optional<ItemPhotoEntity> res = Optional.empty();
-        try (var stmt = connection.prepareStatement(selectSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
             stmt.setLong(1, id);
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                Path path = Paths.get(rs.getString("path"));
-                LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
-                res = Optional.of(new ItemPhotoEntity(id, path, date));
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    Path path = Paths.get(rs.getString("path"));
+                    LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
+                    res = Optional.of(new ItemPhotoEntity(id, path, date));
+                }
             }
-            rs.close();
         }
         return res;
     }

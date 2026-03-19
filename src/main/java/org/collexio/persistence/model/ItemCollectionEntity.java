@@ -49,6 +49,7 @@ public class ItemCollectionEntity {
     }
 
     public String toStringNoId() {
+        List<String> data = this.data.stream().map(ItemEntity::toStringNoId).toList();
         return "ItemCollectionEntity{" +
                 "name='" + name + '\'' +
                 ", data=" + data +

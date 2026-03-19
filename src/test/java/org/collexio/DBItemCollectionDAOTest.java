@@ -1,9 +1,5 @@
 package org.collexio;
-
-import org.collexio.persistence.dao.DBItemCollectionDAO;
-import org.collexio.persistence.dao.DBItemDAO;
-import org.collexio.persistence.dao.DBItemPhotoDAO;
-import org.collexio.persistence.dao.DBTransactionDAO;
+import org.collexio.persistence.dao.*;
 import org.collexio.persistence.model.*;
 import org.junit.jupiter.api.*;
 
@@ -23,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DBItemCollectionDAOTest {
 
     private Connection connection;
+    private DBItemSpecDAO itemSpecDAO;
     private DBItemDAO itemDAO;
     private DBItemPhotoDAO photoDAO;
     private DBTransactionDAO transactionDAO;
@@ -42,56 +39,69 @@ class DBItemCollectionDAOTest {
                 );
             """);
 
-            // Items
             stmt.execute("""
-                CREATE TABLE items (
+                CREATE TABLE item_specs(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    type INTEGER NOT NULL, -- 0 for plant, 1 for tech, 2 for book
                     name TEXT NOT NULL,
-                    quantity INTEGER NOT NULL,
-                    description TEXT NOT NULL,
-                    type INTEGER NOT NULL,
-                    item_collection_id INTEGER,
-                    FOREIGN KEY(item_collection_id) REFERENCES item_collections(id) ON DELETE SET NULL
+                    description TEXT NOT NULL
                 );
             """);
 
-            // Photos
+            stmt.execute("""
+                CREATE TABLE items(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    status INTEGER NOT NULL, -- 0 for bad 1 for average 2 for good
+                    item_spec_id INTEGER,
+                    item_collection_id INTEGER,
+                    FOREIGN KEY(item_spec_id) REFERENCES item_specs(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                    FOREIGN KEY(item_collection_id) REFERENCES item_collections(id) ON DELETE SET NULL ON UPDATE CASCADE
+                );
+            """);
+
             stmt.execute("""
                 CREATE TABLE item_photos (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     path TEXT NOT NULL,
                     photo_date TEXT NOT NULL,
-                    item_id INTEGER,
-                    FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE
+                    item_id INTEGER UNIQUE ,
+                    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE ON UPDATE CASCADE
                 );
             """);
 
-            // Transactions
             stmt.execute("""
                 CREATE TABLE item_transactions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     amount REAL NOT NULL,
-                    income INTEGER NOT NULL,
+                    income INTEGER NOT NULL, -- boolean
                     transaction_date TEXT NOT NULL,
                     item_id INTEGER,
-                    FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE
+                    FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE ON UPDATE CASCADE
                 );
             """);
         }
 
         photoDAO = new DBItemPhotoDAO(connection);
         transactionDAO = new DBTransactionDAO(connection);
-        itemDAO = new DBItemDAO(connection, photoDAO, transactionDAO);
+        itemSpecDAO = new DBItemSpecDAO(connection);
+        itemDAO = new DBItemDAO(connection, itemSpecDAO, photoDAO, transactionDAO);
         collectionDAO = new DBItemCollectionDAO(connection, itemDAO);
     }
 
     @BeforeEach
     void clearData() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
+            stmt.execute("DELETE FROM item_collections;");
             stmt.execute("DELETE FROM item_transactions;");
             stmt.execute("DELETE FROM item_photos;");
             stmt.execute("DELETE FROM items;");
-            stmt.execute("DELETE FROM item_collections;");
+            stmt.execute("DELETE FROM item_specs;");
+
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_collections';");
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_transactions';");
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_photos';");
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name='items';");
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_specs';");
         }
     }
 
@@ -101,47 +111,33 @@ class DBItemCollectionDAOTest {
     }
 
     @Test
-    void testAddCollection() throws SQLException {
+    void testAddGetCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Console");
 
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("/tmp/photo.jpg"), LocalDate.now());
-        ItemEntity item = new ItemEntity(null, ItemType.TECHITEM, "GameBoy", 2, photo, "desc");
-        item.addTransaction(new TransactionEntity(50, true, LocalDate.now()));
-
-        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("/tmp/photo2.jpg"), LocalDate.now());
-        ItemEntity item2 = new ItemEntity(null, ItemType.TECHITEM, "GameBoy Advance", 2, photo, "desc");
-        item2.addTransaction(new TransactionEntity(50, true, LocalDate.now()));
-
-        collection.addItem(item); collection.addItem(item2);
-
-        collectionDAO.add(collection);
-
-        List<ItemCollectionEntity> all = collectionDAO.getAll();
-        assertEquals(1, all.size());
-        assertEquals("Console", all.get(0).getName());
-        assertEquals(2, all.get(0).getData().size());
-        System.out.println(all.get(0));
-    }
-
-    @Test
-    void testGetCollection() throws SQLException {
-        ItemCollectionEntity collection = new ItemCollectionEntity(null, "Collection A");
-
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("/tmp/photo2.jpg"), LocalDate.now());
-        ItemEntity item = new ItemEntity(null, ItemType.BOOK, "Book1", 1, photo, "desc");
+        ItemSpecEntity details = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo 3DS", "nintendo 3ds blu");
+        itemSpecDAO.add(details);
+        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
+        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, itemSpecDAO.get(1L).get());
+        item.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
+        item.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
         collection.addItem(item);
 
+
+        ItemSpecEntity details2 = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo DS", "nintendo ds blu");
+        itemSpecDAO.add(details2);
+        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("data/pippo2.png"), LocalDate.now());
+        ItemEntity item2 = new ItemEntity(ItemStatus.AVERAGE, photo2, itemSpecDAO.get(2L).get());
+        item2.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
+        item2.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
+        collection.addItem(item2);
+
+
         collectionDAO.add(collection);
 
-        ItemCollectionEntity saved = collectionDAO.getAll().get(0);
-
-        Optional<ItemCollectionEntity> fetched = collectionDAO.get(saved.getId());
-
-        assertTrue(fetched.isPresent());
-        assertEquals("Collection A", fetched.get().getName());
-        assertEquals(1, fetched.get().getData().size());
-        System.out.println(fetched.get());
+        ItemCollectionEntity coll = collectionDAO.get(1L).get();
+        assertEquals(coll.toStringNoId(), collection.toStringNoId());
     }
+
 
     @Test
     void testUpdateCollection() throws SQLException {
@@ -170,13 +166,4 @@ class DBItemCollectionDAOTest {
         assertFalse(deleted.isPresent());
     }
 
-    @Test
-    void testGetAllCollections() throws SQLException {
-        collectionDAO.add(new ItemCollectionEntity(null, "C1"));
-        collectionDAO.add(new ItemCollectionEntity(null, "C2"));
-
-        List<ItemCollectionEntity> all = collectionDAO.getAll();
-
-        assertEquals(2, all.size());
-    }
 }

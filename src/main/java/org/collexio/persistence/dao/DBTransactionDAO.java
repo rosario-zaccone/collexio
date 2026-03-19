@@ -31,7 +31,7 @@ public class DBTransactionDAO implements TransactionDAO {
 
     @Override
     public void add(TransactionEntity transaction, Long itemId) throws SQLException {
-        try (var stmt = connection.prepareStatement(insertSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());
@@ -45,14 +45,14 @@ public class DBTransactionDAO implements TransactionDAO {
         Optional<TransactionEntity> res = Optional.empty();
         try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
             stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                double amount = rs.getDouble("amount");
-                boolean income = rs.getInt("income") == 1;
-                LocalDate date = LocalDate.parse(rs.getString("transaction_date"));
-                res = Optional.of(new TransactionEntity(id, amount, income, date));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    double amount = rs.getDouble("amount");
+                    boolean income = rs.getInt("income") == 1;
+                    LocalDate date = LocalDate.parse(rs.getString("transaction_date"));
+                    res = Optional.of(new TransactionEntity(id, amount, income, date));
+                }
             }
-            rs.close();
         }
         return res;
     }

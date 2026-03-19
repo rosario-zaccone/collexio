@@ -1,10 +1,15 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.TransactionEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+// Transaction represents a transaction involving a single item.
+// For example: buying a Nintendo DS or selling a Nintendo DS.
+// Important: if you buy two identical items, you must create two separate transactions.
+// The same applies to selling.
 public class Transaction implements Comparable<Transaction> {
     private final Long id;
     private final double amount;
@@ -80,4 +85,15 @@ public class Transaction implements Comparable<Transaction> {
         if (cmp != 0) return cmp;
         return id == null || o.id == null ? 0 : id.compareTo(o.id);
     }
+
 }
+
+/*
+    public static Transaction fromOrm(TransactionEntity entity) {
+        return new Transaction(entity.getId(), entity.getAmount(), entity.isIncome(), entity.getDate());
+    }
+
+    public TransactionEntity toOrm() {
+        return new TransactionEntity(this.id, this.amount, this.income, this.date);
+    }
+ */

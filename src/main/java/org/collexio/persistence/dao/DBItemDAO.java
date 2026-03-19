@@ -1,9 +1,5 @@
 package org.collexio.persistence.dao;
-
-import org.collexio.persistence.model.ItemEntity;
-import org.collexio.persistence.model.ItemPhotoEntity;
-import org.collexio.persistence.model.ItemType;
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.model.*;
 
 
 import java.sql.*;
@@ -12,27 +8,26 @@ import java.util.*;
 
 public class DBItemDAO implements ItemDAO{
     private final Connection connection;
+    private final ItemSpecDAO itemSpecDAO;
     private final ItemPhotoDAO itemPhotoDAO;
     private final TransactionDAO transactionDAO;
 
     private final static String selectSql = "SELECT * FROM items WHERE id=?";
     private final static String selectAllSql = "SELECT * FROM items";
     private final static String selectByCollectionId = "SELECT * FROM items WHERE item_collection_id=?";
-    private final static String insertSql = "INSERT INTO items(name, quantity, description, type, item_collection_id)"
-            + "VALUES(?,?,?,?,?)";
+    private final static String insertSql = "INSERT INTO items(status, item_spec_id, item_collection_id)"
+            + "VALUES(?,?,?)";
     private final static String deleteSql = "DELETE FROM items WHERE id=?";
     private static final String updateSqlNoCollection = "UPDATE items SET name = ? , "
-            + "quantity = ? ,"
-            + "description = ? ,"
+            + "status = ? ,"
             + "item_collection_id = ? "
             + "WHERE id = ?";
-    private static final String updateSql = "UPDATE items SET name = ? , "
-            + "quantity = ? ,"
-            + "description = ? "
+    private static final String updateSql = "UPDATE items SET status = ? "
             + "WHERE id = ?";
 
-    public DBItemDAO(Connection connection, ItemPhotoDAO itemPhotoDAO, TransactionDAO transactionDAO) {
+    public DBItemDAO(Connection connection, ItemSpecDAO itemSpecDAO, ItemPhotoDAO itemPhotoDAO, TransactionDAO transactionDAO) {
         this.connection = connection;
+        this.itemSpecDAO = itemSpecDAO;
         this.itemPhotoDAO = itemPhotoDAO;
         this.transactionDAO = transactionDAO;
     }
@@ -47,11 +42,9 @@ public class DBItemDAO implements ItemDAO{
         }
         try {
             try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-                stmt.setString(1, item.getName());
-                stmt.setInt(2, item.getQuantity());
-                stmt.setString(3, item.getDescription());
-                stmt.setInt(4, item.getType().ordinal());
-                stmt.setLong(5, collectionId);
+                stmt.setInt(1, item.getStatus().getValue());
+                stmt.setLong(2, item.getDetails().getId());
+                stmt.setLong(3, collectionId);
                 stmt.executeUpdate();
 
                 try (ResultSet keys = stmt.getGeneratedKeys()) {
@@ -86,13 +79,11 @@ public class DBItemDAO implements ItemDAO{
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    int type = rs.getInt("type");
-                    String name = rs.getString("name");
-                    int quantity = rs.getInt("quantity");
-                    String description = rs.getString("description");
+                    ItemStatus status = ItemStatus.fromInt(rs.getInt("status"));
+                    ItemSpecEntity details = itemSpecDAO.get(rs.getLong("item_spec_id")).get();
                     ItemPhotoEntity photo =  itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<TransactionEntity> transactions = transactionDAO.getByItemId(id);
-                    ItemEntity item = new ItemEntity(id, ItemType.fromInt(type), name, quantity, photo, description);
+                    ItemEntity item = new ItemEntity(id, status, photo, details);
                     transactions.forEach(item::addTransaction);
                     res = Optional.of(item);
                 }
@@ -109,13 +100,11 @@ public class DBItemDAO implements ItemDAO{
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     long id = rs.getLong("id");
-                    int type = rs.getInt("type");
-                    String name = rs.getString("name");
-                    int quantity = rs.getInt("quantity");
-                    String description = rs.getString("description");
-                    ItemPhotoEntity photo = itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    ItemStatus status = ItemStatus.fromInt(rs.getInt("status"));
+                    ItemSpecEntity details = itemSpecDAO.get(rs.getLong("item_spec_id")).get();
+                    ItemPhotoEntity photo =  itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<TransactionEntity> transactions = transactionDAO.getByItemId(id);
-                    ItemEntity item = new ItemEntity(id, ItemType.fromInt(type), name, quantity, photo, description);
+                    ItemEntity item = new ItemEntity(id, status, photo, details);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
                 }
@@ -130,14 +119,12 @@ public class DBItemDAO implements ItemDAO{
         if (noCollection)
             prompt = updateSqlNoCollection;
         try (PreparedStatement stmt = connection.prepareStatement(prompt)) {
-            stmt.setString(1, item.getName());
-            stmt.setInt(2, item.getQuantity());
-            stmt.setString(3, item.getDescription());
+            stmt.setInt(1, item.getStatus().getValue());
             if (noCollection) {
-                stmt.setNull(4, Types.BIGINT);
-                stmt.setLong(5, item.getId());
+                stmt.setNull(2, Types.BIGINT);
+                stmt.setLong(3, item.getId());
             } else
-                stmt.setLong(4, item.getId());
+                stmt.setLong(2, item.getId());
             stmt.executeUpdate();
         }
     }
@@ -157,13 +144,11 @@ public class DBItemDAO implements ItemDAO{
             ResultSet rs = stmt.executeQuery(selectAllSql)) {
                 while (rs.next()) {
                     long id = rs.getLong("id");
-                    int type = rs.getInt("type");
-                    String name = rs.getString("name");
-                    int quantity = rs.getInt("quantity");
-                    String description = rs.getString("description");
-                    ItemPhotoEntity photo = itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
+                    ItemStatus status = ItemStatus.fromInt(rs.getInt("status"));
+                    ItemSpecEntity details = itemSpecDAO.get(rs.getLong("item_spec_id")).get();
+                    ItemPhotoEntity photo =  itemPhotoDAO.getByItemId(id).orElseThrow(() -> new NoSuchElementException("No photo for this item"));
                     List<TransactionEntity> transactions = transactionDAO.getByItemId(id);
-                    ItemEntity item = new ItemEntity(id, ItemType.fromInt(type), name, quantity, photo, description);
+                    ItemEntity item = new ItemEntity(id, status, photo, details);
                     transactions.forEach(item::addTransaction);
                     res.add(item);
                 }

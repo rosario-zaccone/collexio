@@ -1,6 +1,5 @@
 package org.collexio.persistence.dao;
 
-
 import org.collexio.persistence.model.ItemCollectionEntity;
 import org.collexio.persistence.model.ItemEntity;
 
@@ -73,8 +72,8 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
     @Override
     public void update(ItemCollectionEntity collection) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(updateSql)) {
-            stmt.setLong(2, collection.getId());
             stmt.setString(1, collection.getName());
+            stmt.setLong(2, collection.getId());
             stmt.executeUpdate();
         }
     }
@@ -92,7 +91,7 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
         List<ItemCollectionEntity> res = new ArrayList<>();
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
-            while (rs.next()) {
+            if (rs.next()) {
                 long id = rs.getLong("id");
                 String name = rs.getString("name");
                 List<ItemEntity> items = itemDAO.getByCollectionId(id);

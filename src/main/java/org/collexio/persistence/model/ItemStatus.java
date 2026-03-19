@@ -1,12 +1,12 @@
 package org.collexio.persistence.model;
 
-public enum ItemType {
-    PLANT(0),
-    TECHITEM(1),
-    BOOK(2);
+public enum ItemStatus {
+    BAD(0),
+    AVERAGE(1),
+    GOOD(2);
 
     private final int value;
-    ItemType(int value) {
+    ItemStatus(int value) {
         this.value = value;
     }
 
@@ -14,11 +14,11 @@ public enum ItemType {
         return value;
     }
 
-    public static ItemType fromInt(int value) {
+    public static ItemStatus fromInt(int value) {
         return switch (value) {
-            case 0 -> PLANT;
-            case 1 -> TECHITEM;
-            case 2 -> BOOK;
+            case 0 -> BAD;
+            case 1 -> AVERAGE;
+            case 2 -> GOOD;
             default -> throw new IllegalArgumentException("Invalid value");
         };
     }

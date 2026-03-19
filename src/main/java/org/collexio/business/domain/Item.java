@@ -1,130 +1,112 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.ItemStatus;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.*;
 
-public abstract class Item {
-    private final Long id; //I-001
-    private String name;
-    private int quantity;
+public class Item {
+    private final Long id;
+    private ItemStatus status;
     private ItemPhoto photo;
-    private String description;
+    private ItemSpec details;
+    private final List<Transaction> transactions = new ArrayList<>();
 
-    private final Set<Transaction> transactions = new TreeSet<>();
 
-
-    public Item(Long id, String name, int quantity, ItemPhoto photo, String description) {
+    public Item(Long id, ItemStatus status, ItemPhoto photo, ItemSpec details) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive or null");
-        if (quantity <= 0)
-            throw new IllegalArgumentException("Quantity must be positive");
-        if (name.isEmpty())
-            throw new IllegalArgumentException("Name can't be empty");
         this.id = id;
-        this.name = name;
-        this.quantity = quantity;
+        this.status = status;
         this.photo = photo;
-        this.description = description;
-    }
-
-    public Item(Long id, String name, int quantity, ItemPhoto photo) {
-        this(id, name, quantity, photo, "no description");
-    }
-
-    public Item(String name, int quantity, ItemPhoto photo, String description) {
-        this(null, name, quantity, photo, description);
+        this.details = details;
     }
 
 
-
-    public Long getId() {
-        return id;
+    public Item(ItemStatus status, ItemPhoto photo, ItemSpec details) {
+        this(null, status, photo, details);
     }
 
-    public void setName(String name) {
-        if (name.isEmpty() || !name.matches("[\\p{L}\\p{N} ]+"))
-            throw new IllegalArgumentException("Name can't be empty and can contain only letters, number and spaces");
-        this.name = name;
-    }
-    public String getName() {
-        return name;
+    public Item copy() {
+        Item item =  new Item(this.id, this.status, this.photo, this.details);
+        this.transactions.forEach(item::addTransaction);
+        return item;
     }
 
-    public void setQuantity(int quantity) {
-        if (quantity <= 0)
-            throw new IllegalArgumentException("Quantity must be positive");
-        this.quantity = quantity;
+    public void setStatus(ItemStatus status) {
+        this.status = status;
     }
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public abstract void generateDescription();
 
     public void setPhoto(ItemPhoto photo) {
         this.photo = photo;
     }
 
+    public void setDetails(ItemSpec details) {
+        this.details = details;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public ItemStatus getStatus() {
+        return status;
+    }
+
+
     public ItemPhoto getPhoto() {
         return photo;
     }
+
+
+    public ItemSpec getDetails() {
+        return details;
+    }
+
+
+    public List<Transaction> getTransactions() {
+        return Collections.unmodifiableList(transactions);
+    }
+
 
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
     }
 
-    public Set<Transaction> getTransactions() {
-        return Collections.unmodifiableSet(transactions);
+
+    public void removeTransaction(Transaction transaction) {
+        transactions.remove(transaction);
     }
 
-    public abstract Item copy();
+    public double balance() {
+        return transactions.stream()
+                .map(e -> e.isIncome() ? e.getAmount() : -e.getAmount())
+                .reduce(0.0, Double::sum);
+    }
+
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return quantity == item.quantity && Objects.equals(name, item.name) && Objects.equals(photo, item.photo) && Objects.equals(description, item.description) && Objects.equals(transactions, item.transactions);
+        return Objects.equals(id, item.id);
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, quantity, photo, description, transactions);
+        return Objects.hashCode(id);
     }
 
     @Override
     public String toString() {
-        return "Item{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", quantity=" + quantity +
-                ", photo=" + photo +
-                ", description=" + description +
-                ", transactions=" + transactions +
-                '}';
-    }
-
-    public String toStringNoId() {
-        return "Item{" +
-                "name='" + name + '\'' +
-                ", quantity=" + quantity +
-                ", photo=" + photo.toStringNoId() +
-                ", description=" + description +
-                ", transactions=" +             transactions.stream()
-                .map(Transaction::toStringNoId)
-                .collect(Collectors.joining(", ")) + +
-                '}';
+        final StringBuilder sb = new StringBuilder("Item{");
+        sb.append("id=").append(id);
+        sb.append(", status=").append(status);
+        sb.append(", photo=").append(photo);
+        sb.append(", details=").append(details);
+        sb.append(", transactions=").append(transactions);
+        sb.append('}');
+        return sb.toString();
     }
 }
