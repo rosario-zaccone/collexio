@@ -2,7 +2,6 @@ package org.collexio;
 import org.collexio.persistence.dao.*;
 import org.collexio.persistence.model.*;
 import org.junit.jupiter.api.*;
-
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,10 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DBItemCollectionDAOTest {
 
     private Connection connection;
-    private DBItemSpecDAO itemSpecDAO;
-    private DBItemDAO itemDAO;
-    private DBItemPhotoDAO photoDAO;
-    private DBTransactionDAO transactionDAO;
     private DBItemCollectionDAO collectionDAO;
 
     @BeforeAll
@@ -81,11 +76,7 @@ class DBItemCollectionDAOTest {
             """);
         }
 
-        photoDAO = new DBItemPhotoDAO(connection);
-        transactionDAO = new DBTransactionDAO(connection);
-        itemSpecDAO = new DBItemSpecDAO(connection);
-        itemDAO = new DBItemDAO(connection, itemSpecDAO, photoDAO, transactionDAO);
-        collectionDAO = new DBItemCollectionDAO(connection, itemDAO);
+        collectionDAO = new DBItemCollectionDAO(connection);
     }
 
     @BeforeEach
@@ -113,25 +104,6 @@ class DBItemCollectionDAOTest {
     @Test
     void testAddGetCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Console");
-
-        ItemSpecEntity details = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo 3DS", "nintendo 3ds blu");
-        itemSpecDAO.add(details);
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
-        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, itemSpecDAO.get(1L).get());
-        item.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
-        item.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
-        collection.addItem(item);
-
-
-        ItemSpecEntity details2 = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo DS", "nintendo ds blu");
-        itemSpecDAO.add(details2);
-        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("data/pippo2.png"), LocalDate.now());
-        ItemEntity item2 = new ItemEntity(ItemStatus.AVERAGE, photo2, itemSpecDAO.get(2L).get());
-        item2.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
-        item2.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
-        collection.addItem(item2);
-
-
         collectionDAO.add(collection);
 
         ItemCollectionEntity coll = collectionDAO.get(1L).get();

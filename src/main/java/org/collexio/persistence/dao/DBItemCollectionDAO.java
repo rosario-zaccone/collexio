@@ -8,7 +8,6 @@ import java.util.*;
 
 public class DBItemCollectionDAO implements ItemCollectionDAO {
     private final Connection connection;
-    private final ItemDAO itemDAO;
 
     private final static String selectSql = "SELECT * FROM item_collections WHERE id=?";
     private final static String selectAllSql = "SELECT * FROM item_collections";
@@ -18,34 +17,15 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
     private static final String updateSql = "UPDATE item_collections SET name = ? "
             + "WHERE id = ?";
 
-    public DBItemCollectionDAO(Connection connection, ItemDAO itemDAO) {
+    public DBItemCollectionDAO(Connection connection) {
         this.connection = connection;
-        this.itemDAO = itemDAO;
     }
 
     @Override
     public void add(ItemCollectionEntity collection) throws SQLException {
-        connection.setAutoCommit(false);
-        try {
-            try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-                stmt.setString(1, collection.getName());
-                stmt.executeUpdate();
-
-                try (ResultSet keys = stmt.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        long collectionId = Math.toIntExact(keys.getLong(1));
-                        for (ItemEntity item: collection.getData()) {
-                            itemDAO.add(item, collectionId);
-                        }
-                    }
-                }
-            }
-            connection.commit();
-        } catch (SQLException ex) {
-            connection.rollback();
-            throw ex;
-        } finally {
-            connection.setAutoCommit(true);
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, collection.getName());
+            stmt.executeUpdate();
         }
     }
 
@@ -57,11 +37,7 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String name = rs.getString("name");
-                    List<ItemEntity> items = itemDAO.getByCollectionId(id);
                     ItemCollectionEntity collection = new ItemCollectionEntity(id, name);
-                    for (ItemEntity item: items) {
-                        collection.addItem(item);
-                    }
                     res = Optional.of(collection);
                 }
             }
@@ -92,13 +68,9 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
             if (rs.next()) {
-                long id = rs.getLong("id");
+                Long id = rs.getLong("id");
                 String name = rs.getString("name");
-                List<ItemEntity> items = itemDAO.getByCollectionId(id);
                 ItemCollectionEntity collection = new ItemCollectionEntity(id, name);
-                for (ItemEntity item: items) {
-                    collection.addItem(item);
-                }
                 res.add(collection);
             }
         }

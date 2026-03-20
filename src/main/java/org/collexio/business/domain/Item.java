@@ -1,5 +1,6 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.ItemEntity;
 import org.collexio.persistence.model.ItemStatus;
 
 import java.util.*;
@@ -17,7 +18,7 @@ public class Item {
             throw new IllegalArgumentException("Id must be positive or null");
         this.id = id;
         this.status = status;
-        this.photo = photo;
+        this.photo = photo == null ? null : new ItemPhoto(photo);
         this.details = details;
     }
 
@@ -26,10 +27,12 @@ public class Item {
         this(null, status, photo, details);
     }
 
-    public Item copy() {
-        Item item =  new Item(this.id, this.status, this.photo, this.details);
-        this.transactions.forEach(item::addTransaction);
-        return item;
+    public Item(Item item)  {
+        this.id = item.id;
+        this.status = item.status;
+        this.photo = new ItemPhoto(item.photo);
+        this.details = item.details;
+        item.transactions.forEach(item::addTransaction);
     }
 
     public void setStatus(ItemStatus status) {
@@ -37,7 +40,7 @@ public class Item {
     }
 
     public void setPhoto(ItemPhoto photo) {
-        this.photo = photo;
+        this.photo = new ItemPhoto(photo);
     }
 
     public void setDetails(ItemSpec details) {
@@ -55,7 +58,7 @@ public class Item {
 
 
     public ItemPhoto getPhoto() {
-        return photo;
+        return new ItemPhoto(photo);
     }
 
 
@@ -108,5 +111,27 @@ public class Item {
         sb.append(", transactions=").append(transactions);
         sb.append('}');
         return sb.toString();
+    }
+
+    public static Item fromEntity(ItemEntity entity) {
+        Item item = new Item(
+                entity.getId(),
+                entity.getStatus(),
+                entity.getPhoto() == null ? null : ItemPhoto.fromEntity(entity.getPhoto()),
+                entity.getSpec() == null ? null : ItemSpec.fromEntity(entity.getSpec())
+                );
+        entity.getTransactions().forEach(t -> item.addTransaction(Transaction.fromEntity(t)));
+        return item;
+    }
+
+    public ItemEntity toEntity() {
+        ItemEntity entity = new ItemEntity(
+                this.id,
+                this.status,
+                this.photo.toEntity(),
+                this.details.toEntity()
+        );
+        this.transactions.forEach(t -> entity.addTransaction(t.toEntity()));
+        return entity;
     }
 }

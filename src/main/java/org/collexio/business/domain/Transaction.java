@@ -67,6 +67,14 @@ public class Transaction implements Comparable<Transaction> {
                 '}';
     }
 
+    public static Transaction fromEntity(TransactionEntity entity) {
+        return new Transaction(entity.getId(), entity.getAmount(), entity.isIncome(), entity.getDate());
+    }
+
+    public TransactionEntity toEntity() {
+        return new TransactionEntity(this.id, this.amount, this.income, this.date);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -88,12 +96,3 @@ public class Transaction implements Comparable<Transaction> {
 
 }
 
-/*
-    public static Transaction fromOrm(TransactionEntity entity) {
-        return new Transaction(entity.getId(), entity.getAmount(), entity.isIncome(), entity.getDate());
-    }
-
-    public TransactionEntity toOrm() {
-        return new TransactionEntity(this.id, this.amount, this.income, this.date);
-    }
- */

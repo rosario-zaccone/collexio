@@ -76,7 +76,7 @@ public class DBItemSpecDAO implements ItemSpecDAO {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
-                long id = rs.getLong("id");
+                Long id = rs.getLong("id");
                 ItemType type = ItemType.fromInt(rs.getInt("type"));
                 String name = rs.getString("name");
                 String description = rs.getString("description");

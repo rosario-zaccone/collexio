@@ -1,5 +1,6 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.ItemPhotoEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -8,7 +9,7 @@ import java.util.Objects;
 
 public class ItemPhoto implements Comparable<ItemPhoto> {
     private final Long id;
-    private final Path path;
+    private Path path;
     private final LocalDate date;
 
     public ItemPhoto(Long id, Path path, LocalDate date) {
@@ -19,6 +20,13 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
         this.date = date;
     }
 
+    public ItemPhoto(ItemPhoto photo) {
+        this.id = photo.id;
+        this.path = photo.path;
+        this.date = photo.date;
+    }
+
+
 
     public ItemPhoto(Long id, Path path) {
         this(null, path, LocalDate.MIN);
@@ -26,6 +34,10 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
 
     public ItemPhoto(Path path, LocalDate date) {
         this(null, path, date);
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 
     public Long getId() {
@@ -56,6 +68,15 @@ public class ItemPhoto implements Comparable<ItemPhoto> {
                 ", date=" + date +
                 '}';
     }
+
+    public static ItemPhoto fromEntity(ItemPhotoEntity entity) {
+        return new ItemPhoto(entity.getId(), entity.getPath(), entity.getDate());
+    }
+
+    public ItemPhotoEntity toEntity() {
+        return new ItemPhotoEntity(this.id, this.path, this.date);
+    }
+
     @Override
     public int compareTo(@NotNull ItemPhoto o) {
         return date.compareTo(o.getDate());

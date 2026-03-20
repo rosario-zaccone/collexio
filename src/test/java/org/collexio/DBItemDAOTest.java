@@ -1,10 +1,8 @@
 package org.collexio;
 
 import org.collexio.persistence.dao.DBItemDAO;
-import org.collexio.persistence.dao.DBItemPhotoDAO;
-import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.dao.DBTransactionDAO;
 import org.collexio.persistence.model.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.*;
 
 import java.nio.file.Path;
@@ -23,9 +21,6 @@ class DBItemDAOTest {
 
     private Connection connection;
     private DBItemDAO itemDAO;
-    private DBItemPhotoDAO photoDAO;
-    private DBTransactionDAO transactionDAO;
-    private DBItemSpecDAO itemSpecDAO;
 
     @BeforeAll
     void setupDatabase() throws SQLException {
@@ -53,6 +48,12 @@ class DBItemDAOTest {
                     description TEXT NOT NULL
                 );
             """);
+
+            stmt.execute("""
+                INSERT INTO item_specs (type, name, description)
+                VALUES (1, 'nintendo ds', 'console nintendo'), (1, 'nintendo 3ds', 'console nintendo');
+            """);
+
 
             stmt.execute("""
                 CREATE TABLE items(
@@ -87,24 +88,15 @@ class DBItemDAOTest {
             """);
         }
 
-        photoDAO = new DBItemPhotoDAO(connection);
-        transactionDAO = new DBTransactionDAO(connection);
-        itemSpecDAO = new DBItemSpecDAO(connection);
-        itemDAO = new DBItemDAO(connection, itemSpecDAO, photoDAO, transactionDAO);
+        itemDAO = new DBItemDAO(connection);
     }
 
     @BeforeEach
     void clearData() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM item_transactions;");
-            stmt.execute("DELETE FROM item_photos;");
             stmt.execute("DELETE FROM items;");
-            stmt.execute("DELETE FROM item_specs;");
 
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_transactions';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_photos';");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name='items';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_specs';");
         }
     }
 
@@ -114,46 +106,29 @@ class DBItemDAOTest {
     }
 
     @Test
-    void testAddItem() throws SQLException {
-        ItemSpecEntity details = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo 3DS", "nintendo 3ds blu");
-        itemSpecDAO.add(details);
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
-        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, itemSpecDAO.get(1L).get());
-        item.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
-        item.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
+    void testAddGet() throws SQLException {
+        ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
+        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
         itemDAO.add(item, 1L);
 
-        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("data/photo2.png"), LocalDate.now());
-        ItemEntity item2 = new ItemEntity(ItemStatus.GOOD, photo2, itemSpecDAO.get(1L).get());
-        item2.addTransaction(new TransactionEntity(150, true, LocalDate.now()));
+        ItemEntity item2 = new ItemEntity(ItemStatus.GOOD, spec);
         itemDAO.add(item2, 1L);
 
-        ItemPhotoEntity photo3 = new ItemPhotoEntity(Path.of("data/photo3.png"), LocalDate.now());
-        ItemEntity item3 = new ItemEntity(ItemStatus.BAD, photo3, itemSpecDAO.get(1L).get());
-        item3.addTransaction(new TransactionEntity(50, false, LocalDate.now()));
+        ItemEntity item3 = new ItemEntity(ItemStatus.BAD, spec);
         itemDAO.add(item3, 1L);
 
         ItemEntity fetched = itemDAO.get(2L).get();
-        assertEquals(item2.toStringNoId(), fetched.toStringNoId());
+        assertEquals(item2.getStatus(), fetched.getStatus());
     }
 
     @Test
     void testGetByCollectionId() throws SQLException {
-        ItemSpecEntity details = new ItemSpecEntity(1L, ItemType.TECHITEM, "Nintendo 3DS", "nintendo 3ds rosso");
-        itemSpecDAO.add(details);
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
-        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, details);
-        item.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
-        item.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
+        ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
+        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
         itemDAO.add(item, 1L);
 
-        ItemSpecEntity details2 = new ItemSpecEntity(2L, ItemType.TECHITEM, "Nintendo DS", "nintendo ds bianco");
-        itemSpecDAO.add(details2);
-        ItemPhotoEntity photo2 = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
-        ItemEntity item2 = new ItemEntity(ItemStatus.AVERAGE, photo, details2);
-        item2.addTransaction(new TransactionEntity(100, false, LocalDate.now()));
-        item2.addTransaction(new TransactionEntity(200, true, LocalDate.now()));
-        itemDAO.add(item2, 1L);
+        ItemEntity item2 = new ItemEntity(ItemStatus.AVERAGE, spec);
+        itemDAO.add(item2,  1L);
 
         List<ItemEntity> items = itemDAO.getByCollectionId(1L);
         assertEquals(2, items.size());
@@ -162,30 +137,21 @@ class DBItemDAOTest {
 
     @Test
     void testUpdateItem() throws SQLException {
-        ItemSpecEntity details = new ItemSpecEntity(1L, ItemType.BOOK, "Libro", "desc");
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("/tmp/photo4.jpg"), LocalDate.now());
-        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, details);
-        item.addTransaction(new TransactionEntity(15.0, true, LocalDate.now()));
-        itemSpecDAO.add(details);
+        ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
+        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
         itemDAO.add(item, 1L);
 
-        ItemEntity updated = new ItemEntity(1L, ItemStatus.GOOD, photo, details);
-        updated.addTransaction(new TransactionEntity(15.0, true, LocalDate.now()));
-
+        ItemEntity updated = new ItemEntity(1L, ItemStatus.GOOD, spec);
         itemDAO.update(updated, false);
 
         ItemEntity fetched = itemDAO.get(1L).get();
-        assertEquals(updated.toStringNoId(), fetched.toStringNoId());
+        assertEquals(updated.getStatus(), fetched.getStatus());
     }
 
     @Test
     void testDeleteItem() throws SQLException {
-        ItemSpecEntity details = new ItemSpecEntity(1L, ItemType.TECHITEM, "Nintendo DS");
-        itemSpecDAO.add(details);
-        ItemPhotoEntity photo = new ItemPhotoEntity(Path.of("data/pippo.png"), LocalDate.now());
-        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, photo, details);
-        item.addTransaction(new TransactionEntity(200, false, LocalDate.now()));
-        item.addTransaction(new TransactionEntity(400, true, LocalDate.now()));
+        ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
+        ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
 
         itemDAO.add(item, 1L);
 

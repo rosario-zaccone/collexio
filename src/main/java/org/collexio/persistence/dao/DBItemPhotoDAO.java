@@ -21,6 +21,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
     private static final String updateSql = "UPDATE item_photos SET path = ? , "
             + "photo_date = ? "
             + "WHERE id = ?";
+    private static final String deleteSql = "DELETE FROM item_photos WHERE item_id = ?";
 
     public DBItemPhotoDAO(Connection connection) {
         this.connection = connection; // DI
@@ -50,8 +51,8 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
         try (PreparedStatement stmt = connection.prepareStatement(selectByItemIdSql)) {
             stmt.setLong(1, itemId);
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    long id = rs.getLong("id");
+                if (rs.next()) {
+                    Long id = rs.getLong("id");
                     Path path = Paths.get(rs.getString("path"));
                     LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
                     res = Optional.of(new ItemPhotoEntity(id, path, date));
@@ -78,7 +79,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
             while (rs.next()) {
-                long id = rs.getLong("id");
+                Long id = rs.getLong("id");
                 Path path = Paths.get(rs.getString("path"));
                 LocalDate date = LocalDate.parse(rs.getString("photo_date"));
                 res.add(new ItemPhotoEntity(id, path, date));
@@ -87,26 +88,29 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
         return res;
     }
 
-    @Override
-    public Optional<ItemPhotoEntity> getLast() throws SQLException {
-        Optional<ItemPhotoEntity> res = Optional.empty();
-        try (Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(selectMaxIdSql)){
-                while (rs.next()) {
-                    Path path = Paths.get(rs.getString("path"));
-                    LocalDate date = LocalDate.parse(rs.getString("photo_date")); //rs.getTimestamp("photo_date").toLocalDateTime(); for postgres
-                    res = Optional.of(new ItemPhotoEntity(rs.getLong("id"), path, date));
-                }
-            }
-        return res;
-    }
 
     @Override
-    public void add(ItemPhotoEntity photo, Long itemId) throws SQLException {
+    public ItemPhotoEntity add(ItemPhotoEntity photo, Long itemId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
             stmt.setString(1, photo.getPath().toString());
             stmt.setString(2, photo.getDate().toString());
             stmt.setLong(3, itemId);
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return new ItemPhotoEntity(rs.getLong(1), photo.getPath(), photo.getDate());
+                } else {
+                    throw new SQLException("Creating transaction failed, no ID obtained.");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deleteByItemId(Long id)throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(deleteSql)) {
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         }
     }

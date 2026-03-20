@@ -1,5 +1,6 @@
 package org.collexio.persistence.dao;
 
+import org.collexio.business.domain.Transaction;
 import org.collexio.persistence.model.TransactionEntity;
 
 import java.sql.*;
@@ -14,11 +15,6 @@ public class DBTransactionDAO implements TransactionDAO {
     private static final String selectByItemIdSql = "SELECT * FROM item_transactions WHERE item_id = ? ORDER BY transaction_date";
     private static final String selectSql = "SELECT * FROM item_transactions WHERE id=?";
     private static final String insertSql = "INSERT INTO item_transactions(amount, income, transaction_date, item_id) VALUES (?,?,?,?)";
-    private static final String updateSqlNoItem = "UPDATE item_transactions SET amount = ? , "
-            + "income = ? ,"
-            + "transaction_date = ?,"
-            + "item_id = ? "
-            + "WHERE id = ?";
     private static final String updateSql = "UPDATE item_transactions SET amount = ? , "
             + "income = ? ,"
             + "transaction_date = ? "
@@ -30,14 +26,23 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public void add(TransactionEntity transaction, Long itemId) throws SQLException {
+    public TransactionEntity add(TransactionEntity transaction, Long itemId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());
             stmt.setLong(4, itemId);
             stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return new TransactionEntity(rs.getLong(1), transaction.getAmount(), transaction.isIncome(), transaction.getDate());
+                } else {
+                    throw new SQLException("Creating transaction failed, no ID obtained.");
+                }
+            }
         }
+
     }
 
     @Override
@@ -58,19 +63,12 @@ public class DBTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public void update(TransactionEntity transaction, boolean noItem) throws SQLException{
-        String prompt = updateSql;
-        if (noItem)
-            prompt = updateSqlNoItem;
-        try (PreparedStatement stmt = connection.prepareStatement(prompt)) {
+    public void update(TransactionEntity transaction) throws SQLException{
+        try (PreparedStatement stmt = connection.prepareStatement(updateSql)) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());
-            if (noItem) {
-                stmt.setNull(4, Types.INTEGER);
-                stmt.setLong(5, transaction.getId());
-            } else
-                stmt.setLong(4, transaction.getId());
+            stmt.setLong(4, transaction.getId());
             stmt.executeUpdate();
         }
     }

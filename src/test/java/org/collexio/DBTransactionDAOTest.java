@@ -8,10 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -122,15 +119,17 @@ class DBTransactionDAOTest {
     }
 
     @Test
-    void testAddAndGetTransaction() throws SQLException {
+    void testAddGetTransaction() throws SQLException {
         TransactionEntity t = new TransactionEntity(100.0, true, LocalDate.now());
         TransactionEntity t2 = new TransactionEntity(1000.0, true, LocalDate.now());
-        transactionDAO.add(t, 1L);
-        transactionDAO.add(t2, 1L);
+        t = transactionDAO.add(t, 1L);
+        t2 = transactionDAO.add(t2, 1L);
 
-        TransactionEntity fetched = transactionDAO.get(1L).get();
-
+        TransactionEntity fetched = transactionDAO.get(t.getId()).get();
         assertEquals(t.toStringNoId(), fetched.toStringNoId());
+
+        Optional<TransactionEntity> empty = transactionDAO.get(4L);
+        assertTrue(empty.isEmpty());
     }
 
     @Test
@@ -180,7 +179,7 @@ class DBTransactionDAOTest {
         TransactionEntity saved = all.get(0);
 
         TransactionEntity updated = new TransactionEntity(saved.getId(), 150.0, true, LocalDate.now().plusDays(1));
-        transactionDAO.update(updated, false);
+        transactionDAO.update(updated);
 
         Optional<TransactionEntity> fetched = transactionDAO.get(saved.getId());
         assertTrue(fetched.isPresent());

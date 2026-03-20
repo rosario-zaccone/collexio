@@ -1,5 +1,6 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.ItemSpecEntity;
 import org.collexio.persistence.model.ItemType;
 
 import java.util.Objects;
@@ -26,9 +27,10 @@ public class ItemSpec {
         this(id, type, name, "no description");
     }
 
-    public ItemSpec(String name, ItemType type, String description) {
+    public ItemSpec(ItemType type, String name, String description) {
         this(null, type, name, description);
     }
+
 
     public Long getId() {
         return id;
@@ -55,6 +57,14 @@ public class ItemSpec {
         sb.append(", description='").append(description).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public static ItemSpec fromEntity(ItemSpecEntity entity) {
+        return new ItemSpec(entity.getId(), entity.getType(), entity.getName(), entity.getDescription());
+    }
+
+    public ItemSpecEntity toEntity() {
+        return new ItemSpecEntity(this.id, this.type, this.name, this.description);
     }
 
     @Override

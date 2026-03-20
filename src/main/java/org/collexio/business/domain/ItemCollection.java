@@ -1,5 +1,7 @@
 package org.collexio.business.domain;
 
+import org.collexio.persistence.model.ItemCollectionEntity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +45,7 @@ public class ItemCollection {
     }
 
     public void addItem(Item item) { //TODO: deep copy
-        data.add(item.copy());
+        data.add(new Item(item));
     }
 
     public void removeItem(Item item) {
@@ -67,6 +69,18 @@ public class ItemCollection {
                 ", name='" + name + '\'' +
                 ", data=" + data +
                 '}';
+    }
+
+    public static ItemCollection fromEntity(ItemCollectionEntity entity) {
+        ItemCollection collection = new ItemCollection(entity.getId(), entity.getName());
+        entity.getData().forEach(i -> collection.addItem(Item.fromEntity(i)));
+        return collection;
+    }
+
+    public ItemCollectionEntity toEntity() {
+        ItemCollectionEntity entity = new ItemCollectionEntity(this.id, this.name);
+        this.data.forEach(i -> entity.addItem(i.toEntity()));
+        return entity;
     }
 
     @Override
