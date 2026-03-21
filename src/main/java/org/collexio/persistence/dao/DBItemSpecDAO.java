@@ -1,5 +1,6 @@
 package org.collexio.persistence.dao;
 
+import org.collexio.persistence.model.ItemPhotoEntity;
 import org.collexio.persistence.model.ItemSpecEntity;
 import org.collexio.persistence.model.ItemType;
 
@@ -19,18 +20,30 @@ public class DBItemSpecDAO implements ItemSpecDAO {
             + "description = ? "
             + "WHERE id = ?";
     private static final String deleteSql = "DELETE FROM item_specs WHERE id=?";
+    private static final String selectSpecSql =
+            "SELECT item_specs.id AS spec_id, item_specs.type, item_specs.name, item_specs.description " +
+                    "FROM items INNER JOIN item_specs ON items.item_spec_id = item_specs.id " +
+                    "WHERE items.id = ?";
 
     public DBItemSpecDAO(Connection connection) {
         this.connection = connection; // DI
     }
 
     @Override
-    public void add(ItemSpecEntity spec) throws SQLException {
+    public ItemSpecEntity add(ItemSpecEntity spec) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
             stmt.setInt(1, spec.getType().getValue());
             stmt.setString(2, spec.getName());
             stmt.setString(3, spec.getDescription());
             stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return new ItemSpecEntity(rs.getLong(1), spec.getType(), spec.getName(), spec.getDescription());
+                } else {
+                    throw new SQLException("Creating transaction failed, no ID obtained.");
+                }
+            }
         }
     }
 
@@ -81,6 +94,24 @@ public class DBItemSpecDAO implements ItemSpecDAO {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 res.add(new ItemSpecEntity(id, type, name, description));
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public Optional<ItemSpecEntity> getItemSpec(Long id) throws SQLException {
+        Optional<ItemSpecEntity> res = Optional.empty();
+        try (PreparedStatement stmt = connection.prepareStatement(selectSpecSql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Long specId = rs.getLong("spec_id");
+                    ItemType type = ItemType.fromInt(rs.getInt("type"));
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    res = Optional.of(new ItemSpecEntity(specId, type, name, description));
+                }
             }
         }
         return res;

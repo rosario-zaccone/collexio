@@ -77,13 +77,13 @@ class DBItemSpecDAOTest {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.BOOK, "Name", "Desc");
         ItemSpecEntity spec2 = new ItemSpecEntity(ItemType.BOOK, "Name2", "Desc");
         ItemSpecEntity spec3 = new ItemSpecEntity(ItemType.BOOK, "Name3", "Desc");
-        dao.add(spec); dao.add(spec2); dao.add(spec3);
+        spec = dao.add(spec); spec2 = dao.add(spec2); spec3 = dao.add(spec3);
 
-        ItemSpecEntity saved = dao.getAll().get(0);
-        dao.delete(saved.getId());
+        dao.delete(dao.get(spec2.getId()).get().getId());
 
-        Optional<ItemSpecEntity> result = dao.get(saved.getId());
+        Optional<ItemSpecEntity> result = dao.get(spec2.getId());
         assertFalse(result.isPresent());
+        assertEquals(2, dao.getAll().size());
     }
 
     @Test

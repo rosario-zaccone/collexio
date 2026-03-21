@@ -90,8 +90,8 @@ class ItemServiceTest {
         itemSpecDAO = new DBItemSpecDAO(connection);
         itemDAO = new DBItemDAO(connection);
 
-        itemService = new ItemService(itemDAO, new ItemPhotoService(photoDAO), new TransactionService(transactionDAO));
         itemSpecService = new ItemSpecService(itemSpecDAO);
+        itemService = new ItemService(itemDAO, new ItemPhotoService(photoDAO), new TransactionService(transactionDAO), itemSpecService);
         // cartella temporanea per le foto
         tempDir = Files.createTempDirectory("item_photos");
         System.setProperty("ITEM_PHOTO_DIR", tempDir.toString());
@@ -124,48 +124,58 @@ class ItemServiceTest {
 
     @Test
     void testAddAndGetItem() throws SQLException, IOException {
-        ItemSpec spec = new ItemSpec(1L, ItemType.TECHITEM, "Nintendo Switch", "console");
-        itemSpecService.add(spec);
+        ItemSpec spec = new ItemSpec(ItemType.TECHITEM, "Nintendo Switch", "console");
+        spec = itemSpecService.add(spec);
 
-        Item item = new Item(1L, ItemStatus.GOOD, new ItemPhoto(1L, Path.of("images/test/test.png"), LocalDate.now()), spec);
+        Item item = new Item(ItemStatus.GOOD, new ItemPhoto(Path.of("images/test/test.png"), LocalDate.now()), spec);
         item.addTransaction(new Transaction(1L, 200, true, LocalDate.now()));
         item.addTransaction(new Transaction(2L, 400, true, LocalDate.now()));
 
-        itemService.add(item, 1L);
-        Item fetched = itemService.get(1L);
+        item = itemService.add(item, 1L);
+        Item fetched = itemService.get(item.getId());
         assertEquals(item.toString(), fetched.toString());
     }
 
-    /*
     @Test
     void testGetByCollectionId() throws SQLException, IOException {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo Switch", "console");
-        itemSpecDAO.add(spec);
+        spec = itemSpecDAO.add(spec);
 
-        Path photoPath = Files.createTempFile(tempDir, "photo2", ".png");
-        ItemPhoto photo = new ItemPhoto(photoPath, LocalDate.now());
-        Item item = new Item(ItemStatus.GOOD, photo, ItemSpec.fromEntity(spec));
+        Path photoPath1 = Files.createTempFile(tempDir, "photo1", ".png");
+        ItemPhoto photo1 = new ItemPhoto(photoPath1, LocalDate.now());
+        Item item1 = new Item(ItemStatus.GOOD, photo1, ItemSpec.fromEntity(spec));
+        item1 = itemService.add(item1, 1L);
 
-        itemService.add(item, 1L);
+        Path photoPath2 = Files.createTempFile(tempDir, "photo2", ".png");
+        ItemPhoto photo2 = new ItemPhoto(photoPath2, LocalDate.now());
+        Item item2 = new Item(ItemStatus.GOOD, photo2, ItemSpec.fromEntity(spec));
+        item2 = itemService.add(item2, 1L);
+
+        Path photoPath3 = Files.createTempFile(tempDir, "photo3", ".png");
+        ItemPhoto photo3 = new ItemPhoto(photoPath3, LocalDate.now());
+        Item item3 = new Item(ItemStatus.GOOD, photo3, ItemSpec.fromEntity(spec));
+        item3 = itemService.add(item3, 1L);
 
         List<Item> items = itemService.getByCollectionId(1L);
-        assertEquals(1, items.size());
-        assertEquals("Nintendo Switch", items.get(0).getSpec().getName());
+
+        assertEquals(3, items.size());
+        assertTrue(items.contains(item1));
+        assertTrue(items.contains(item2));
+        assertTrue(items.contains(item3));
     }
 
     @Test
     void testDeleteItem() throws SQLException, IOException {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.TECHITEM, "GameCube", "console");
-        itemSpecDAO.add(spec);
+        spec = itemSpecDAO.add(spec);
 
         Path photoPath = Files.createTempFile(tempDir, "photo3", ".png");
         ItemPhoto photo = new ItemPhoto(photoPath, LocalDate.now());
         Item item = new Item(ItemStatus.AVERAGE, photo, ItemSpec.fromEntity(spec));
 
-        itemService.add(item, 1L);
-        itemService.delete(1L);
+        item = itemService.add(item, 1L);
+        itemService.delete(item.getId());
 
         assertThrows(NoSuchElementException.class, () -> itemService.get(1L));
     }
-     */
 }

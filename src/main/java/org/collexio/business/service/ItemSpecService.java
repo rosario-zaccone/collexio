@@ -3,6 +3,10 @@ package org.collexio.business.service;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.dao.ItemSpecDAO;
 import org.collexio.persistence.model.ItemSpecEntity;
+import org.collexio.utilities.InfoGenerator;
+import org.collexio.utilities.InfoGeneratorFactory;
+import org.collexio.utilities.PriceScraper;
+import org.collexio.utilities.PriceScraperFactory;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
@@ -15,8 +19,8 @@ public class ItemSpecService {
         this.dao = dao;
     }
 
-    public void add(ItemSpec spec) throws SQLException {
-        dao.add(spec.toEntity());
+    public ItemSpec add(ItemSpec spec) throws SQLException {
+        return ItemSpec.fromEntity(dao.add(spec.toEntity()));
     }
 
     public ItemSpec get(Long id) throws SQLException {
@@ -33,4 +37,23 @@ public class ItemSpecService {
     public void delete(Long id) throws SQLException {
         dao.delete(id);
     }
+
+    public ItemSpec getByItemId(Long id) throws SQLException {
+        Optional<ItemSpecEntity> res = dao.getItemSpec(id);
+        if (res.isEmpty())
+            throw new NoSuchElementException("ItemSpec not found for id: " + id);
+        return ItemSpec.fromEntity(res.get());
+    }
+
+    public double price(ItemSpec spec) {
+        PriceScraper scraper = PriceScraperFactory.getPriceScraper(spec);
+        return scraper.computePrice(spec.getName());
+    }
+
+    public String generateDescriptionByAI(ItemSpec spec) {
+        InfoGenerator generator = InfoGeneratorFactory.getInfoGenerator(spec);
+        return generator.generateDescription(spec.getName());
+    }
+
+
 }

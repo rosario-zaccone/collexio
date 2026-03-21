@@ -104,9 +104,9 @@ class DBItemCollectionDAOTest {
     @Test
     void testAddGetCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Console");
-        collectionDAO.add(collection);
+        collection = collectionDAO.add(collection);
 
-        ItemCollectionEntity coll = collectionDAO.get(1L).get();
+        ItemCollectionEntity coll = collectionDAO.get(collection.getId()).get();
         assertEquals(coll.toStringNoId(), collection.toStringNoId());
     }
 
@@ -114,9 +114,9 @@ class DBItemCollectionDAOTest {
     @Test
     void testUpdateCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Old Name");
-        collectionDAO.add(collection);
+        collection = collectionDAO.add(collection);
 
-        ItemCollectionEntity saved = collectionDAO.getAll().get(0);
+        ItemCollectionEntity saved = collectionDAO.get(collection.getId()).get();
 
         collectionDAO.update(new ItemCollectionEntity(saved.getId(), "New Name"));
 

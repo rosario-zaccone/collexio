@@ -109,15 +109,15 @@ class DBItemDAOTest {
     void testAddGet() throws SQLException {
         ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
         ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
-        itemDAO.add(item, 1L);
+        item = itemDAO.add(item, 1L);
 
         ItemEntity item2 = new ItemEntity(ItemStatus.GOOD, spec);
-        itemDAO.add(item2, 1L);
+        item2 = itemDAO.add(item2, 1L);
 
         ItemEntity item3 = new ItemEntity(ItemStatus.BAD, spec);
-        itemDAO.add(item3, 1L);
+        item3 = itemDAO.add(item3, 1L);
 
-        ItemEntity fetched = itemDAO.get(2L).get();
+        ItemEntity fetched = itemDAO.get(item2.getId()).get();
         assertEquals(item2.getStatus(), fetched.getStatus());
     }
 
@@ -125,10 +125,13 @@ class DBItemDAOTest {
     void testGetByCollectionId() throws SQLException {
         ItemSpecEntity spec = new ItemSpecEntity(1L, ItemType.TECHITEM, "nintendo ds", "console nintendo");
         ItemEntity item = new ItemEntity(ItemStatus.AVERAGE, spec);
-        itemDAO.add(item, 1L);
+        item = itemDAO.add(item, 1L);
 
         ItemEntity item2 = new ItemEntity(ItemStatus.AVERAGE, spec);
-        itemDAO.add(item2,  1L);
+        item2 = itemDAO.add(item2,  1L);
+
+        ItemEntity item3 = new ItemEntity(ItemStatus.AVERAGE, spec);
+        item2 = itemDAO.add(item2,  2L);
 
         List<ItemEntity> items = itemDAO.getByCollectionId(1L);
         assertEquals(2, items.size());

@@ -126,7 +126,10 @@ class DBTransactionDAOTest {
         t2 = transactionDAO.add(t2, 1L);
 
         TransactionEntity fetched = transactionDAO.get(t.getId()).get();
-        assertEquals(t.toStringNoId(), fetched.toStringNoId());
+        assertEquals(t.toString(), fetched.toString());
+
+        fetched = transactionDAO.get(t2.getId()).get();
+        assertEquals(t2.toString(), fetched.toString());
 
         Optional<TransactionEntity> empty = transactionDAO.get(4L);
         assertTrue(empty.isEmpty());
@@ -173,7 +176,7 @@ class DBTransactionDAOTest {
     @Test
     void testUpdateTransaction() throws SQLException {
         TransactionEntity t = new TransactionEntity(75.0, false, LocalDate.now());
-        transactionDAO.add(t, 1L);
+        t = transactionDAO.add(t, 1L);
 
         List<TransactionEntity> all = transactionDAO.getAll();
         TransactionEntity saved = all.get(0);
@@ -183,20 +186,21 @@ class DBTransactionDAOTest {
 
         Optional<TransactionEntity> fetched = transactionDAO.get(saved.getId());
         assertTrue(fetched.isPresent());
-        assertEquals(updated.toStringNoId(), fetched.get().toStringNoId());
+        assertEquals(updated.toString(), fetched.get().toString());
     }
 
     @Test
     void testDeleteTransaction() throws SQLException {
-        TransactionEntity t = new TransactionEntity(30.0, false, LocalDate.now());
-        transactionDAO.add(t, 1L);
+        TransactionEntity t = new TransactionEntity(100.0, true, LocalDate.now());
+        TransactionEntity t2 = new TransactionEntity(1000.0, true, LocalDate.now());
+        t = transactionDAO.add(t, 1L);
+        t2 = transactionDAO.add(t2, 1L);
 
-        List<TransactionEntity> all = transactionDAO.getAll();
-        TransactionEntity saved = all.get(0);
+        transactionDAO.delete(t.getId());
 
-        transactionDAO.delete(saved.getId());
-
-        Optional<TransactionEntity> fetched = transactionDAO.get(saved.getId());
+        Optional<TransactionEntity> fetched = transactionDAO.get(t.getId());
         assertFalse(fetched.isPresent());
+        fetched = transactionDAO.get(t2.getId());
+        assertTrue(fetched.isPresent());
     }
 }

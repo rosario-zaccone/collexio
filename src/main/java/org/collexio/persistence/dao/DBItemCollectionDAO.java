@@ -2,6 +2,7 @@ package org.collexio.persistence.dao;
 
 import org.collexio.persistence.model.ItemCollectionEntity;
 import org.collexio.persistence.model.ItemEntity;
+import org.collexio.persistence.model.TransactionEntity;
 
 import java.sql.*;
 import java.util.*;
@@ -22,11 +23,20 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
     }
 
     @Override
-    public void add(ItemCollectionEntity collection) throws SQLException {
+    public ItemCollectionEntity add(ItemCollectionEntity collection) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, collection.getName());
             stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return new ItemCollectionEntity(rs.getLong(1), collection.getName());
+                } else {
+                    throw new SQLException("Creating transaction failed, no ID obtained.");
+                }
+            }
         }
+
     }
 
     @Override

@@ -50,31 +50,53 @@ public class ItemSpecServiceTest {
     @Test
     public void testAddGet() throws SQLException {
         ItemSpec spec = new ItemSpec(1L, ItemType.TECHITEM, "nintendo ds", "desc");
-        service.add(spec);
-        ItemSpec fetched = service.get(1L);
-        assertEquals(spec.toEntity().toStringNoId(), fetched.toEntity().toStringNoId());
+        spec = service.add(spec);
+        ItemSpec fetched = service.get(spec.getId());
+        assertEquals(spec.toEntity().toString(), fetched.toEntity().toString());
 
         assertThrows(NoSuchElementException.class, () -> service.get(2L));
     }
 
     @Test
     public void testDelete() throws SQLException {
-        ItemSpec spec = new ItemSpec(1L, ItemType.TECHITEM, "nintendo ds", "desc");
-        service.add(spec);
-        service.delete(1L);
+        ItemSpec spec = new ItemSpec(ItemType.TECHITEM, "nintendo ds", "desc");
+        spec = service.add(spec);
+        service.delete(spec.getId());
 
         assertThrows(NoSuchElementException.class, () -> service.get(1L));
     }
 
     @Test
     public void testUpdate() throws SQLException {
-        ItemSpec spec = new ItemSpec(1L, ItemType.TECHITEM, "nintendo ds", "desc");
-        service.add(spec);
+        ItemSpec spec = new ItemSpec(ItemType.TECHITEM, "nintendo ds", "desc");
+        spec = service.add(spec);
 
-        ItemSpec updatedSpec = new ItemSpec(1L, ItemType.TECHITEM, "nintendo ds lite", "new desc");
+        ItemSpec updatedSpec = new ItemSpec(spec.getId(), ItemType.TECHITEM, "nintendo ds lite", "new desc");
         service.update(updatedSpec);
 
         ItemSpec fetched = service.get(1L);
-        assertEquals(updatedSpec.toEntity().toStringNoId(), fetched.toEntity().toStringNoId());
+        assertEquals(updatedSpec.toEntity().toString(), fetched.toEntity().toString());
+    }
+
+    @Test
+    @Disabled
+    public void testPrice() throws SQLException {
+        //ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
+        //System.out.println(service.price(tech));
+
+        ItemSpec book = new ItemSpec(ItemType.BOOK, "Dragon Ball Super. Vol. 4", "desc");
+        System.out.println(service.price(book));
+    }
+
+    @Test
+    public void testGenerator() throws SQLException {
+        ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
+        System.out.println(service.generateDescriptionByAI(tech));
+
+        ItemSpec book = new ItemSpec(ItemType.BOOK, "Dragon Ball Super. Vol. 4", "desc");
+        System.out.println(service.generateDescriptionByAI(book));
+
+        ItemSpec plant = new ItemSpec(ItemType.PLANT, "crassula ovata", "desc");
+        System.out.println(service.generateDescriptionByAI(book));
     }
 }

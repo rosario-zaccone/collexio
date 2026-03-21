@@ -23,10 +23,6 @@ public class DBItemDAO implements ItemDAO{
             + "WHERE id = ?";
     private static final String updateSql = "UPDATE items SET status = ? "
             + "WHERE id = ?";
-    private static final String selectSpecSql =
-            "SELECT item_specs.id AS spec_id, item_specs.type, item_specs.name, item_specs.description " +
-                    "FROM items INNER JOIN item_specs ON items.item_spec_id = item_specs.id " +
-                    "WHERE items.id = ?";
 
     public DBItemDAO(Connection connection) {
         this.connection = connection;
@@ -34,7 +30,7 @@ public class DBItemDAO implements ItemDAO{
 
 
     @Override
-    public Long add(ItemEntity item, Long collectionId) throws SQLException {
+    public ItemEntity add(ItemEntity item, Long collectionId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, item.getStatus().getValue());
             stmt.setLong(2, item.getSpec().getId());
@@ -43,7 +39,7 @@ public class DBItemDAO implements ItemDAO{
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getLong(1);
+                    return new ItemEntity(rs.getLong(1), item.getStatus(), item.getSpec());
                 } else {
                     throw new SQLException("Creating item failed, no ID obtained.");
                 }
@@ -119,24 +115,6 @@ public class DBItemDAO implements ItemDAO{
                     ItemEntity item = new ItemEntity(id, status);
                     res.add(item);
                 }
-        }
-        return res;
-    }
-
-    @Override
-    public Optional<ItemSpecEntity> getItemSpec(Long id) throws SQLException {
-        Optional<ItemSpecEntity> res = Optional.empty();
-        try (PreparedStatement stmt = connection.prepareStatement(selectSpecSql)) {
-            stmt.setLong(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Long specId = rs.getLong("spec_id");
-                    ItemType type = ItemType.fromInt(rs.getInt("type"));
-                    String name = rs.getString("name");
-                    String description = rs.getString("description");
-                    res = Optional.of(new ItemSpecEntity(specId, type, name, description));
-                }
-            }
         }
         return res;
     }

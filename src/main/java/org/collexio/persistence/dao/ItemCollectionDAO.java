@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemCollectionDAO {
-    void add(ItemCollectionEntity collection) throws SQLException;
+    ItemCollectionEntity add(ItemCollectionEntity collection) throws SQLException;
     Optional<ItemCollectionEntity> get(Long id) throws SQLException;
     void update(ItemCollectionEntity collection) throws SQLException;
     void delete(Long id) throws SQLException;

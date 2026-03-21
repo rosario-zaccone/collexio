@@ -14,8 +14,6 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
 
     private static final String selectAllSql = "SELECT * FROM item_photos";
     private static final String selectSql = "SELECT * FROM item_photos WHERE id=?";
-    private static final String selectMaxIdSql =
-            "SELECT * FROM item_photos ORDER BY id DESC LIMIT 1";
     private static final String selectByItemIdSql = "SELECT * FROM item_photos WHERE item_id=?";
     private static final String insertSql = "INSERT INTO item_photos(path, photo_date, item_id) VALUES (?,?,?)";
     private static final String updateSql = "UPDATE item_photos SET path = ? , "
