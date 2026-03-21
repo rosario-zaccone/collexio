@@ -7,6 +7,7 @@ import org.collexio.persistence.dao.DBItemDAO;
 import org.collexio.persistence.dao.ItemDAO;
 import org.collexio.persistence.model.ItemEntity;
 
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 
 
 public class ItemService {
@@ -32,7 +32,7 @@ public class ItemService {
 
     public Item add(Item item, Long collectionId) throws SQLException, IOException {
         // PRE: details and collection prev saved
-        Connection connection = ((DBItemDAO)dao).getConnection();
+        Connection connection = ((DBItemDAO) dao).getConnection();
         boolean transactionOwner = false;
         if (connection.getAutoCommit()) {
             connection.setAutoCommit(false);
@@ -79,7 +79,7 @@ public class ItemService {
 
     public List<Item> getByCollectionId(Long collectionId) throws SQLException {
         List<Item> items = new ArrayList<>();
-        for (ItemEntity entity: dao.getByCollectionId(collectionId)) {
+        for (ItemEntity entity : dao.getByCollectionId(collectionId)) {
             items.add(get(entity.getId()));
         }
         return items;
@@ -87,7 +87,7 @@ public class ItemService {
 
     public List<Item> getAll(Long collectionId) throws SQLException {
         List<Item> items = new ArrayList<>();
-        for (ItemEntity entity: dao.getAll()) {
+        for (ItemEntity entity : dao.getAll()) {
             items.add(get(entity.getId()));
         }
         return items;

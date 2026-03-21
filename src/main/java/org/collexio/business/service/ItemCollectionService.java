@@ -5,6 +5,7 @@ import org.collexio.business.domain.ItemCollection;
 import org.collexio.persistence.dao.DBItemCollectionDAO;
 import org.collexio.persistence.dao.ItemCollectionDAO;
 import org.collexio.persistence.model.ItemCollectionEntity;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,7 +26,7 @@ public class ItemCollectionService {
 
     // add get getAll delete update
     public ItemCollection add(ItemCollection collection) throws SQLException, IOException {
-        Connection connection = ((DBItemCollectionDAO)dao).getConnection();
+        Connection connection = ((DBItemCollectionDAO) dao).getConnection();
         ItemCollection res;
         try {
             connection.setAutoCommit(false);
@@ -47,6 +48,7 @@ public class ItemCollectionService {
         return res;
     }
 
+
     public ItemCollection get(Long id) throws SQLException {
         Optional<ItemCollectionEntity> res = dao.get(id);
         if (res.isEmpty())
@@ -59,7 +61,7 @@ public class ItemCollectionService {
 
     public List<ItemCollection> getAll() throws SQLException {
         List<ItemCollection> colls = new ArrayList<>();
-        for (ItemCollectionEntity entity: dao.getAll()) {
+        for (ItemCollectionEntity entity : dao.getAll()) {
             colls.add(get(entity.getId()));
         }
         return colls;

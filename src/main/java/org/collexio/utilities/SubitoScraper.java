@@ -29,7 +29,7 @@ public class SubitoScraper implements PriceScraper {
                     .build();
             String responseBody = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body)
-                    .join();  // Wait and get the response body as String
+                    .join();
             Document doc = Jsoup.parseBodyFragment(responseBody);
             Elements items = doc.select("div article"); // to improve
             if (items.isEmpty())
@@ -54,7 +54,6 @@ public class SubitoScraper implements PriceScraper {
         }
         if (count == 0)
             throw new NoSuchElementException("Item not found");
-        // selezionare solo le cards che hanno il nome articolo nei titoli, il titolo si trova dentro il div dentro un h2 dentro uno span
         return (double) Math.round(((double) value / count * 100)) /100;
     }
 
