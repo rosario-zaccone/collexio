@@ -68,7 +68,7 @@ public class ItemService {
             throw new NoSuchElementException("Item not found for id: " + id);
         Item item = Item.fromEntity(res.get());
         item.setPhoto(photoService.getByItemId(id));
-        item.setDetails(specService.getByItemId(id));
+        item.setSpec(specService.getByItemId(id));
         transactionService.getByItemId(id).forEach(item::addTransaction);
         return item;
     }

@@ -9,29 +9,29 @@ public class Item {
     private final Long id;
     private ItemStatus status;
     private ItemPhoto photo;
-    private ItemSpec details;
+    private ItemSpec spec;
     private final List<Transaction> transactions = new ArrayList<>();
 
 
-    public Item(Long id, ItemStatus status, ItemPhoto photo, ItemSpec details) {
+    public Item(Long id, ItemStatus status, ItemPhoto photo, ItemSpec spec) {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive or null");
         this.id = id;
         this.status = status;
         this.photo = photo == null ? null : new ItemPhoto(photo);
-        this.details = details;
+        this.spec = spec;
     }
 
 
-    public Item(ItemStatus status, ItemPhoto photo, ItemSpec details) {
-        this(null, status, photo, details);
+    public Item(ItemStatus status, ItemPhoto photo, ItemSpec spec) {
+        this(null, status, photo, spec);
     }
 
     public Item(Item item)  {
         this.id = item.id;
         this.status = item.status;
         this.photo = new ItemPhoto(item.photo);
-        this.details = item.details;
+        this.spec = item.spec;
         item.transactions.forEach(item::addTransaction);
     }
 
@@ -43,8 +43,8 @@ public class Item {
         this.photo = new ItemPhoto(photo);
     }
 
-    public void setDetails(ItemSpec details) {
-        this.details = details;
+    public void setSpec(ItemSpec spec) {
+        this.spec = spec;
     }
 
     public Long getId() {
@@ -62,8 +62,8 @@ public class Item {
     }
 
 
-    public ItemSpec getDetails() {
-        return details;
+    public ItemSpec getSpec() {
+        return spec;
     }
 
 
@@ -107,7 +107,7 @@ public class Item {
         sb.append("id=").append(id);
         sb.append(", status=").append(status);
         sb.append(", photo=").append(photo);
-        sb.append(", details=").append(details);
+        sb.append(", details=").append(spec);
         sb.append(", transactions=").append(transactions);
         sb.append('}');
         return sb.toString();
@@ -129,7 +129,7 @@ public class Item {
                 this.id,
                 this.status,
                 this.photo.toEntity(),
-                this.details.toEntity()
+                this.spec.toEntity()
         );
         this.transactions.forEach(t -> entity.addTransaction(t.toEntity()));
         return entity;
