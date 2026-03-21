@@ -77,7 +77,7 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
         List<ItemCollectionEntity> res = new ArrayList<>();
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(selectAllSql)) {
-            if (rs.next()) {
+            while (rs.next()) {
                 Long id = rs.getLong("id");
                 String name = rs.getString("name");
                 ItemCollectionEntity collection = new ItemCollectionEntity(id, name);
@@ -85,5 +85,9 @@ public class DBItemCollectionDAO implements ItemCollectionDAO {
             }
         }
         return res;
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 }

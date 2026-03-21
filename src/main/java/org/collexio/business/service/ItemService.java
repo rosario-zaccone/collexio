@@ -32,24 +32,30 @@ public class ItemService {
 
     public Item add(Item item, Long collectionId) throws SQLException, IOException {
         // PRE: details and collection prev saved
-        Connection conn = null;
+        Connection connection = ((DBItemDAO)dao).getConnection();
+        boolean transactionOwner = false;
+        if (connection.getAutoCommit()) {
+            connection.setAutoCommit(false);
+            transactionOwner = true;
+        }
         Item res;
         try {
-            conn = ((DBItemDAO)dao).getConnection();
-            conn.setAutoCommit(false);
+            connection.setAutoCommit(false);
             ItemEntity entity = dao.add(item.toEntity(), collectionId);
             res = Item.fromEntity(entity);
             res.setPhoto(photoService.add(item.getPhoto(), entity.getId()));
             for (Transaction e : item.getTransactions()) {
                 res.addTransaction(transactionService.addTransaction(e, entity.getId()));
             }
-            conn.commit();
+            if (transactionOwner)
+                connection.commit();
         } catch (SQLException | IOException e) {
-            conn.rollback();
+            if (transactionOwner)
+                connection.rollback();
             throw e;
         } finally {
-            if (conn != null) {
-                conn.setAutoCommit(true);
+            if (transactionOwner) {
+                connection.setAutoCommit(true);
             }
         }
         return res;
