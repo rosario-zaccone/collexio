@@ -32,6 +32,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>3.7.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.genai</groupId>
       <artifactId>google-genai</artifactId>
       <version>1.15.0</version>
@@ -107,7 +113,6 @@
         <version>3.2.2</version>
         <configuration>
           <configLocation>google_checks.xml</configLocation>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
         </configuration>

@@ -22,4 +22,14 @@ public enum ItemType {
             default -> throw new IllegalArgumentException("Invalid value");
         };
     }
+
+    @Override
+    public String toString() {
+        return switch (value) {
+            case 0 -> "Plant";
+            case 1 -> "Tech Item";
+            case 2 -> "Book";
+            default -> throw new IllegalStateException("Unexpected value: " + value);
+        };
+    }
 }
