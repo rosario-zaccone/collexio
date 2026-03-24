@@ -9,6 +9,8 @@ import org.collexio.utilities.PriceScraper;
 import org.collexio.utilities.PriceScraperFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -43,6 +45,13 @@ public class ItemSpecService {
         if (res.isEmpty())
             throw new NoSuchElementException("ItemSpec not found for id: " + id);
         return ItemSpec.fromEntity(res.get());
+    }
+
+    public List<ItemSpec> getAll() throws SQLException {
+        List<ItemSpecEntity> fetched = dao.getAll();
+        List<ItemSpec> res = new ArrayList<>();
+        fetched.forEach(e -> res.add(ItemSpec.fromEntity(e)));
+        return res;
     }
 
     public double price(ItemSpec spec) {

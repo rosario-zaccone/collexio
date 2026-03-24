@@ -1,46 +1,45 @@
 package org.collexio.presentation.model;
 
 import org.collexio.business.domain.ItemSpec;
+import org.collexio.business.service.ItemSpecService;
 
 import javax.swing.table.AbstractTableModel;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ItemSpecTableModel extends AbstractTableModel {
-    private final static int COLUMNS = 4;
-    private final String[][] data;
+public class ItemSpecTableModel extends AbstractTableModel implements CrudTableModel {
+    private final static int COLUMNS = 5;
+    private List<ItemSpec> data;
+    private final ItemSpecService service;
 
-    public ItemSpecTableModel(List<ItemSpec> specs) {
-        data = new String[specs.size()][COLUMNS];
-
-        data[0][0] = "Id"; data[0][1] = "Type"; data[0][2] = "Name"; data[0][3] = "Description";
-        for (int i = 0; i < specs.size(); i++) {
-            ItemSpec spec = specs.get(i);
-            for (int j = 0; j < COLUMNS; j++) {
-                data[i][j] = switch(j) {
-                    case 0 -> spec.getId().toString();
-                    case 1 -> spec.getType().toString();
-                    case 2 -> spec.getName();
-                    case 3 -> spec.getDescription();
-                    default -> "";
-                };
-            }
-        }
+    public ItemSpecTableModel(ItemSpecService service) throws SQLException {
+        this.service = service;
+        data = service.getAll();
     }
 
 
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     @Override
     public int getColumnCount() {
-        return data[0].length;
+        return COLUMNS;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return data[rowIndex][columnIndex];
+        ItemSpec spec = data.get(rowIndex);
+        return switch (columnIndex) {
+            case 0 -> spec.getId();
+            case 1 -> spec.getType();
+            case 2 -> spec.getName();
+            case 3 -> spec.getDescription();
+            case 4 -> "Delete";
+            default -> throw new IllegalStateException("Unexpected value");
+        };
     }
 
     @Override
@@ -50,7 +49,30 @@ public class ItemSpecTableModel extends AbstractTableModel {
             case 1 -> "Type";
             case 2 -> "Name";
             case 3 -> "Description";
+            case 4 -> "Delete";
             default -> "";
         };
+    }
+
+    public void removeRow(int row) throws SQLException {
+        service.delete(data.get(row).getId());
+        refresh();
+        fireTableRowsDeleted(row, row);
+    }
+
+    @Override
+    public void addRow(ItemSpec spec) throws SQLException {
+        service.add(spec);
+        refresh();
+        fireTableDataChanged();
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 4;
+    }
+
+    public void refresh() throws SQLException {
+        data = service.getAll();
     }
 }
