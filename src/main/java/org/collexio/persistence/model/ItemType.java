@@ -32,4 +32,13 @@ public enum ItemType {
             default -> throw new IllegalStateException("Unexpected value: " + value);
         };
     }
+
+    public static ItemType fromString(String value) {
+        return switch (value) {
+            case "Plant" -> PLANT;
+            case "Tech Item" -> TECHITEM;
+            case "Book" -> BOOK;
+            default -> throw new IllegalArgumentException("Invalid value");
+        };
+    }
 }

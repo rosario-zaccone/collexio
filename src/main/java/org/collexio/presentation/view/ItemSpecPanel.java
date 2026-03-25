@@ -10,15 +10,20 @@ public class ItemSpecPanel extends JPanel{
     private final CrudTableModel model;
     private final JTable table;
 
-    private final ButtonColumn deleteButtonColumn;
+    private final ButtonColumn deleteButton;
+    private final ButtonColumn updateButton;
+    private final ButtonColumn priceButton;
     private final JButton addButton;
     private final InsertSpecForm insertForm;
+    private final UpdateSpecForm updateSpecForm;
 
     public ItemSpecPanel(ItemSpecTableModel model) {
         this.model = model;
         table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
-        deleteButtonColumn = new ButtonColumn(table, null, 4);
+        priceButton = new ButtonColumn(table, null, 4);
+        updateButton = new ButtonColumn(table, null, 5);
+        deleteButton = new ButtonColumn(table, null, 6);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setAlignmentX(LEFT_ALIGNMENT);
@@ -37,6 +42,7 @@ public class ItemSpecPanel extends JPanel{
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         this.insertForm = new InsertSpecForm();
+        this.updateSpecForm = new UpdateSpecForm();
     }
 
     public CrudTableModel getModel() {
@@ -55,8 +61,19 @@ public class ItemSpecPanel extends JPanel{
         return insertForm;
     }
 
-    public ButtonColumn getDeleteButtonColumn() {
-        return deleteButtonColumn;
+    public UpdateSpecForm getUpdateSpecForm() {
+        return updateSpecForm;
     }
 
+    public ButtonColumn getPriceButton() {
+        return priceButton;
+    }
+
+    public ButtonColumn getDeleteButton() {
+        return deleteButton;
+    }
+
+    public ButtonColumn getUpdateButton() {
+        return updateButton;
+    }
 }

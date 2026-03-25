@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemSpecTableModel extends AbstractTableModel implements CrudTableModel {
-    private final static int COLUMNS = 5;
+    private final static int COLUMNS = 7;
     private List<ItemSpec> data;
     private final ItemSpecService service;
 
@@ -37,7 +37,9 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
             case 1 -> spec.getType();
             case 2 -> spec.getName();
             case 3 -> spec.getDescription();
-            case 4 -> "Delete";
+            case 4 -> "Scrape price";
+            case 5 -> "Update";
+            case 6 -> "Delete";
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -49,7 +51,9 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
             case 1 -> "Type";
             case 2 -> "Name";
             case 3 -> "Description";
-            case 4 -> "Delete";
+            case 4 -> "Scrape price";
+            case 5 -> "Update";
+            case 6 -> "Delete";
             default -> "";
         };
     }
@@ -68,11 +72,30 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     @Override
+    public void updateRow(ItemSpec spec) throws SQLException {
+        service.update(spec);
+        refresh();
+        fireTableDataChanged();
+    }
+
+    public double price(int row) {
+        return service.price(data.get(row));
+    }
+
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 4;
+        return columnIndex == 4 || columnIndex == 5 || columnIndex == 6;
     }
 
     public void refresh() throws SQLException {
         data = service.getAll();
+    }
+
+    public ItemSpec getSpec(int row) {
+        return data.get(row);
+    }
+
+    public String generateDescription(ItemSpec spec) {
+        return service.generateDescriptionByAI(spec);
     }
 }

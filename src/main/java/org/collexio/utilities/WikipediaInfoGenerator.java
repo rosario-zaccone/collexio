@@ -57,7 +57,7 @@ public class WikipediaInfoGenerator implements InfoGenerator {
             responseBody = response.body();
             root = mapper.readTree(responseBody);
             JsonNode node = root.path("query").path("pages").path(id);
-            String prompt = "Generate a concise description of the item, maximum 250 words, based on the following data: " +
+            String prompt = "Generate a concise description of the item, maximum 50 words, based on the following data: " +
                     node.path("extract").toString() +
                     "Provide the output as plain text without any special formatting or markup. " +
                     "This content will be used as a Java String.";

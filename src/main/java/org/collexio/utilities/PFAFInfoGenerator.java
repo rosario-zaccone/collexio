@@ -53,7 +53,7 @@ public class PFAFInfoGenerator implements InfoGenerator {
             if (tableContent.isEmpty() || phyContent.isEmpty() || summaryContent.isEmpty())
                 throw new IllegalArgumentException("You must use a valid plant name");
 
-            String prompt = "Generate a concise description of the plant, maximum 250 words, based on the following data: " +
+            String prompt = "Generate a concise description of the plant, maximum 100 words, based on the following data: " +
                     "General information: " + tableContent + "; " + summaryContent + ". " +
                     "Physical characteristics: " + phyContent + ". " +
                     "Provide the output as plain text without any special formatting or markup. " +

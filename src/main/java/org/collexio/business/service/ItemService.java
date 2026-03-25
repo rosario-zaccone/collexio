@@ -100,7 +100,7 @@ public class ItemService {
 
     public void update(Item item) throws SQLException, IOException {
         //TODO
-        //idea: update aggiorna anche le transazioni di item
+        //idea: update aggiorna anche le transazioni di item usando transaction service
     }
 
 }

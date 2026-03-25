@@ -79,15 +79,15 @@ public class ItemSpecServiceTest {
     }
 
     @Test
-    @Disabled
     public void testPrice() throws SQLException {
-        //ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
-        //System.out.println(service.price(tech));
+        ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
+        System.out.println(service.price(tech));
 
-        ItemSpec book = new ItemSpec(ItemType.BOOK, "Dragon Ball Super. Vol. 4", "desc");
-        System.out.println(service.price(book));
+        //ItemSpec book = new ItemSpec(ItemType.BOOK, "Dragon Ball Super. Vol. 4", "desc");
+        //System.out.println(service.price(book));
     }
 
+    @Disabled
     @Test
     public void testGenerator() throws SQLException {
         ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");

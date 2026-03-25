@@ -24,7 +24,7 @@ public class GeminiInfoGenerator implements InfoGenerator {
         try (Client geminiClient = Client.builder()
                 .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
                 .build()) {
-            String prompt = "Generate a concise description of the book/comic/manga " + itemName +", maximum 150 words." +
+            String prompt = "Generate a concise description of the book/comic/manga " + itemName +", maximum 50 words." +
                     "Provide the output as plain text without any special formatting or markup. " +
                     "This content will be used as a Java String for a description of a item in an inventory." +
                     "For example: DragonBall is a manga written by Toriyama and illustrate the adventure of Goku, the protegonist...";

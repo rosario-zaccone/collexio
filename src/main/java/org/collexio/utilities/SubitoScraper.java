@@ -35,9 +35,9 @@ public class SubitoScraper implements PriceScraper {
             if (items.isEmpty())
                 break;
             for (Element item : items) {
-                String title = item.select("section.AdItemCardResponsive_details__ZxI0t h3").text();
+                String title = item.select("section h3").text();
                 if (title.length() <= itemName.length() + 4) { // considera gli annunci il cui titolo non supera di tanto la lunghezza del nome dell'articolo
-                    String price = item.select("section div section  div p").text();
+                    String price = item.select("section div  p").text();
                     StringBuilder nPrice = new StringBuilder();
                     // price extraction
                     for (int i = 0; i < price.length(); i++) {

@@ -74,6 +74,6 @@ public class ItemCollectionService {
 
     public void update(Item item) throws SQLException, IOException {
         //TODO
-        //idea: update aggiorna anche gli item
+        //idea: update aggiorna anche gli item usando itemservice
     }
 }
