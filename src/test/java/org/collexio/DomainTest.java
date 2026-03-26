@@ -16,10 +16,11 @@ class DomainTest {
         ItemSpec spec = new ItemSpec(1L, ItemType.TECHITEM, "NintendoDS", "desc");
         Item item = new Item(1L, ItemStatus.GOOD, photo, spec);
         item.setStatus(ItemStatus.AVERAGE);
-        item.addTransaction(new Transaction(1L, 50, true, LocalDate.now()));
-        item.addTransaction(new Transaction(2L, 100, true, LocalDate.now()));
-        item.addTransaction(new Transaction(3L, 50, false, LocalDate.now()));
+        item.addTransaction(new Transaction(1L, 50, false, LocalDate.now()));
+        item.addTransaction(new Transaction(3L, 50, true, LocalDate.now()));
+        System.out.println(item.isAvailable());
         item.removeTransaction(new Transaction(1L, 50, true, LocalDate.now()));
+        System.out.println(item.isAvailable());
         System.out.println(item);
         assertEquals(50, item.balance());
     }

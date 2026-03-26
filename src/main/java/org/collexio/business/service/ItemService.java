@@ -103,5 +103,8 @@ public class ItemService {
         //idea: update aggiorna anche le transazioni di item usando transaction service
     }
 
+    public ItemSpecService getSpecService() {
+        return specService;
+    }
 }
 

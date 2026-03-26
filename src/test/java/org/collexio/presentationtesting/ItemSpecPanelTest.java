@@ -1,20 +1,16 @@
 package org.collexio.presentationtesting;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.persistence.dao.ConnectionFactory;
 import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.model.ItemType;
 import org.collexio.presentation.controller.ItemSpecController;
 import org.collexio.presentation.model.ItemSpecTableModel;
-import org.collexio.presentation.view.ItemSpecPanel;
+import org.collexio.presentation.view.itemspec.ItemSpecPanel;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemSpecPanelTest {
     private static void createAndShowGUI() throws SQLException, IOException {

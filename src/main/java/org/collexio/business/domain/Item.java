@@ -32,7 +32,7 @@ public class Item {
         this.status = item.status;
         this.photo = new ItemPhoto(item.photo);
         this.spec = item.spec;
-        item.transactions.forEach(item::addTransaction);
+        item.transactions.forEach(this::addTransaction);
     }
 
     public void setStatus(ItemStatus status) {
@@ -85,6 +85,10 @@ public class Item {
         return transactions.stream()
                 .map(e -> e.isIncome() ? e.getAmount() : -e.getAmount())
                 .reduce(0.0, Double::sum);
+    }
+
+    public boolean isAvailable() {
+        return transactions.stream().filter(e -> !e.isIncome()).count() == 0; // no sell transaction
     }
 
 

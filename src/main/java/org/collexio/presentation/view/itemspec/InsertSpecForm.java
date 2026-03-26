@@ -1,4 +1,4 @@
-package org.collexio.presentation.view;
+package org.collexio.presentation.view.itemspec;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,42 +14,60 @@ public class InsertSpecForm extends JDialog {
     private final JLabel messageLabel;
 
     public InsertSpecForm() {
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
-        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        typePanel.add(new JLabel("Type:"));
+        // Type
+        contentPanel.add(new JLabel("Type:"), gbc);
+        gbc.gridx = 1;
         typeField = new JTextField(20);
-        typePanel.add(typeField);
-        contentPanel.add(typePanel);
+        contentPanel.add(typeField, gbc);
 
-        JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        namePanel.add(new JLabel("Name:"));
+        // Name
+        gbc.gridx = 0;
+        gbc.gridy++;
+        contentPanel.add(new JLabel("Name:"), gbc);
+        gbc.gridx = 1;
         nameField = new JTextField(20);
-        namePanel.add(nameField);
-        contentPanel.add(namePanel);
+        contentPanel.add(nameField, gbc);
 
-        JPanel descriptionPanel = new JPanel(new BorderLayout());
-        descriptionPanel.add(new JLabel("Description:"), BorderLayout.NORTH);
+        // Description
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        contentPanel.add(new JLabel("Description:"), gbc);
+
+        gbc.gridy++;
         descriptionField = new JTextArea(5, 30);
         descriptionField.setLineWrap(true);
         descriptionField.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(descriptionField);
-        descriptionPanel.add(scrollPane, BorderLayout.CENTER);
-        contentPanel.add(descriptionPanel);
+        contentPanel.add(scrollPane, gbc);
 
+        // Message label
+        gbc.gridy++;
         messageLabel = new JLabel(" ");
-        contentPanel.add(messageLabel);
+        messageLabel.setForeground(Color.RED);
+        contentPanel.add(messageLabel, gbc);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // Buttons
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JPanel buttonPanel = new JPanel();
         submitButton = new JButton("Insert");
         cancelButton = new JButton("Cancel");
         buttonPanel.add(submitButton);
         buttonPanel.add(cancelButton);
-        contentPanel.add(buttonPanel);
+        contentPanel.add(buttonPanel, gbc);
 
         this.getContentPane().add(contentPanel);
-
         this.pack();
         this.setLocationRelativeTo(null);
     }

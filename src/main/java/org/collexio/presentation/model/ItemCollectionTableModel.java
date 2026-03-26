@@ -1,18 +1,19 @@
 package org.collexio.presentation.model;
 
-import org.collexio.business.domain.ItemSpec;
-import org.collexio.business.service.ItemSpecService;
+import org.collexio.business.domain.ItemCollection;
+import org.collexio.business.service.ItemCollectionService;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ItemSpecTableModel extends AbstractTableModel implements CrudTableModel<ItemSpec> {
-    private final static int COLUMNS = 7;
-    private List<ItemSpec> data;
-    private final ItemSpecService service;
+public class ItemCollectionTableModel extends AbstractTableModel implements CrudTableModel<ItemCollection> {
+    private final static int COLUMNS = 6;
+    private List<ItemCollection> data;
+    private final ItemCollectionService service;
 
-    public ItemSpecTableModel(ItemSpecService service) throws SQLException {
+    public ItemCollectionTableModel(ItemCollectionService service) throws SQLException {
         this.service = service;
         data = service.getAll();
     }
@@ -30,15 +31,14 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ItemSpec spec = data.get(rowIndex);
+        ItemCollection coll = data.get(rowIndex);
         return switch (columnIndex) {
-            case 0 -> spec.getId();
-            case 1 -> spec.getType();
-            case 2 -> spec.getName();
-            case 3 -> spec.getDescription();
-            case 4 -> "Scrape price";
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 0 -> coll.getId();
+            case 1 -> coll.getName();
+            case 2 -> "Items";
+            case 3-> "Value";
+            case 4 -> "Update";
+            case 5 -> "Delete";
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -47,17 +47,15 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     public String getColumnName(int column) {
         return switch (column) {
             case 0 -> "Id";
-            case 1 -> "Type";
-            case 2 -> "Name";
-            case 3 -> "Description";
-            case 4 -> "Scrape price";
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 1 -> "Name";
+            case 2 -> "Items";
+            case 3-> "Value";
+            case 4 -> "Update";
+            case 5 -> "Delete";
             default -> "";
         };
     }
 
-    @Override
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
@@ -65,26 +63,26 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     @Override
-    public void addRow(ItemSpec elem) throws SQLException {
+    public void addRow(ItemCollection elem) throws SQLException, IOException {
         service.add(elem);
         refresh();
         fireTableDataChanged();
     }
 
     @Override
-    public void updateRow(ItemSpec elem) throws SQLException {
+    public void updateRow(ItemCollection elem) throws SQLException, IOException {
         service.update(elem);
         refresh();
         fireTableDataChanged();
     }
 
     @Override
-    public ItemSpec getRow(int row) {
+    public ItemCollection getRow(int row) {
         return data.get(row);
     }
 
-    public double price(int row) {
-        return service.price(data.get(row));
+    public double value(int row) {
+        return service.value(data.get(row));
     }
 
     @Override
@@ -96,7 +94,4 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
         data = service.getAll();
     }
 
-    public String generateDescription(ItemSpec spec) {
-        return service.generateDescriptionByAI(spec);
-    }
 }

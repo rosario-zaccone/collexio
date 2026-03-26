@@ -44,7 +44,7 @@ public class ItemCollection {
         return Collections.unmodifiableList(this.data);
     }
 
-    public void addItem(Item item) { //TODO: deep copy
+    public void addItem(Item item) {
         data.add(new Item(item));
     }
 

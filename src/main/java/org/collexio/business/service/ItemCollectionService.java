@@ -72,8 +72,13 @@ public class ItemCollectionService {
     }
 
 
-    public void update(Item item) throws SQLException, IOException {
+    public void update(ItemCollection collection) throws SQLException, IOException {
         //TODO
         //idea: update aggiorna anche gli item usando itemservice
+    }
+
+    public double value(ItemCollection collection) {
+        return collection.getData().stream().map(e -> itemService.getSpecService().price(e.getSpec()))
+                .reduce(0.0, Double::sum);
     }
 }

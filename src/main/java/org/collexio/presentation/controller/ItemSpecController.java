@@ -1,20 +1,17 @@
 package org.collexio.presentation.controller;
 
-import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.model.ItemType;
 import org.collexio.presentation.dto.ItemSpecDTO;
-import org.collexio.presentation.model.CrudTableModel;
 import org.collexio.presentation.model.ItemSpecTableModel;
-import org.collexio.presentation.view.InsertSpecForm;
-import org.collexio.presentation.view.ItemSpecPanel;
-import org.collexio.presentation.view.UpdateSpecForm;
+import org.collexio.presentation.view.itemspec.InsertSpecForm;
+import org.collexio.presentation.view.itemspec.ItemSpecPanel;
+import org.collexio.presentation.view.itemspec.UpdateSpecForm;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class ItemSpecController {
     private ItemSpecTableModel model;
@@ -30,13 +27,10 @@ public class ItemSpecController {
         this.view.getDeleteButton().setAction(new DeleteAction());
         this.view.getUpdateButton().setAction(new UpdateAction());
         this.view.getPriceButton().setAction(new PriceAction());
-        this.view.getUpdateButton().setAction(new UpdateAction());
 
         insertForm = view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new InsertFormListener());
-        insertForm.getCancelButton().addActionListener(e -> {
-            insertForm.dispose();
-        });
+        insertForm.getCancelButton().addActionListener(e -> insertForm.dispose());
 
         updateForm = view.getUpdateSpecForm();
         updateForm.getSubmitButton().addActionListener(new UpdateFormListener());
@@ -134,11 +128,11 @@ public class ItemSpecController {
             updateForm.setVisible(true);
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
-            ItemSpecDTO dto = ItemSpecDTO.fromDomain(model.getSpec(modelRow));
-            updateForm.setId(dto.getId().toString());
-            updateForm.setDescription(dto.getDescription());
-            updateForm.setName(dto.getName());
-            updateForm.setItemType(dto.getType().toString());
+            ItemSpec spec = model.getRow(modelRow);
+            updateForm.setId(spec.getId().toString());
+            updateForm.setDescription(spec.getDescription());
+            updateForm.setName(spec.getName());
+            updateForm.setItemType(spec.getType().toString());
         }
     }
 
