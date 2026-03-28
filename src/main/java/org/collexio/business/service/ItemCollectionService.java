@@ -1,13 +1,10 @@
 package org.collexio.business.service;
 
-import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemCollection;
-import org.collexio.persistence.dao.DBItemCollectionDAO;
 import org.collexio.persistence.dao.ItemCollectionDAO;
 import org.collexio.persistence.model.ItemCollectionEntity;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;

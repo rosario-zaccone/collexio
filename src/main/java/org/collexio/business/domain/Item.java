@@ -34,7 +34,7 @@ public class Item {
     public Item(Item item)  {
         this.id = item.id;
         this.status = item.status;
-        this.photo = new ItemPhoto(item.photo);
+        this.photo = item.photo == null ? null : new ItemPhoto(item.photo);
         this.spec = item.spec;
         item.transactions.forEach(this::addTransaction);
     }

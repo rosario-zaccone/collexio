@@ -2,7 +2,6 @@ package org.collexio.business.service;
 
 
 import org.collexio.business.domain.Item;
-import org.collexio.business.domain.Transaction;
 import org.collexio.persistence.dao.DBItemDAO;
 import org.collexio.persistence.dao.ItemDAO;
 import org.collexio.persistence.model.ItemEntity;
@@ -36,11 +35,10 @@ public class ItemService {
         Optional<ItemEntity> res = dao.get(id);
         if (res.isEmpty())
             throw new NoSuchElementException("Item not found for id: " + id);
-        Item item = Item.fromEntity(res.get());
-        return item;
+        return Item.fromEntity(res.get());
     }
 
-    public void freeFromCollection(Item item) throws SQLException, IOException {
+    public void freeFromCollection(Item item) throws SQLException {
         dao.update(item.toEntity(), true);
     }
 
@@ -67,6 +65,10 @@ public class ItemService {
 
     public void update(Item item) throws SQLException, IOException {
         dao.update(item.toEntity(), false);
+    }
+
+    public Connection getConnection() {
+        return ((DBItemDAO)dao).getConnection();
     }
 }
 
