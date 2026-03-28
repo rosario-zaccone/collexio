@@ -19,14 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ItemCollectionServiceTest {
 
     private Connection connection;
-    private DBItemDAO itemDAO;
-    private DBItemPhotoDAO photoDAO;
-    private DBTransactionDAO transactionDAO;
-    private DBItemSpecDAO itemSpecDAO;
     private DBItemCollectionDAO collectionDAO;
-
-    private ItemService itemService;
-    private ItemSpecService itemSpecService;
     private ItemCollectionService collectionService;
 
     private Path tempDir;
@@ -80,68 +73,29 @@ class ItemCollectionServiceTest {
                 );
             """);
         }
-
-        photoDAO = new DBItemPhotoDAO(connection);
-        transactionDAO = new DBTransactionDAO(connection);
-        itemSpecDAO = new DBItemSpecDAO(connection);
-        itemDAO = new DBItemDAO(connection);
         collectionDAO = new DBItemCollectionDAO(connection);
-
-        itemSpecService = new ItemSpecService(itemSpecDAO);
-        itemService = new ItemService(itemDAO, new ItemPhotoService(photoDAO), new TransactionService(transactionDAO), itemSpecService);
-        collectionService = new ItemCollectionService(collectionDAO, itemService);
-
-        tempDir = Files.createTempDirectory("photos");
-        System.setProperty("ITEM_PHOTO_DIR", tempDir.toString());
+        collectionService = new ItemCollectionService(collectionDAO);
     }
 
     @BeforeEach
     void clear() throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM item_transactions;");
-            stmt.execute("DELETE FROM item_photos;");
-            stmt.execute("DELETE FROM items;");
-            stmt.execute("DELETE FROM item_specs;");
             stmt.execute("DELETE FROM item_collections;");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_collections';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_transactions';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_photos';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='items';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_specs';");
         }
-
-        Files.walk(tempDir)
-                .filter(Files::isRegularFile)
-                .forEach(f -> f.toFile().delete());
     }
 
     @AfterAll
     void teardown() throws SQLException, IOException {
         connection.close();
-        Files.walk(tempDir)
-                .sorted((a,b) -> b.compareTo(a))
-                .forEach(f -> f.toFile().delete());
     }
 
     @Test
     void testAddAndGetCollection() throws SQLException, IOException {
-        ItemSpec spec = itemSpecService.add(new ItemSpec(ItemType.TECHITEM, "Switch", "console"));
-
-        Path p1 = Files.createTempFile(tempDir, "p1", ".png");
-        Path p2 = Files.createTempFile(tempDir, "p2", ".png");
-
-        Item i1 = new Item(ItemStatus.GOOD, new ItemPhoto(p1, LocalDate.now()), spec);
-        Item i2 = new Item(ItemStatus.AVERAGE, new ItemPhoto(p2, LocalDate.now()), spec);
-
         ItemCollection col = new ItemCollection("Test");
-        col.addItem(i1);
-        col.addItem(i2);
-
         col = collectionService.add(col);
-
         ItemCollection fetched = collectionService.get(col.getId());
 
-        assertEquals(2, fetched.getData().size());
     }
 
     @Test

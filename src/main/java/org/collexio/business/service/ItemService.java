@@ -19,18 +19,59 @@ import java.util.Optional;
 
 public class ItemService {
     private final ItemDAO dao;
-    private final ItemPhotoService photoService;
-    private final TransactionService transactionService;
-    private final ItemSpecService specService;
 
-    public ItemService(ItemDAO dao, ItemPhotoService photoService, TransactionService transactionService, ItemSpecService specService) {
+    public ItemService(ItemDAO dao) {
         this.dao = dao;
-        this.photoService = photoService;
-        this.transactionService = transactionService;
-        this.specService = specService;
     }
 
     public Item add(Item item, Long collectionId) throws SQLException, IOException {
+        Item res;
+        ItemEntity entity = dao.add(item.toEntity(), collectionId);
+        res = Item.fromEntity(entity);
+        return res;
+    }
+
+
+    public Item get(Long id) throws SQLException {
+        Optional<ItemEntity> res = dao.get(id);
+        if (res.isEmpty())
+            throw new NoSuchElementException("Item not found for id: " + id);
+        Item item = Item.fromEntity(res.get());
+        return item;
+    }
+
+    public void freeFromCollection(Item item) throws SQLException, IOException {
+        dao.update(item.toEntity(), true);
+    }
+
+    public List<Item> getByCollectionId(Long collectionId) throws SQLException {
+        List<Item> items = new ArrayList<>();
+        for (ItemEntity entity : dao.getByCollectionId(collectionId)) {
+            items.add(Item.fromEntity(entity));
+        }
+        return items;
+    }
+
+    public List<Item> getAll() throws SQLException {
+        List<Item> items = new ArrayList<>();
+        for (ItemEntity entity : dao.getAll()) {
+            items.add(Item.fromEntity(entity));
+        }
+        return items;
+    }
+
+    public void delete(Long id) throws SQLException {
+        dao.delete(id);
+    }
+
+
+    public void update(Item item) throws SQLException, IOException {
+        dao.update(item.toEntity(), false);
+    }
+}
+
+/*
+public Item add(Item item, Long collectionId) throws SQLException, IOException {
         // PRE: details and collection prev saved
         Connection connection = ((DBItemDAO) dao).getConnection();
         boolean transactionOwner = false;
@@ -60,51 +101,4 @@ public class ItemService {
         }
         return res;
     }
-
-
-    public Item get(Long id) throws SQLException {
-        Optional<ItemEntity> res = dao.get(id);
-        if (res.isEmpty())
-            throw new NoSuchElementException("Item not found for id: " + id);
-        Item item = Item.fromEntity(res.get());
-        item.setPhoto(photoService.getByItemId(id));
-        item.setSpec(specService.getByItemId(id));
-        transactionService.getByItemId(id).forEach(item::addTransaction);
-        return item;
-    }
-
-    public void freeFromCollection(Item item) throws SQLException, IOException {
-        dao.update(item.toEntity(), true);
-    }
-
-    public List<Item> getByCollectionId(Long collectionId) throws SQLException {
-        List<Item> items = new ArrayList<>();
-        for (ItemEntity entity : dao.getByCollectionId(collectionId)) {
-            items.add(get(entity.getId()));
-        }
-        return items;
-    }
-
-    public List<Item> getAll(Long collectionId) throws SQLException {
-        List<Item> items = new ArrayList<>();
-        for (ItemEntity entity : dao.getAll()) {
-            items.add(get(entity.getId()));
-        }
-        return items;
-    }
-
-    public void delete(Long id) throws SQLException {
-        dao.delete(id);
-    }
-
-
-    public void update(Item item) throws SQLException, IOException {
-        //TODO
-        //idea: update aggiorna anche le transazioni di item usando transaction service
-    }
-
-    public ItemSpecService getSpecService() {
-        return specService;
-    }
-}
-
+ */

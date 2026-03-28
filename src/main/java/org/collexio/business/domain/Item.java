@@ -22,6 +22,10 @@ public class Item {
         this.spec = spec;
     }
 
+    public Item(ItemStatus status, ItemSpec spec) {
+        this(null, status, null, spec);
+    }
+
 
     public Item(ItemStatus status, ItemPhoto photo, ItemSpec spec) {
         this(null, status, photo, spec);
@@ -132,8 +136,8 @@ public class Item {
         ItemEntity entity = new ItemEntity(
                 this.id,
                 this.status,
-                this.photo.toEntity(),
-                this.spec.toEntity()
+                this.photo == null ? null : this.photo.toEntity(),
+                this.spec == null ? null : this.spec.toEntity()
         );
         this.transactions.forEach(t -> entity.addTransaction(t.toEntity()));
         return entity;

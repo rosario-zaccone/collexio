@@ -81,10 +81,6 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
         return data.get(row);
     }
 
-    public double value(int row) {
-        return service.value(data.get(row));
-    }
-
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 4 || columnIndex == 5 || columnIndex == 6;

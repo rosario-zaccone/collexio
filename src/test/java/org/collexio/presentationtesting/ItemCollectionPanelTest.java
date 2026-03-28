@@ -22,13 +22,7 @@ public class ItemCollectionPanelTest {
 
         ItemCollectionTableModel model = new ItemCollectionTableModel(
                 new ItemCollectionService(
-                        new DBItemCollectionDAO(conn),
-                        new ItemService(
-                                new DBItemDAO(conn),
-                                new ItemPhotoService(new DBItemPhotoDAO(conn)),
-                                new TransactionService(new DBTransactionDAO(conn)),
-                                new ItemSpecService(new DBItemSpecDAO(conn))
-                        )
+                        new DBItemCollectionDAO(conn)
                 )
         );
 

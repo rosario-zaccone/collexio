@@ -30,13 +30,8 @@ class ItemServiceTest {
 
     private Connection connection;
     private DBItemDAO itemDAO;
-    private DBItemPhotoDAO photoDAO;
-    private DBTransactionDAO transactionDAO;
-    private DBItemSpecDAO itemSpecDAO;
     private ItemService itemService;
-    private ItemSpecService itemSpecService;
-
-    private Path tempDir;
+    private ItemSpecService specService;
 
     @BeforeAll
     void setupDatabase() throws SQLException, IOException {
@@ -45,6 +40,7 @@ class ItemServiceTest {
             stmt.execute("PRAGMA foreign_keys = ON");
 
             stmt.execute("CREATE TABLE item_collections (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);");
+            stmt.execute("INSERT INTO item_collections (name) VALUES ('Console');");
             stmt.execute("INSERT INTO item_collections (name) VALUES ('Console');");
             stmt.execute("""
                 CREATE TABLE item_specs(
@@ -85,75 +81,46 @@ class ItemServiceTest {
             """);
         }
 
-        photoDAO = new DBItemPhotoDAO(connection);
-        transactionDAO = new DBTransactionDAO(connection);
-        itemSpecDAO = new DBItemSpecDAO(connection);
-        itemDAO = new DBItemDAO(connection);
 
-        itemSpecService = new ItemSpecService(itemSpecDAO);
-        itemService = new ItemService(itemDAO, new ItemPhotoService(photoDAO), new TransactionService(transactionDAO), itemSpecService);
-        // cartella temporanea per le foto
-        tempDir = Files.createTempDirectory("item_photos");
-        System.setProperty("ITEM_PHOTO_DIR", tempDir.toString());
+        itemDAO = new DBItemDAO(connection);
+        itemService = new ItemService(itemDAO);
+        specService = new ItemSpecService(new DBItemSpecDAO(connection));
     }
 
     @BeforeEach
     void clearData() throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM item_transactions;");
-            stmt.execute("DELETE FROM item_photos;");
             stmt.execute("DELETE FROM items;");
-            stmt.execute("DELETE FROM item_specs;");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_transactions';");
-            stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_photos';");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name='items';");
+            stmt.execute("DELETE FROM item_specs;");
             stmt.execute("DELETE FROM sqlite_sequence WHERE name='item_specs';");
         }
-        Files.walk(tempDir)
-                .filter(Files::isRegularFile)
-                .forEach(f -> f.toFile().delete());
     }
 
     @AfterAll
     void teardown() throws SQLException, IOException {
         connection.close();
-        Files.walk(tempDir)
-                .sorted((a,b) -> b.compareTo(a))
-                .forEach(f -> f.toFile().delete());
     }
 
     @Test
     void testAddAndGetItem() throws SQLException, IOException {
-        ItemSpec spec = new ItemSpec(ItemType.TECHITEM, "Nintendo Switch", "console");
-        spec = itemSpecService.add(spec);
-
-        Item item = new Item(ItemStatus.GOOD, new ItemPhoto(Path.of("images/test/test.png"), LocalDate.now()), spec);
-        item.addTransaction(new Transaction(1L, 200, true, LocalDate.now()));
-        item.addTransaction(new Transaction(2L, 400, true, LocalDate.now()));
-
+        ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        Item item = new Item(ItemStatus.GOOD, spec);
         item = itemService.add(item, 1L);
         Item fetched = itemService.get(item.getId());
+        item.setSpec(null);
         assertEquals(item.toString(), fetched.toString());
     }
 
     @Test
     void testGetByCollectionId() throws SQLException, IOException {
-        ItemSpecEntity spec = new ItemSpecEntity(ItemType.TECHITEM, "Nintendo Switch", "console");
-        spec = itemSpecDAO.add(spec);
-
-        Path photoPath1 = Files.createTempFile(tempDir, "photo1", ".png");
-        ItemPhoto photo1 = new ItemPhoto(photoPath1, LocalDate.now());
-        Item item1 = new Item(ItemStatus.GOOD, photo1, ItemSpec.fromEntity(spec));
+        ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        Item item1 = new Item(ItemStatus.GOOD, spec);
         item1 = itemService.add(item1, 1L);
-
-        Path photoPath2 = Files.createTempFile(tempDir, "photo2", ".png");
-        ItemPhoto photo2 = new ItemPhoto(photoPath2, LocalDate.now());
-        Item item2 = new Item(ItemStatus.GOOD, photo2, ItemSpec.fromEntity(spec));
+        Item item2 = new Item(ItemStatus.GOOD, spec);
         item2 = itemService.add(item2, 1L);
 
-        Path photoPath3 = Files.createTempFile(tempDir, "photo3", ".png");
-        ItemPhoto photo3 = new ItemPhoto(photoPath3, LocalDate.now());
-        Item item3 = new Item(ItemStatus.GOOD, photo3, ItemSpec.fromEntity(spec));
+        Item item3 = new Item(ItemStatus.GOOD, spec);
         item3 = itemService.add(item3, 1L);
 
         List<Item> items = itemService.getByCollectionId(1L);
@@ -166,16 +133,10 @@ class ItemServiceTest {
 
     @Test
     void testDeleteItem() throws SQLException, IOException {
-        ItemSpecEntity spec = new ItemSpecEntity(ItemType.TECHITEM, "GameCube", "console");
-        spec = itemSpecDAO.add(spec);
-
-        Path photoPath = Files.createTempFile(tempDir, "photo3", ".png");
-        ItemPhoto photo = new ItemPhoto(photoPath, LocalDate.now());
-        Item item = new Item(ItemStatus.AVERAGE, photo, ItemSpec.fromEntity(spec));
-
+        ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        Item item = new Item(ItemStatus.AVERAGE, spec);
         item = itemService.add(item, 1L);
         itemService.delete(item.getId());
-
         assertThrows(NoSuchElementException.class, () -> itemService.get(1L));
     }
 }
