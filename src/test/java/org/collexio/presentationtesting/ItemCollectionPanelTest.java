@@ -19,11 +19,12 @@ public class ItemCollectionPanelTest {
         JFrame frame = new JFrame("ItemCollection Table Demo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Connection conn = ConnectionFactory.getConnection();
-
+        ItemCollectionService itemCollectionService = new ItemCollectionService(
+                new DBItemCollectionDAO(conn)
+                );
         ItemCollectionTableModel model = new ItemCollectionTableModel(
-                new ItemCollectionService(
-                        new DBItemCollectionDAO(conn)
-                )
+                itemCollectionService,
+                new ItemCollectionOrchestrator(new ItemService(new DBItemDAO(conn)), itemCollectionService)
         );
 
         ItemCollectionPanel view = new ItemCollectionPanel(model);

@@ -17,11 +17,8 @@ public class DBItemDAO implements ItemDAO{
     private final static String insertSql = "INSERT INTO items(status, item_spec_id, item_collection_id)"
             + "VALUES(?,?,?)";
     private final static String deleteSql = "DELETE FROM items WHERE id=?";
-    private static final String updateSqlNoCollection = "UPDATE items SET name = ? , "
-            + "status = ? ,"
+    private static final String updateSql = "UPDATE items SET status = ? , "
             + "item_collection_id = ? "
-            + "WHERE id = ?";
-    private static final String updateSql = "UPDATE items SET status = ? "
             + "WHERE id = ?";
 
     public DBItemDAO(Connection connection) {
@@ -34,7 +31,11 @@ public class DBItemDAO implements ItemDAO{
         try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, item.getStatus().getValue());
             stmt.setLong(2, item.getSpec().getId());
-            stmt.setLong(3, collectionId);
+            if (collectionId != null) {
+                stmt.setLong(3, collectionId);
+            } else {
+                stmt.setNull(3, java.sql.Types.BIGINT);
+            }
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -81,17 +82,14 @@ public class DBItemDAO implements ItemDAO{
     }
 
     @Override
-    public void update(ItemEntity item, boolean noCollection) throws SQLException {
-        String prompt = updateSql;
-        if (noCollection)
-            prompt = updateSqlNoCollection;
-        try (PreparedStatement stmt = connection.prepareStatement(prompt)) {
+    public void update(ItemEntity item, Long collectionId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(updateSql)) {
             stmt.setInt(1, item.getStatus().getValue());
-            if (noCollection) {
+            if (collectionId != null)
+                stmt.setLong(2, collectionId);
+            else
                 stmt.setNull(2, Types.BIGINT);
-                stmt.setLong(3, item.getId());
-            } else
-                stmt.setLong(2, item.getId());
+            stmt.setLong(3, item.getId());
             stmt.executeUpdate();
         }
     }

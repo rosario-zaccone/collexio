@@ -5,7 +5,7 @@ import java.awt.*;
 
 
 public class InsertSpecForm extends JDialog {
-    private final JTextField typeField;
+    private final JComboBox<String> typeCombo;
     private final JTextField nameField;
     private final JTextArea descriptionField;
 
@@ -22,10 +22,12 @@ public class InsertSpecForm extends JDialog {
         gbc.gridy = 0;
 
         // Type
+        gbc.gridy++;
         contentPanel.add(new JLabel("Type:"), gbc);
         gbc.gridx = 1;
-        typeField = new JTextField(20);
-        contentPanel.add(typeField, gbc);
+        String[] statusOptions = {"Book", "Tech Item", "Plant"};
+        typeCombo = new JComboBox<>(statusOptions);
+        contentPanel.add(typeCombo, gbc);
 
         // Name
         gbc.gridx = 0;
@@ -74,6 +76,8 @@ public class InsertSpecForm extends JDialog {
 
     public void clearForm() {
         nameField.setText("");
+        typeCombo.setSelectedIndex(0);
+        descriptionField.setText("");
         messageLabel.setText(" ");
     }
 
@@ -81,8 +85,8 @@ public class InsertSpecForm extends JDialog {
         return nameField.getText().trim();
     }
 
-    public String getItemType() {
-        return typeField.getText().trim();
+    public int getItemType() {
+        return typeCombo.getSelectedIndex();
     }
 
     public String getDescription() {

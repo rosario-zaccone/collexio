@@ -56,6 +56,10 @@ public class ItemCollection {
         return data.size();
     }
 
+    public int length() {
+        return data.size();
+    }
+
     public double totalBalance() {
         return data.stream()
                 .map(Item::balance)

@@ -39,7 +39,7 @@ public class ItemService {
     }
 
     public void freeFromCollection(Item item) throws SQLException {
-        dao.update(item.toEntity(), true);
+        dao.update(item.toEntity(), null);
     }
 
     public List<Item> getByCollectionId(Long collectionId) throws SQLException {
@@ -63,8 +63,8 @@ public class ItemService {
     }
 
 
-    public void update(Item item) throws SQLException, IOException {
-        dao.update(item.toEntity(), false);
+    public void update(Item item, Long collectionId) throws SQLException, IOException {
+        dao.update(item.toEntity(), collectionId);
     }
 
     public Connection getConnection() {

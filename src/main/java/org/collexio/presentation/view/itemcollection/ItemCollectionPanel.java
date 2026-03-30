@@ -13,7 +13,6 @@ public class ItemCollectionPanel extends JPanel {
     private final ButtonColumn deleteButton;
     private final ButtonColumn updateButton;
     private final ButtonColumn itemsButton;
-    private final ButtonColumn valueButton;
     private final JButton addButton;
     private final InsertItemCollectionForm insertForm;
     private final UpdateItemCollectionForm updateForm;
@@ -26,8 +25,8 @@ public class ItemCollectionPanel extends JPanel {
         table.setRowHeight(30);
         table.getTableHeader().setReorderingAllowed(false);
 
-        itemsButton = new ButtonColumn(table, null, 2);
-        valueButton = new ButtonColumn(table, null, 3);
+
+        itemsButton = new ButtonColumn(table, null, 3);
         updateButton = new ButtonColumn(table, null, 4);
         deleteButton = new ButtonColumn(table, null, 5);
 
@@ -75,9 +74,6 @@ public class ItemCollectionPanel extends JPanel {
         return itemsButton;
     }
 
-    public ButtonColumn getValueButton() {
-        return valueButton;
-    }
 
     public ButtonColumn getDeleteButton() {
         return deleteButton;

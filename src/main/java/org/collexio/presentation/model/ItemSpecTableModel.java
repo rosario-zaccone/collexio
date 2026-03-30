@@ -99,4 +99,5 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     public String generateDescription(ItemSpec spec) {
         return service.generateDescriptionByAI(spec);
     }
+
 }

@@ -22,9 +22,9 @@ public class ItemCollectionController {
     public ItemCollectionController(ItemCollectionTableModel model, ItemCollectionPanel view) {
         this.model = model;
         this.view = view;
-        this.view.getAddButton().addActionListener(new ItemCollectionController.InsertButtonListener());
-        this.view.getDeleteButton().setAction(new ItemCollectionController.DeleteAction());
-        this.view.getUpdateButton().setAction(new ItemCollectionController.UpdateAction());
+        this.view.getAddButton().addActionListener(new InsertButtonListener());
+        this.view.getDeleteButton().setAction(new DeleteAction());
+        this.view.getUpdateButton().setAction(new UpdateAction());
 
         insertForm = view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new ItemCollectionController.InsertFormListener());

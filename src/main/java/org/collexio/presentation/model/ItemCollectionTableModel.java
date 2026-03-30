@@ -1,6 +1,7 @@
 package org.collexio.presentation.model;
 
 import org.collexio.business.domain.ItemCollection;
+import org.collexio.business.service.ItemCollectionOrchestrator;
 import org.collexio.business.service.ItemCollectionService;
 
 import javax.swing.table.AbstractTableModel;
@@ -12,10 +13,12 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     private final static int COLUMNS = 6;
     private List<ItemCollection> data;
     private final ItemCollectionService service;
+    private final ItemCollectionOrchestrator orchestrator;
 
-    public ItemCollectionTableModel(ItemCollectionService service) throws SQLException {
+    public ItemCollectionTableModel(ItemCollectionService service, ItemCollectionOrchestrator orchestrator) throws SQLException {
         this.service = service;
         data = service.getAll();
+        this.orchestrator = orchestrator;
     }
 
 
@@ -35,8 +38,8 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
         return switch (columnIndex) {
             case 0 -> coll.getId();
             case 1 -> coll.getName();
-            case 2 -> "Items";
-            case 3-> "Value";
+            case 2-> coll.length();
+            case 3 -> "Items";
             case 4 -> "Update";
             case 5 -> "Delete";
             default -> throw new IllegalStateException("Unexpected value");
@@ -48,8 +51,8 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
         return switch (column) {
             case 0 -> "Id";
             case 1 -> "Name";
-            case 2 -> "Items";
-            case 3-> "Value";
+            case 2 -> "Total";
+            case 3-> "Items";
             case 4 -> "Update";
             case 5 -> "Delete";
             default -> "";
@@ -87,7 +90,7 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     }
 
     public void refresh() throws SQLException {
-        data = service.getAll();
+        data = orchestrator.getAllFullCollections();
     }
 
 }

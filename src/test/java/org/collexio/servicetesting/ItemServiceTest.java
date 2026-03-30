@@ -1,17 +1,8 @@
 package org.collexio.servicetesting;
 
-import org.collexio.business.domain.Item;
-import org.collexio.business.domain.ItemPhoto;
-import org.collexio.business.domain.ItemSpec;
-import org.collexio.business.domain.Transaction;
-import org.collexio.business.service.ItemPhotoService;
-import org.collexio.business.service.ItemService;
-import org.collexio.business.service.ItemSpecService;
-import org.collexio.business.service.TransactionService;
-import org.collexio.persistence.dao.DBItemDAO;
-import org.collexio.persistence.dao.DBItemPhotoDAO;
-import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.dao.DBTransactionDAO;
+import org.collexio.business.domain.*;
+import org.collexio.business.service.*;
+import org.collexio.persistence.dao.*;
 import org.collexio.persistence.model.*;
 
 import org.junit.jupiter.api.*;
@@ -32,6 +23,7 @@ class ItemServiceTest {
     private DBItemDAO itemDAO;
     private ItemService itemService;
     private ItemSpecService specService;
+    private ItemCollectionService collectionService;
 
     @BeforeAll
     void setupDatabase() throws SQLException, IOException {
@@ -40,8 +32,6 @@ class ItemServiceTest {
             stmt.execute("PRAGMA foreign_keys = ON");
 
             stmt.execute("CREATE TABLE item_collections (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);");
-            stmt.execute("INSERT INTO item_collections (name) VALUES ('Console');");
-            stmt.execute("INSERT INTO item_collections (name) VALUES ('Console');");
             stmt.execute("""
                 CREATE TABLE item_specs(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,6 +75,7 @@ class ItemServiceTest {
         itemDAO = new DBItemDAO(connection);
         itemService = new ItemService(itemDAO);
         specService = new ItemSpecService(new DBItemSpecDAO(connection));
+        collectionService = new ItemCollectionService(new DBItemCollectionDAO(connection));
     }
 
     @BeforeEach
@@ -105,8 +96,9 @@ class ItemServiceTest {
     @Test
     void testAddAndGetItem() throws SQLException, IOException {
         ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        ItemCollection coll = collectionService.add(new ItemCollection("nintendo"));
         Item item = new Item(ItemStatus.GOOD, spec);
-        item = itemService.add(item, 1L);
+        item = itemService.add(item, coll.getId());
         Item fetched = itemService.get(item.getId());
         item.setSpec(null);
         assertEquals(item.toString(), fetched.toString());
@@ -115,15 +107,16 @@ class ItemServiceTest {
     @Test
     void testGetByCollectionId() throws SQLException, IOException {
         ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        ItemCollection coll = collectionService.add(new ItemCollection("nintendo"));
         Item item1 = new Item(ItemStatus.GOOD, spec);
-        item1 = itemService.add(item1, 1L);
+        item1 = itemService.add(item1, coll.getId());
         Item item2 = new Item(ItemStatus.GOOD, spec);
-        item2 = itemService.add(item2, 1L);
+        item2 = itemService.add(item2, coll.getId());
 
         Item item3 = new Item(ItemStatus.GOOD, spec);
-        item3 = itemService.add(item3, 1L);
+        item3 = itemService.add(item3, coll.getId());
 
-        List<Item> items = itemService.getByCollectionId(1L);
+        List<Item> items = itemService.getByCollectionId(coll.getId());
 
         assertEquals(3, items.size());
         assertTrue(items.contains(item1));
@@ -134,9 +127,22 @@ class ItemServiceTest {
     @Test
     void testDeleteItem() throws SQLException, IOException {
         ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        ItemCollection coll = collectionService.add(new ItemCollection("nintendo"));
         Item item = new Item(ItemStatus.AVERAGE, spec);
-        item = itemService.add(item, 1L);
+        item = itemService.add(item, coll.getId());
         itemService.delete(item.getId());
-        assertThrows(NoSuchElementException.class, () -> itemService.get(1L));
+        Item finalItem = item;
+        assertThrows(NoSuchElementException.class, () -> itemService.get(finalItem.getId()));
+    }
+
+    @Test
+    void testUpdateItem() throws SQLException, IOException {
+        ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "nintendo ds", "blabla"));
+        ItemCollection coll = collectionService.add(new ItemCollection("nintendo"));
+        ItemCollection coll2 = collectionService.add(new ItemCollection("nintendo new"));
+        Item item = new Item(ItemStatus.AVERAGE, spec);
+        item = itemService.add(item, coll.getId());
+        itemService.update(item, coll2.getId());
+        assertEquals(0, collectionService.get(coll.getId()).getData().size());
     }
 }
