@@ -25,18 +25,35 @@ public class ItemOrchestrator {
     }
 
     public Item addWithPhoto(Item item, Long collectionId, ItemPhoto photo) throws SQLException, IOException {
+        Item nItem;
         Connection connection = itemService.getConnection();
         try {
             connection.setAutoCommit(false);
-            item = itemService.add(item, collectionId);
-            item.setPhoto(photoService.add(photo, item.getId()));
+            nItem = itemService.add(item, collectionId);
+            nItem.setPhoto(photoService.add(photo, item.getId()));
         } catch (SQLException | IOException e) {
             connection.rollback();
             throw e;
         } finally {
             connection.setAutoCommit(true);
         }
-        return item;
+        return nItem;
+    }
+
+    public Item updateWithPhoto(Item item, Long collectionId, ItemPhoto photo) throws SQLException, IOException {
+        Connection connection = itemService.getConnection();
+        Item nItem = new Item(item);
+        try {
+            connection.setAutoCommit(false);
+            itemService.update(item, collectionId);
+            nItem.setPhoto(photoService.update(photo, item.getId()));
+        } catch (SQLException | IOException e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
+        }
+        return nItem;
     }
 
     public Item getFullItem(Long id) throws SQLException {

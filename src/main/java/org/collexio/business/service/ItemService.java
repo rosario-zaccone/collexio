@@ -67,6 +67,10 @@ public class ItemService {
         dao.update(item.toEntity(), collectionId);
     }
 
+    public Optional<Long> getCollectionId(Item item) throws SQLException {
+        return dao.getCollectionId(item.getId());
+    }
+
     public Connection getConnection() {
         return ((DBItemDAO)dao).getConnection();
     }

@@ -11,6 +11,7 @@ import org.collexio.presentation.view.itemspec.UpdateSpecForm;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class ItemSpecController {
@@ -58,12 +59,10 @@ public class ItemSpecController {
                 ItemSpec spec = new ItemSpec(type, name, description);
                 model.addRow(spec);
                 insertForm.setMessageLabel("Item spec inserted");
-            } catch (IllegalArgumentException ex) { // TODO: change messagges
-                insertForm.setMessageLabel("Error: " + ex);
-            } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex);
+            } catch (IllegalArgumentException ex) {
+                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Error: " + ex);
+                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
             }
 
         }
@@ -78,13 +77,10 @@ public class ItemSpecController {
                 String description = updateForm.getDescription();
                 model.updateRow(new ItemSpec(id, type, name, description));
                 updateForm.setMessageLabel("Item spec updated");
-            } catch (IllegalArgumentException ex) { // TODO: change messagges
-                updateForm.setMessageLabel("Error: " + ex);
-            } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex);
-                ex.printStackTrace();
+            } catch (IllegalArgumentException ex) {
+                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Error: " + ex);
+                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
             }
 
         }

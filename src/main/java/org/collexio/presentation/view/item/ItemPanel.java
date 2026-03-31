@@ -19,7 +19,7 @@ public class ItemPanel extends JPanel{
     private final ButtonColumn priceButton;
     private final JButton addButton;
     private final InsertItemForm insertForm;
-    // private final UpdateSpecForm updateSpecForm;
+    private final UpdateItemForm updateForm;
 
     public ItemPanel(ItemTableModel model) {
         this.model = model;
@@ -67,7 +67,7 @@ public class ItemPanel extends JPanel{
         add(addButton);
 
         this.insertForm = new InsertItemForm();
-        // this.updateSpecForm = new UpdateSpecForm();
+        this.updateForm = new UpdateItemForm();
 
         table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -107,9 +107,9 @@ public class ItemPanel extends JPanel{
         return insertForm;
     }
 
-    // public UpdateForm getUpdateSpecForm() {
-    //     return updateSpecForm;
-    // }
+    public UpdateItemForm getUpdateForm() {
+         return updateForm;
+     }
 
     public ButtonColumn getPriceButton() {
         return priceButton;

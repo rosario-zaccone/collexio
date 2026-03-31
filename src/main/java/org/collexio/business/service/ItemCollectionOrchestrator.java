@@ -25,9 +25,9 @@ public class ItemCollectionOrchestrator {
     }
 
     public List<ItemCollection> getAllFullCollections() throws SQLException {
-        var collectins = collectionService.getAll();
+        var collections = collectionService.getAll();
         List<ItemCollection> res = new ArrayList<>();
-        for (ItemCollection collection: collectins)
+        for (ItemCollection collection: collections)
             res.add(getFullCollection(collection.getId()));
         return res;
     }

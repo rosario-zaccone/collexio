@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemTableModel extends AbstractTableModel implements CrudTableModel<Item> {
     private final static int COLUMNS = 9;
@@ -102,15 +103,14 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     @Override
     public void updateRow(Item elem) throws SQLException, IOException { // free from collection
-        // photo update ??
-        service.update(elem, null);
+        orchestrator.updateWithPhoto(elem, null, elem.getPhoto());
         refresh();
         fireTableDataChanged();
     }
 
 
     public void updateRowWithCollection(Item elem, Long collectionId) throws SQLException, IOException {
-        // photo update outside this, responsibility by controller with photoservice
+        orchestrator.updateWithPhoto(elem, collectionId, elem.getPhoto());
         service.update(elem, collectionId);
         refresh();
         fireTableDataChanged();
@@ -127,14 +127,18 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 7 || columnIndex == 5 || columnIndex == 6;
+        return columnIndex == 8 || columnIndex == 7 || columnIndex == 6;
     }
 
     public void refresh() throws SQLException {
         data = orchestrator.getAllFullItems();
     }
 
-    public ItemSpec getSpec(Long id) throws SQLException {
-        return specService.get(id);
+    public ItemSpec getSpec(Long specId) throws SQLException {
+        return specService.get(specId);
+    }
+
+    public Optional<Long> getCollectionId(Item elem) throws SQLException {
+        return service.getCollectionId(elem);
     }
 }

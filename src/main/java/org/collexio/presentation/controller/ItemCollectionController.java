@@ -52,14 +52,12 @@ public class ItemCollectionController {
                 ItemCollection collection = new ItemCollection(name);
                 model.addRow(collection);
                 insertForm.setMessageLabel("Item Collection inserted");
-            } catch (IllegalArgumentException ex) { // TODO: change messagges
-                insertForm.setMessageLabel("Error: " + ex);
-            } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex);
+            } catch (IllegalArgumentException ex) {
+                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Error: " + ex);
+                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
-                insertForm.setMessageLabel("Error: " + ex);
+                insertForm.setMessageLabel("IO Error: " + ex.getMessage());
             }
 
         }
@@ -72,15 +70,12 @@ public class ItemCollectionController {
                 String name = updateForm.getName();
                 model.updateRow(new ItemCollection(id, name));
                 updateForm.setMessageLabel("Item Collection updated");
-            } catch (IllegalArgumentException ex) { // TODO: change messagges
-                updateForm.setMessageLabel("Error: " + ex);
-            } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex);
-                ex.printStackTrace();
+            } catch (IllegalArgumentException ex) {
+                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Error: " + ex);
+                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
-                updateForm.setMessageLabel("Error: " + ex);
+                updateForm.setMessageLabel("IO Error: " + ex.getMessage());
             }
 
         }

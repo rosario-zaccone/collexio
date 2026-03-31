@@ -4,10 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class InsertItemForm extends JDialog {
+public class UpdateItemForm extends JDialog {
     private final JComboBox<String> statusCombo;
+    private final JTextField idField;
     private final JTextField collectionField;
     private final JTextField specField;
+    private final JTextField photoIdField;
     private final JTextField photoPath;
     private final JTextField photoDate;
 
@@ -15,7 +17,7 @@ public class InsertItemForm extends JDialog {
     private final JButton cancelButton;
     private final JLabel messageLabel;
 
-    public InsertItemForm() {
+    public UpdateItemForm() {
         JPanel contentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
@@ -23,8 +25,16 @@ public class InsertItemForm extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
+        // Id
+        contentPanel.add(new JLabel("Item id:"), gbc);
+        gbc.gridx = 1;
+        idField = new JTextField(20);
+        contentPanel.add(idField, gbc);
+
         // Collection
-        contentPanel.add(new JLabel("Collection Id(Leave empty if the item isn't part of a collection) :"), gbc);
+        gbc.gridx = 0;
+        gbc.gridy++;
+        contentPanel.add(new JLabel("Collection Id (Leave empty if the item isn't part of a collection:"), gbc);
         gbc.gridx = 1;
         collectionField = new JTextField(20);
         contentPanel.add(collectionField, gbc);
@@ -76,6 +86,12 @@ public class InsertItemForm extends JDialog {
         photoDate = new JTextField(20);
         contentPanel.add(photoDate, gbc);
 
+        // Hidden photo id field
+        photoIdField = new JTextField();
+        photoIdField.setEditable(false);
+        photoIdField.setVisible(false);
+        contentPanel.add(photoIdField);
+
         // Message label
         gbc.gridy++;
         gbc.gridx = 0;
@@ -90,7 +106,7 @@ public class InsertItemForm extends JDialog {
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         JPanel buttonPanel = new JPanel();
-        submitButton = new JButton("Insert");
+        submitButton = new JButton("Update");
         cancelButton = new JButton("Cancel");
         buttonPanel.add(submitButton);
         buttonPanel.add(cancelButton);
@@ -108,6 +124,10 @@ public class InsertItemForm extends JDialog {
         photoPath.setText("");
         photoDate.setText("");
         messageLabel.setText(" ");
+    }
+
+    public String getId() {
+        return idField.getText().trim();
     }
 
     public String getCollection() {
@@ -128,6 +148,38 @@ public class InsertItemForm extends JDialog {
 
     public String getPhotoDate() {
         return photoDate.getText().trim();
+    }
+
+    public void setId(String id) {
+        idField.setText(id);
+    }
+
+    public void setCollection(String id) {
+        collectionField.setText(id);
+    }
+
+    public void setSpec(String spec) {
+        specField.setText(spec);
+    }
+
+    public void setStatus(int status) {
+        statusCombo.setSelectedIndex(status);
+    }
+
+    public void setPhotoPath(String path) {
+        photoPath.setText(path);
+    }
+
+    public void setPhotoDate(String date) {
+        photoDate.setText(date);
+    }
+
+    public void setPhotoId(String id) {
+        photoIdField.setText(id);
+    }
+
+    public String getPhotoId() {
+        return photoIdField.getText().trim();
     }
 
     public void setMessageLabel(String text) {

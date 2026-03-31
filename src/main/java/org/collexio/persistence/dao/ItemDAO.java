@@ -15,5 +15,6 @@ public interface ItemDAO {
     void update(ItemEntity item, Long collectionId) throws SQLException; // noCollection = true -> remove the item from the collection
     void delete(Long id) throws SQLException;
     List<ItemEntity> getAll() throws SQLException;
+    Optional<Long> getCollectionId(Long id) throws SQLException;
 
 }

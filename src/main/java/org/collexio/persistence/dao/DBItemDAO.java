@@ -1,6 +1,4 @@
 package org.collexio.persistence.dao;
-import org.collexio.business.domain.Item;
-import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.model.*;
 
 
@@ -20,7 +18,6 @@ public class DBItemDAO implements ItemDAO{
     private static final String updateSql = "UPDATE items SET status = ? , "
             + "item_collection_id = ? "
             + "WHERE id = ?";
-
     public DBItemDAO(Connection connection) {
         this.connection = connection;
     }
@@ -113,6 +110,22 @@ public class DBItemDAO implements ItemDAO{
                     ItemEntity item = new ItemEntity(id, status);
                     res.add(item);
                 }
+        }
+        return res;
+    }
+
+    @Override
+    public Optional<Long> getCollectionId(Long id) throws SQLException {
+        Optional<Long> res = Optional.empty();
+        try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Long collectionId = rs.getLong("item_collection_id");
+                    if (!rs.wasNull())
+                        res = Optional.of(collectionId);
+                }
+            }
         }
         return res;
     }
