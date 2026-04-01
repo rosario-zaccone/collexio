@@ -17,13 +17,14 @@ public class ItemCollectionPanel extends JPanel {
     private final InsertItemCollectionForm insertForm;
     private final UpdateItemCollectionForm updateForm;
 
+
     public ItemCollectionPanel(ItemCollectionTableModel model) {
         this.model = model;
-
         table = new JTable(model);
-
-        table.setRowHeight(30);
+        table.setRowHeight(60);
         table.getTableHeader().setReorderingAllowed(false);
+        this.insertForm = new InsertItemCollectionForm();
+        this.updateForm = new UpdateItemCollectionForm();
 
 
         itemsButton = new ButtonColumn(table, null, 3);
@@ -42,12 +43,13 @@ public class ItemCollectionPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        add(scrollPane);
-        add(Box.createVerticalStrut(15));
-        add(addButton);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        add(scrollPane, BorderLayout.CENTER);
+        add(addButton, BorderLayout.SOUTH);
+        addButton.setPreferredSize(new Dimension(0, 50));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-        this.insertForm = new InsertItemCollectionForm();
-        this.updateForm = new UpdateItemCollectionForm();
     }
 
     public ItemCollectionTableModel getModel() {

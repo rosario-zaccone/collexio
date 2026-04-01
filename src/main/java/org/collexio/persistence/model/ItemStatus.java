@@ -22,4 +22,14 @@ public enum ItemStatus {
             default -> throw new IllegalArgumentException("Invalid value");
         };
     }
+
+    @Override
+    public String toString() {
+        return switch (value) {
+            case 0 -> "Bad";
+            case 1 -> "Average";
+            case 2 -> "Good";
+            default -> throw new IllegalStateException("Unexpected value: " + value);
+        };
+    }
 }

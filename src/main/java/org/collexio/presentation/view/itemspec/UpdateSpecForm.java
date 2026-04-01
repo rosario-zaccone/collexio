@@ -35,7 +35,7 @@ public class UpdateSpecForm extends JDialog {
         gbc.gridy++;
         contentPanel.add(new JLabel("Type:"), gbc);
         gbc.gridx = 1;
-        String[] statusOptions = {"Book", "Tech Item", "Plant"};
+        String[] statusOptions = {"Plant", "Tech Item", "Book"};
         typeCombo = new JComboBox<>(statusOptions);
         contentPanel.add(typeCombo, gbc);
 

@@ -30,7 +30,8 @@ public class ItemOrchestrator {
         try {
             connection.setAutoCommit(false);
             nItem = itemService.add(item, collectionId);
-            nItem.setPhoto(photoService.add(photo, item.getId()));
+            System.out.println(nItem);
+            nItem.setPhoto(photoService.add(photo, nItem.getId()));
         } catch (SQLException | IOException e) {
             connection.rollback();
             throw e;

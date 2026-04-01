@@ -21,7 +21,6 @@ public class ItemSpecPanel extends JPanel{
 
     public ItemSpecPanel(ItemSpecTableModel model) {
         this.model = model;
-
         table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -41,12 +40,14 @@ public class ItemSpecPanel extends JPanel{
             }
         };
 
-        table.setRowHeight(30);
+        table.setRowHeight(60);
         table.getTableHeader().setReorderingAllowed(false);
 
         priceButton = new ButtonColumn(table, null, 4);
         updateButton = new ButtonColumn(table, null, 5);
         deleteButton = new ButtonColumn(table, null, 6);
+        this.insertForm = new InsertSpecForm();
+        this.updateSpecForm = new UpdateSpecForm();
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -60,12 +61,13 @@ public class ItemSpecPanel extends JPanel{
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        add(scrollPane);
-        add(Box.createVerticalStrut(15));
-        add(addButton);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        add(scrollPane, BorderLayout.CENTER);
+        add(addButton, BorderLayout.SOUTH);
+        addButton.setPreferredSize(new Dimension(0, 50));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-        this.insertForm = new InsertSpecForm();
-        this.updateSpecForm = new UpdateSpecForm();
     }
 
     public ItemSpecTableModel getModel() {

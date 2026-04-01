@@ -29,11 +29,11 @@ public class ItemSpecController {
         this.view.getUpdateButton().setAction(new UpdateAction());
         this.view.getPriceButton().setAction(new PriceAction());
 
-        insertForm = view.getInsertForm();
+        insertForm = this.view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new InsertFormListener());
         insertForm.getCancelButton().addActionListener(e -> insertForm.dispose());
 
-        updateForm = view.getUpdateSpecForm();
+        updateForm = this.view.getUpdateSpecForm();
         updateForm.getSubmitButton().addActionListener(new UpdateFormListener());
         updateForm.getCancelButton().addActionListener(e -> {
             updateForm.dispose();
@@ -111,7 +111,12 @@ public class ItemSpecController {
                 try {
                     model.removeRow(modelRow);
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex); // TODO: show dialog error messagge (or message on a status bar)
+                    JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            "Error",
+                            "Error",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                 }
             }
         }

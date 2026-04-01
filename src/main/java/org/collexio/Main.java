@@ -2,6 +2,9 @@ package org.collexio;
 
 import org.collexio.persistence.dao.*;
 import org.collexio.business.service.*;
+import org.collexio.presentation.model.ItemCollectionTableModel;
+import org.collexio.presentation.model.ItemSpecTableModel;
+import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.view.AppFrame;
 import org.collexio.presentation.controller.*;
 import javax.swing.*;
@@ -22,29 +25,55 @@ public class Main {
                 ItemPhotoDAO photoDAO = new DBItemPhotoDAO(connection);
                 TransactionDAO transactionDAO = new DBTransactionDAO(connection);
 
-                ItemCollectionService collectionService = new ItemCollectionService(collectionDAO);
+                ItemCollectionService itemCollectionService = new ItemCollectionService(collectionDAO);
                 ItemService itemService = new ItemService(itemDAO);
-                ItemSpecService specService = new ItemSpecService(specDAO);
-                ItemPhotoService photoService = new ItemPhotoService(photoDAO);
+                ItemSpecService itemSpecService = new ItemSpecService(specDAO);
+                ItemPhotoService itemPhotoService = new ItemPhotoService(photoDAO);
                 TransactionService transactionService = new TransactionService(transactionDAO);
 
                 ItemCollectionOrchestrator collectionOrchestrator =
-                        new ItemCollectionOrchestrator(itemService, collectionService);
+                        new ItemCollectionOrchestrator(itemService, itemCollectionService);
 
                 ItemOrchestrator itemOrchestrator =
-                        new ItemOrchestrator(itemService, photoService, transactionService, specService);
+                        new ItemOrchestrator(itemService, itemPhotoService, transactionService, itemSpecService);
 
-                new AppFrame(
+                ItemCollectionTableModel itemCollectionModel = new ItemCollectionTableModel(itemCollectionService, collectionOrchestrator);
+                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService);
+                ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService);
+
+                var frame = new AppFrame(
                         "Collexio",
-                        connection,
-                        collectionService,
-                        collectionOrchestrator,
-                        itemService,
-                        itemOrchestrator,
-                        photoService,
-                        specService,
-                        transactionService
+                        itemCollectionModel,
+                        itemSpecModel,
+                        itemModel
                 );
+
+                frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        try {
+                            if (connection != null && !connection.isClosed()) {
+                                connection.close();
+                            }
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+
+                var tab = frame.getTabbedPanel();
+                // Controllers
+                new ItemSpecController(itemSpecModel, tab.getItemSpecPanel());
+                new ItemCollectionController(
+                        itemCollectionModel,
+                        tab.getItemCollectionPanel(),
+                        tab.getItemPanel(),
+                        () -> {
+                            // tab.getItemPanel().getModel().refresh();
+                            tab.getTabbedPanel().setSelectedComponent(tab.getItemPanel());
+                        }
+                );
+                new ItemController(itemModel, tab.getItemPanel());
 
             } catch (SQLException | IOException e) {
                 throw new RuntimeException(e);

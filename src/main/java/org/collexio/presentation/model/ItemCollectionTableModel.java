@@ -86,11 +86,15 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 4 || columnIndex == 5 || columnIndex == 6;
+        return columnIndex == 3 || columnIndex == 4 || columnIndex == 5;
     }
 
     public void refresh() throws SQLException {
         data = orchestrator.getAllFullCollections();
+    }
+
+    public List<Long> getCollectionIds() throws SQLException {
+        return service.getAll().stream().map(ItemCollection::getId).toList();
     }
 
 }

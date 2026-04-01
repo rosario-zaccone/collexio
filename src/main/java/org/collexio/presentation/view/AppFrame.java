@@ -1,43 +1,36 @@
 package org.collexio.presentation.view;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import org.collexio.business.service.*;
+import org.collexio.presentation.model.ItemCollectionTableModel;
+import org.collexio.presentation.model.ItemSpecTableModel;
+import org.collexio.presentation.model.ItemTableModel;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import javax.swing.*;
 
 public class AppFrame extends JFrame {
+    private TabbedPanel tabbedPanel;
 
     public AppFrame(
             String title,
-            Connection connection,
-            ItemCollectionService itemCollectionService,
-            ItemCollectionOrchestrator collectionOrchestrator,
-            ItemService itemService,
-            ItemOrchestrator itemOrchestrator,
-            ItemPhotoService photoService,
-            ItemSpecService specService,
-            TransactionService transactionService
+            ItemCollectionTableModel itemCollectionModel,
+            ItemSpecTableModel itemSpecModel,
+            ItemTableModel itemModel
     ) {
         super(title);
         FlatLaf.setup(new FlatLightLaf());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        TabbedPanel tabbedPanel = null;
         try {
             tabbedPanel = new TabbedPanel(
-                    connection,
-                    itemCollectionService,
-                    collectionOrchestrator,
-                    itemService,
-                    itemOrchestrator,
-                    photoService,
-                    specService,
-                    transactionService
+                    itemCollectionModel,
+                    itemSpecModel,
+                    itemModel
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,14 +44,28 @@ public class AppFrame extends JFrame {
         fileMenu.setMnemonic(KeyEvent.VK_A);
         JMenuItem dump = new JMenuItem("Dump database");
         fileMenu.add(dump);
-        fileMenu.addSeparator();
+
 
         JMenu viewMenu = new JMenu("View");
         JMenu lookMenu = new JMenu("Appearance");
         JMenuItem light = new JMenuItem("Light");
         JMenuItem dark = new JMenuItem("Dark");
+        JMenuItem intellij = new JMenuItem("IntelliJ");
+        JMenuItem darcula = new JMenuItem("Darcula");
+        JMenuItem macLight = new JMenuItem("Mac Light");
+        JMenuItem macDark = new JMenuItem("Mac Dark");
+
         lookMenu.add(light);
         lookMenu.add(dark);
+        lookMenu.addSeparator();
+
+        lookMenu.add(intellij);
+        lookMenu.add(darcula);
+        lookMenu.addSeparator();
+
+        lookMenu.add(macLight);
+        lookMenu.add(macDark);
+
         viewMenu.add(lookMenu);
 
         menuBar.add(fileMenu);
@@ -82,7 +89,32 @@ public class AppFrame extends JFrame {
             FlatLaf.updateUI();
         });
 
+        intellij.addActionListener(e -> {
+            FlatLaf.setup(new FlatIntelliJLaf());
+            FlatLaf.updateUI();
+        });
+
+        darcula.addActionListener(e -> {
+            FlatLaf.setup(new FlatDarculaLaf());
+            FlatLaf.updateUI();
+        });
+
+        macLight.addActionListener(e -> {
+            FlatLaf.setup(new FlatMacLightLaf());
+            FlatLaf.updateUI();
+        });
+
+        macDark.addActionListener(e -> {
+            FlatLaf.setup(new FlatMacDarkLaf());
+            FlatLaf.updateUI();
+        });
+
+
         pack();
         setVisible(true);
+    }
+
+    public TabbedPanel getTabbedPanel() {
+        return tabbedPanel;
     }
 }

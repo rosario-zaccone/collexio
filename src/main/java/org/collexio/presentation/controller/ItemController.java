@@ -4,19 +4,16 @@ import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.model.ItemStatus;
-import org.collexio.persistence.model.ItemType;
-import org.collexio.presentation.model.ItemSpecTableModel;
+import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.view.item.InsertItemForm;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.item.UpdateItemForm;
-import org.collexio.presentation.view.itemspec.InsertSpecForm;
-import org.collexio.presentation.view.itemspec.ItemSpecPanel;
-import org.collexio.presentation.view.itemspec.UpdateSpecForm;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -24,8 +21,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public class ItemController {
-    private ItemTableModel model;
-    private ItemPanel view;
+    private final ItemTableModel model;
+    private final ItemPanel view;
     private final InsertItemForm insertForm;
     private final UpdateItemForm updateForm;
 
@@ -36,13 +33,16 @@ public class ItemController {
         this.view.getAddButton().addActionListener(new InsertButtonListener());
         this.view.getDeleteButton().setAction(new DeleteAction());
         this.view.getUpdateButton().setAction(new UpdateAction());
+        this.view.getFilterField().addActionListener(new FilterListener());
+        this.view.getPrintButton().addActionListener(new PrintListener());
 
-        insertForm = view.getInsertForm();
+        insertForm = this.view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new InsertFormListener());
         insertForm.getCancelButton().addActionListener(e -> insertForm.dispose());
         this.view.getPriceButton().setAction(new PriceAction());
 
-        updateForm = view.getUpdateForm();
+
+        updateForm = this.view.getUpdateForm();
         updateForm.getSubmitButton().addActionListener(new UpdateFormListener());
         updateForm.getCancelButton().addActionListener(e -> {
             updateForm.dispose();
@@ -50,9 +50,52 @@ public class ItemController {
         });
     }
 
+    class PrintListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                view.getTable().print();
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(
+                        view.getTable(),
+                        "Error",
+                        "Error",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        }
+    }
+
     class InsertButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             insertForm.setVisible(true);
+        }
+    }
+
+    class FilterListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String collectionId = view.getFilterField().getSelectedItem().toString();
+            if (collectionId.isEmpty()) {
+                view.setFilterField(null);
+            } else {
+
+                view.setFilterField(new RowFilter<ItemTableModel, Integer>() {
+                    @Override
+                    public boolean include(Entry<? extends ItemTableModel, ? extends Integer> entry) {
+                        Long itemId = (Long) entry.getValue(0);
+                        try {
+                            Optional<Long> itemCollectionId = model.getCollectionId(itemId);
+                            if (itemCollectionId.isEmpty())
+                                return false;
+                            else
+                                return itemCollectionId.get().equals(Long.valueOf(collectionId));
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                });
+            }
+
         }
     }
 
@@ -125,7 +168,12 @@ public class ItemController {
                 try {
                     model.removeRow(modelRow);
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex); // TODO: show dialog error messagge (or message on a status bar)
+                    JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            "Error",
+                            "Error",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                 }
             }
         }
@@ -142,7 +190,7 @@ public class ItemController {
             updateForm.setId(item.getId().toString());
             Optional<Long> collection;
             try {
-                collection = model.getCollectionId(item);
+                collection = model.getCollectionId(item.getId());
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }

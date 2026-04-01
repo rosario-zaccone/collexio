@@ -138,7 +138,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
         return specService.get(specId);
     }
 
-    public Optional<Long> getCollectionId(Item elem) throws SQLException {
-        return service.getCollectionId(elem);
+    public Optional<Long> getCollectionId(Long itemId) throws SQLException {
+        return service.getCollectionId(itemId);
     }
 }
