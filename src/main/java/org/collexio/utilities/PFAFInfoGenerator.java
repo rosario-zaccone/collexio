@@ -19,7 +19,7 @@ public class PFAFInfoGenerator implements InfoGenerator {
     private static final String baseUrl = "https://pfaf.org/user/Plant.aspx?LatinName=";
 
     @Override
-    public String generateDescription(String itemName) {
+    public String generateDescription(String itemName) throws IOException, InterruptedException {
         Dotenv dotenv = Dotenv.load();
         try (Client geminiClient = Client.builder()
                 .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
@@ -66,10 +66,6 @@ public class PFAFInfoGenerator implements InfoGenerator {
 
             return responseGemini.text();
 
-        } catch(InterruptedException | IOException e) {
-            System.out.println("Error");
-            Thread.currentThread().interrupt();
-            return "";
         }
     }
 

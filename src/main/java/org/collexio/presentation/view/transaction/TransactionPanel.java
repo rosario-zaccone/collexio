@@ -1,39 +1,38 @@
-package org.collexio.presentation.view.item;
+package org.collexio.presentation.view.transaction;
 
-
-
+import org.collexio.business.domain.Transaction;
 import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemTableModel;
+import org.collexio.presentation.model.TransactionTableModel;
 import org.collexio.presentation.view.ButtonColumn;
+import org.collexio.presentation.view.item.InsertItemForm;
+import org.collexio.presentation.view.item.UpdateItemForm;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.print.PrinterException;
 import java.sql.SQLException;
 
-public class ItemPanel extends JPanel{
-    private final ItemTableModel model;
+// wallet area ?
+public class TransactionPanel extends JPanel {
+    private final TransactionTableModel model;
     private final JTable table;
-    private final ItemCollectionTableModel collectionModel;
+    private final ItemTableModel itemModel;
     private final ButtonColumn deleteButton;
     private final ButtonColumn updateButton;
-    private final ButtonColumn priceButton;
-    private final ButtonColumn transactionsButton;
-    private final JButton printButton;
     private final JButton addButton;
-    private final InsertItemForm insertForm;
-    private final UpdateItemForm updateForm;
+    private final InsertTransactionForm insertForm;
+    private final UpdateTransactionForm updateForm;
     private final JComboBox<String> filterField;
 
-    TableRowSorter<ItemTableModel> filter;
+    TableRowSorter<TransactionTableModel> filter;
 
-    public ItemPanel(ItemTableModel model, ItemCollectionTableModel collectionModel) {
-        this.collectionModel = collectionModel;
-        filterField = new JComboBox<String>();
+    public TransactionPanel(TransactionTableModel model, ItemTableModel itemModel) {
         this.model = model;
+        this.itemModel = itemModel;
+        filterField = new JComboBox<String>();
 
         table = new JTable(model) {
             @Override
@@ -57,40 +56,18 @@ public class ItemPanel extends JPanel{
         table.setRowSorter(filter);
         table.setRowHeight(60);
         table.getTableHeader().setReorderingAllowed(false);
-        table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-
-                if (value instanceof ImageIcon icon) {
-                    label.setIcon(icon);
-                    label.setText(null);
-                    label.setHorizontalAlignment(JLabel.CENTER);
-                } else {
-                    label.setIcon(null);
-                    label.setText("No image");
-                }
-
-                return label;
-            }
-        });
         refreshFilter();
-        this.insertForm = new InsertItemForm();
-        this.updateForm = new UpdateItemForm();
+        this.insertForm = new InsertTransactionForm();
+        this.updateForm = new UpdateTransactionForm();
 
-        transactionsButton = new ButtonColumn(table, null, 7);
-        priceButton = new ButtonColumn(table, null, 8);
-        updateButton = new ButtonColumn(table, null, 9);
-        deleteButton = new ButtonColumn(table, null, 10);
+        updateButton = new ButtonColumn(table, null, 5);
+        deleteButton = new ButtonColumn(table, null, 6);
 
 
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
         filterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel filterLabel = new JLabel("Filter by Collection ID: ");
+        JLabel filterLabel = new JLabel("Filter by Item ID: ");
         filterLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
         filterPanel.add(filterLabel);
         filterPanel.add(Box.createHorizontalStrut(10));
@@ -104,25 +81,18 @@ public class ItemPanel extends JPanel{
         addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
 
-        printButton = new JButton("Print");
-        printButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        printButton.setFont(printButton.getFont().deriveFont(Font.BOLD, 14f));
-
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         add(filterPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        bottomPanel.add(addButton);
-        bottomPanel.add(printButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        add(addButton, BorderLayout.SOUTH);
         filterPanel.setPreferredSize(new Dimension(0, 30));
         addButton.setPreferredSize(new Dimension(0, 50));
         filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     }
 
-    public ItemTableModel getModel() {
+    public TransactionTableModel getModel() {
         return model;
     }
 
@@ -134,24 +104,12 @@ public class ItemPanel extends JPanel{
         return addButton;
     }
 
-    public InsertItemForm getInsertForm() {
+    public InsertTransactionForm getInsertForm() {
         return insertForm;
     }
 
-    public UpdateItemForm getUpdateForm() {
-         return updateForm;
-     }
-
-    public JButton getPrintButton() {
-        return printButton;
-    }
-
-    public ButtonColumn getTransactionsButton() {
-        return transactionsButton;
-    }
-
-    public ButtonColumn getPriceButton() {
-        return priceButton;
+    public UpdateTransactionForm getUpdateForm() {
+        return updateForm;
     }
 
     public ButtonColumn getDeleteButton() {
@@ -166,18 +124,17 @@ public class ItemPanel extends JPanel{
         return filterField;
     }
 
-    public void setFilterField(RowFilter<ItemTableModel, Integer> rf) {
+    public void setFilterField(RowFilter<TransactionTableModel, Integer> rf) {
         filter.setRowFilter(rf);
     }
 
-    public void setCollectionIdForFilter(String id) {
+    public void setItemIdForFilter(String id) {
         filterField.setSelectedItem(id);
     }
 
     public void refreshFilter() {
         try {
-            var ids = new java.util.ArrayList<>(
-                    collectionModel.getCollectionIds().stream()
+            var ids = new java.util.ArrayList<>(itemModel.getItemIds().stream()
                             .map(Object::toString)
                             .toList()
             );
@@ -188,4 +145,3 @@ public class ItemPanel extends JPanel{
         }
     }
 }
-

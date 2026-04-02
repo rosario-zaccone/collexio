@@ -14,21 +14,29 @@ public class TransactionService {
         this.dao = dao;
     }
 
-    public Transaction addTransaction(Transaction transaction, Long itemId) throws SQLException {
+    public Transaction add(Transaction transaction, Long itemId) throws SQLException {
         TransactionEntity entity = dao.add(transaction.toEntity(), itemId);
         return Transaction.fromEntity(entity);
     }
 
-    public void updateTransaction(Transaction transaction) throws SQLException {
+    public void update(Transaction transaction) throws SQLException {
         dao.update(transaction.toEntity());
     }
 
-    public void deleteTransaction(Transaction transaction) throws SQLException {
-        dao.delete(transaction.toEntity().getId());
+    public void delete(Long id) throws SQLException {
+        dao.delete(id);
     }
 
     public List<Transaction> getByItemId(Long itemId) throws SQLException {
         return dao.getByItemId(itemId).stream().map(Transaction::fromEntity).toList();
+    }
+
+    public List<Transaction> getAll() throws SQLException {
+        return dao.getAll().stream().map(Transaction::fromEntity).toList();
+    }
+
+    public Long getItemId(Long id) throws SQLException {
+        return dao.getItemId(id);
     }
 
 }

@@ -7,6 +7,7 @@ import org.collexio.business.service.*;
 import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.model.ItemTableModel;
+import org.collexio.presentation.model.TransactionTableModel;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -20,7 +21,8 @@ public class AppFrame extends JFrame {
             String title,
             ItemCollectionTableModel itemCollectionModel,
             ItemSpecTableModel itemSpecModel,
-            ItemTableModel itemModel
+            ItemTableModel itemModel,
+            TransactionTableModel transactionModel
     ) {
         super(title);
         FlatLaf.setup(new FlatLightLaf());
@@ -30,7 +32,8 @@ public class AppFrame extends JFrame {
             tabbedPanel = new TabbedPanel(
                     itemCollectionModel,
                     itemSpecModel,
-                    itemModel
+                    itemModel,
+                    transactionModel
             );
         } catch (Exception e) {
             e.printStackTrace();

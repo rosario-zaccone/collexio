@@ -114,4 +114,18 @@ public class DBTransactionDAO implements TransactionDAO {
         }
         return res;
     }
+
+    @Override
+    public Long getItemId(Long id) throws SQLException {
+        Long itemId = null;
+        try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    itemId = rs.getLong("item_id");
+                }
+            }
+        }
+        return itemId;
+    }
 }

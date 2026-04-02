@@ -62,11 +62,11 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableRowsDeleted(row, row);
+        fireTableDataChanged();
     }
 
     @Override
-    public void addRow(ItemCollection elem) throws SQLException, IOException {
+    public void addRow(ItemCollection elem, Long associatedId) throws SQLException, IOException {
         service.add(elem);
         refresh();
         fireTableDataChanged();

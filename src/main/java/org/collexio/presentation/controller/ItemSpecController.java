@@ -2,7 +2,6 @@ package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.model.ItemType;
-import org.collexio.presentation.dto.ItemSpecDTO;
 import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.view.itemspec.InsertSpecForm;
 import org.collexio.presentation.view.itemspec.ItemSpecPanel;
@@ -15,8 +14,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class ItemSpecController {
-    private ItemSpecTableModel model;
-    private ItemSpecPanel view;
+    private final ItemSpecTableModel model;
+    private final ItemSpecPanel view;
     private final InsertSpecForm insertForm;
     private final UpdateSpecForm updateForm;
 
@@ -57,7 +56,7 @@ public class ItemSpecController {
                 ItemType type = ItemType.fromInt(insertForm.getItemType());
                 String description = insertForm.getDescription();
                 ItemSpec spec = new ItemSpec(type, name, description);
-                model.addRow(spec);
+                model.addRow(spec, null);
                 insertForm.setMessageLabel("Item spec inserted");
             } catch (IllegalArgumentException ex) {
                 insertForm.setMessageLabel("Input Error: " + ex.getMessage());
@@ -88,9 +87,17 @@ public class ItemSpecController {
 
     class GenerateDescriptionButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            String desc = model.generateDescription(new ItemSpec(Long.parseLong(updateForm.getId()), ItemType.fromInt(updateForm.getItemType()), updateForm.getName(), updateForm.getDescription()));
-            System.out.println(desc);
-            updateForm.setDescription(desc);
+            try {
+                String desc = model.generateDescription(new ItemSpec(Long.parseLong(updateForm.getId()), ItemType.fromInt(updateForm.getItemType()), updateForm.getName(), updateForm.getDescription()));
+                updateForm.setDescription(desc);
+            } catch (IOException | InterruptedException ex) {
+                JOptionPane.showMessageDialog(
+                        view.getTable(),
+                        "Error during description generation " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
         }
     }
 
@@ -114,7 +121,7 @@ public class ItemSpecController {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
                             "Error",
-                            "Error",
+                            "Database Error " + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }

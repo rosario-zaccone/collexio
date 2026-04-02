@@ -4,6 +4,7 @@ import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemSpecService;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -61,11 +62,11 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableRowsDeleted(row, row);
+        fireTableDataChanged();
     }
 
     @Override
-    public void addRow(ItemSpec elem) throws SQLException {
+    public void addRow(ItemSpec elem, Long associatedId) throws SQLException {
         service.add(elem);
         refresh();
         fireTableDataChanged();
@@ -96,7 +97,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
         data = service.getAll();
     }
 
-    public String generateDescription(ItemSpec spec) {
+    public String generateDescription(ItemSpec spec) throws IOException, InterruptedException {
         return service.generateDescriptionByAI(spec);
     }
 

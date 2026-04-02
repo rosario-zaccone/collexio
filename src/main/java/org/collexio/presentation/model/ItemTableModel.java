@@ -1,6 +1,7 @@
 package org.collexio.presentation.model;
 
 import org.collexio.business.domain.Item;
+import org.collexio.business.domain.ItemCollection;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemOrchestrator;
 import org.collexio.business.service.ItemService;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ItemTableModel extends AbstractTableModel implements CrudTableModel<Item> {
-    private final static int COLUMNS = 9;
+    private final static int COLUMNS = 11;
     private List<Item> data;
     private final ItemService service;
     private final ItemOrchestrator orchestrator;
@@ -31,7 +32,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return data == null ? 0 : data.size();
     }
 
     @Override
@@ -58,9 +59,17 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
             case 3 -> item.getSpec().getName();
             case 4 -> item.getSpec().getDescription();
             case 5 -> item.getStatus();
-            case 6 -> "Scrape price";
-            case 7 -> "Update";
-            case 8 -> "Delete";
+            case 6 -> {
+                try {
+                    yield service.getCollectionId(item.getId()).isEmpty() ? "No collection" : service.getCollectionId(item.getId()).get() ;
+                } catch (SQLException e) {
+                    yield "Not available";
+                }
+            }
+            case 7 -> "Transactions";
+            case 8 -> "Scrape price";
+            case 9 -> "Update";
+            case 10 -> "Delete";
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -74,9 +83,11 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
             case 3 -> "Name";
             case 4 -> "Description";
             case 5 -> "Status";
-            case 6 -> "Scrape price";
-            case 7 -> "Update";
-            case 8 -> "Delete";
+            case 6 -> "Collection id";
+            case 7 -> "Transactions";
+            case 8 -> "Scrape price";
+            case 9 -> "Update";
+            case 10 -> "Delete";
             default -> "";
         };
     }
@@ -85,21 +96,16 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableRowsDeleted(row, row);
-    }
-
-    @Override
-    public void addRow(Item elem) throws SQLException, IOException {
-        orchestrator.addWithPhoto(elem, null, elem.getPhoto());
-        refresh();
         fireTableDataChanged();
     }
 
-    public void addRowWithCollection(Item elem, Long collectionId) throws SQLException, IOException {
+    @Override
+    public void addRow(Item elem, Long collectionId) throws SQLException, IOException {
         orchestrator.addWithPhoto(elem, collectionId, elem.getPhoto());
         refresh();
         fireTableDataChanged();
     }
+
 
     @Override
     public void updateRow(Item elem) throws SQLException, IOException { // free from collection
@@ -127,7 +133,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 8 || columnIndex == 7 || columnIndex == 6;
+        return columnIndex <= 10 && columnIndex >= 7;
     }
 
     public void refresh() throws SQLException {
@@ -140,5 +146,10 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     public Optional<Long> getCollectionId(Long itemId) throws SQLException {
         return service.getCollectionId(itemId);
+    }
+
+
+    public List<Long> getItemIds() throws SQLException {
+        return service.getAll().stream().map(Item::getId).toList();
     }
 }

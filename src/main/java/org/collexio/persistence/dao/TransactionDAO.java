@@ -12,4 +12,5 @@ public interface TransactionDAO {
     void delete(Long id) throws SQLException;
     List<TransactionEntity> getAll() throws SQLException;
     List<TransactionEntity> getByItemId(Long itemId) throws SQLException;
+    Long getItemId(Long id) throws SQLException;
 }

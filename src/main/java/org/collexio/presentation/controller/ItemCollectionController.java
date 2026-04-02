@@ -15,10 +15,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class ItemCollectionController {
-    private ItemCollectionTableModel model;
-    private ItemCollectionPanel view;
-    private ItemPanel itemView;
-    private TabSwitchListener tabSwitchListener;
+    private final ItemCollectionTableModel model;
+    private final ItemCollectionPanel view;
+    private final ItemPanel itemView;
+    private final TabSwitchListener tabSwitchListener;
     private final InsertItemCollectionForm insertForm;
     private final UpdateItemCollectionForm updateForm;
 
@@ -57,7 +57,7 @@ public class ItemCollectionController {
             try {
                 String name = insertForm.getName();
                 ItemCollection collection = new ItemCollection(name);
-                model.addRow(collection);
+                model.addRow(collection, null);
                 insertForm.setMessageLabel("Item Collection inserted");
                 itemView.refreshFilter();
 
@@ -112,7 +112,7 @@ public class ItemCollectionController {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
                             "Error",
-                            "Error",
+                            "Database Error " + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }
@@ -137,7 +137,7 @@ public class ItemCollectionController {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (tabSwitchListener != null) {
-                tabSwitchListener.switchToItemTab();
+                tabSwitchListener.switchToTab();
                 int viewRow = Integer.parseInt(e.getActionCommand());
                 int modelRow = view.getTable().convertRowIndexToModel(viewRow);
                 ItemCollection collection = model.getRow(modelRow);

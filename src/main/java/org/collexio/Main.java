@@ -5,6 +5,7 @@ import org.collexio.business.service.*;
 import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.model.ItemTableModel;
+import org.collexio.presentation.model.TransactionTableModel;
 import org.collexio.presentation.view.AppFrame;
 import org.collexio.presentation.controller.*;
 import javax.swing.*;
@@ -40,12 +41,14 @@ public class Main {
                 ItemCollectionTableModel itemCollectionModel = new ItemCollectionTableModel(itemCollectionService, collectionOrchestrator);
                 ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService);
                 ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService);
+                TransactionTableModel transactionModel = new TransactionTableModel(transactionService);
 
                 var frame = new AppFrame(
                         "Collexio",
                         itemCollectionModel,
                         itemSpecModel,
-                        itemModel
+                        itemModel,
+                        transactionModel
                 );
 
                 frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -73,7 +76,16 @@ public class Main {
                             tab.getTabbedPanel().setSelectedComponent(tab.getItemPanel());
                         }
                 );
-                new ItemController(itemModel, tab.getItemPanel());
+                new ItemController(
+                        itemModel,
+                        tab.getItemPanel(),
+                        tab.getTransactionPanel(),
+                        () -> {
+                            // tab.getItemPanel().getModel().refresh();
+                            tab.getTabbedPanel().setSelectedComponent(tab.getTransactionPanel());
+                        }
+                        );
+                new TransactionController(transactionModel, tab.getTransactionPanel());
 
             } catch (SQLException | IOException e) {
                 throw new RuntimeException(e);

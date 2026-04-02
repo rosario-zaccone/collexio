@@ -4,11 +4,11 @@ import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.model.ItemStatus;
-import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.view.item.InsertItemForm;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.item.UpdateItemForm;
+import org.collexio.presentation.view.transaction.TransactionPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -23,18 +23,23 @@ import java.util.Optional;
 public class ItemController {
     private final ItemTableModel model;
     private final ItemPanel view;
+    private final TransactionPanel transactionView;
+    private final TabSwitchListener tabSwitchListener;
     private final InsertItemForm insertForm;
     private final UpdateItemForm updateForm;
 
 
-    public ItemController(ItemTableModel model, ItemPanel view) {
+    public ItemController(ItemTableModel model, ItemPanel view, TransactionPanel transactionView, TabSwitchListener tabSwitchListener) {
         this.model = model;
         this.view = view;
+        this.tabSwitchListener = tabSwitchListener;
+        this.transactionView = transactionView;
         this.view.getAddButton().addActionListener(new InsertButtonListener());
         this.view.getDeleteButton().setAction(new DeleteAction());
         this.view.getUpdateButton().setAction(new UpdateAction());
         this.view.getFilterField().addActionListener(new FilterListener());
         this.view.getPrintButton().addActionListener(new PrintListener());
+        this.view.getTransactionsButton().setAction(new TransactionsAction());
 
         insertForm = this.view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new InsertFormListener());
@@ -59,7 +64,7 @@ public class ItemController {
                 JOptionPane.showMessageDialog(
                         view.getTable(),
                         "Error",
-                        "Error",
+                        "Printer Error " + ex.getMessage(),
                         JOptionPane.INFORMATION_MESSAGE
                 );
             }
@@ -74,8 +79,8 @@ public class ItemController {
 
     class FilterListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            String collectionId = view.getFilterField().getSelectedItem().toString();
-            if (collectionId.isEmpty()) {
+            String selectedId = view.getFilterField().getSelectedItem().toString();
+            if (selectedId.isEmpty()) {
                 view.setFilterField(null);
             } else {
 
@@ -84,11 +89,11 @@ public class ItemController {
                     public boolean include(Entry<? extends ItemTableModel, ? extends Integer> entry) {
                         Long itemId = (Long) entry.getValue(0);
                         try {
-                            Optional<Long> itemCollectionId = model.getCollectionId(itemId);
-                            if (itemCollectionId.isEmpty())
+                            Optional<Long> collectionId = model.getCollectionId(itemId);
+                            if (collectionId.isEmpty())
                                 return false;
                             else
-                                return itemCollectionId.get().equals(Long.valueOf(collectionId));
+                                return collectionId.get().equals(Long.valueOf(selectedId));
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -113,7 +118,7 @@ public class ItemController {
                 LocalDate date = LocalDate.parse(insertForm.getPhotoDate());
                 ItemPhoto photo = new ItemPhoto(path, date);
                 ItemSpec spec = model.getSpec(specId);
-                model.addRowWithCollection(new Item(status, photo, spec), collectionId);
+                model.addRow(new Item(status, photo, spec), collectionId);
                 insertForm.setMessageLabel("Item spec inserted");
             } catch (IllegalArgumentException ex) {
                 insertForm.setMessageLabel("Input Error: " + ex.getMessage());
@@ -151,6 +156,21 @@ public class ItemController {
     }
 
 
+    public class TransactionsAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (tabSwitchListener != null) {
+                tabSwitchListener.switchToTab();
+                int viewRow = Integer.parseInt(e.getActionCommand());
+                int modelRow = view.getTable().convertRowIndexToModel(viewRow);
+                Item item = model.getRow(modelRow);
+                Long itemId = item.getId(); // set the filter to this id
+                transactionView.setItemIdForFilter(itemId.toString()); // ,MPDIFU
+            }
+        }
+    }
+
+
     public class DeleteAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -171,7 +191,7 @@ public class ItemController {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
                             "Error",
-                            "Error",
+                            "Database Error " + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }

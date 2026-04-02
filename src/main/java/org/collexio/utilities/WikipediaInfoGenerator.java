@@ -17,7 +17,7 @@ public class WikipediaInfoGenerator implements InfoGenerator {
     private static final String infoUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&pageids={ITEM_ID}&exintro=true&explaintext=true";
 
     @Override
-    public String generateDescription(String itemName) {
+    public String generateDescription(String itemName) throws IOException, InterruptedException {
         String id;
         Dotenv dotenv = Dotenv.load();
         try (Client geminiClient = Client.builder()
@@ -67,10 +67,6 @@ public class WikipediaInfoGenerator implements InfoGenerator {
                     null);
             return responseGemini.text();
 
-        } catch(InterruptedException | IOException e) {
-            System.out.println("Error");
-            Thread.currentThread().interrupt();
-            return "";
         }
     }
 }

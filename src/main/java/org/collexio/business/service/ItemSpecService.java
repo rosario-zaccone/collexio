@@ -8,6 +8,7 @@ import org.collexio.utilities.InfoGeneratorFactory;
 import org.collexio.utilities.PriceScraper;
 import org.collexio.utilities.PriceScraperFactory;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ItemSpecService {
         return scraper.computePrice(spec.getName());
     }
 
-    public String generateDescriptionByAI(ItemSpec spec) {
+    public String generateDescriptionByAI(ItemSpec spec) throws IOException, InterruptedException {
         InfoGenerator generator = InfoGeneratorFactory.getInfoGenerator(spec);
         return generator.generateDescription(spec.getName());
     }

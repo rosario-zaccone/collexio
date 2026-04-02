@@ -1,6 +1,5 @@
 package org.collexio.servicetesting;
 
-import net.bytebuddy.asm.Advice;
 import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.domain.ItemSpec;
@@ -123,8 +122,8 @@ class ItemOrchestratorTest {
     void getTest() throws SQLException, IOException {
         ItemSpec spec = specService.add(new ItemSpec(ItemType.TECHITEM, "Nintendo DS", "blabla"));
         Item item = service.addWithPhoto(new Item(ItemStatus.GOOD, spec), 1L, new ItemPhoto(Path.of("/home/rosario/Documents/computer_science/projects/collexio/images/test/test.png"), LocalDate.now()));
-        transactionService.addTransaction(new Transaction(200, false, LocalDate.now()), item.getId());
-        transactionService.addTransaction(new Transaction(250, true, LocalDate.now()), item.getId());
+        transactionService.add(new Transaction(200, false, LocalDate.now()), item.getId());
+        transactionService.add(new Transaction(250, true, LocalDate.now()), item.getId());
         item = service.getFullItem(item.getId());
         System.out.println(item.balance());
     }
