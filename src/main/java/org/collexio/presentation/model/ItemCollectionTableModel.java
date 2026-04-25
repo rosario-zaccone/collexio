@@ -73,7 +73,7 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     }
 
     @Override
-    public void updateRow(ItemCollection elem) throws SQLException, IOException {
+    public void updateRow(ItemCollection elem, Long associatedId) throws SQLException, IOException {
         service.update(elem);
         refresh();
         fireTableDataChanged();

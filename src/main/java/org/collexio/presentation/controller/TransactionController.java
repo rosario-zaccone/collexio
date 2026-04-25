@@ -34,14 +34,14 @@ public class TransactionController {
         this.view.getAddButton().addActionListener(new InsertButtonListener());
         this.view.getDeleteButton().setAction(new DeleteAction());
         this.view.getFilterField().addActionListener(new FilterListener());
-        //this.view.getUpdateButton().setAction(new UpdateAction());
+        this.view.getUpdateButton().setAction(new UpdateAction());
 
         insertForm = this.view.getInsertForm();
         insertForm.getSubmitButton().addActionListener(new InsertFormListener());
         insertForm.getCancelButton().addActionListener(e -> insertForm.dispose());
 
         updateForm = this.view.getUpdateForm();
-        //updateForm.getSubmitButton().addActionListener(new UpdateFormListener());
+        updateForm.getSubmitButton().addActionListener(new UpdateFormListener());
         updateForm.getCancelButton().addActionListener(e -> {
             updateForm.dispose();
             updateForm.clearForm();
@@ -127,25 +127,28 @@ public class TransactionController {
             }
         }
     }
-/*
+
     class UpdateFormListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
+                Long itemId = Long.parseLong(updateForm.getItemId());
+                double amount = Double.parseDouble(updateForm.getAmount());
+                boolean income = updateForm.getTransactionType() != 0;
+                LocalDate date = LocalDate.parse(updateForm.getDate());
+                Transaction transaction = new Transaction(amount, income, date);
                 Long id = Long.parseLong(updateForm.getId());
-                String name = updateForm.getName();
-                ItemType type = ItemType.fromInt(updateForm.getItemType());
-                String description = updateForm.getDescription();
-                model.updateRow(new ItemSpec(id, type, name, description));
+                model.updateRow(new Transaction(id, amount, income, date), itemId);
                 updateForm.setMessageLabel("Item spec updated");
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
                 updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+            } catch (IOException ex) {
+                updateForm.setMessageLabel("IO Error: " + ex.getMessage());
             }
 
         }
     }
-
 
     public class UpdateAction extends AbstractAction {
         @Override
@@ -153,14 +156,19 @@ public class TransactionController {
             updateForm.setVisible(true);
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
-            ItemSpec spec = model.getRow(modelRow);
-            updateForm.setId(spec.getId().toString());
-            updateForm.setDescription(spec.getDescription());
-            updateForm.setName(spec.getName());
-            updateForm.setItemType(spec.getType().getValue());
+            Transaction transaction = model.getRow(modelRow);
+            updateForm.setId(transaction.getId().toString());
+            updateForm.setAmount(String.valueOf(transaction.getAmount()));
+            updateForm.setDate(transaction.getDate().toString());
+            updateForm.setTransactionType(transaction.isIncome() ? 1 : 0);
+            Long itemId;
+            try {
+                itemId = model.getItemId(transaction.getId());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            updateForm.setItemId(itemId.toString());
         }
     }
 
-
-    */
 }

@@ -6,7 +6,6 @@ import javax.swing.table.AbstractTableModel;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 
 public class TransactionTableModel extends AbstractTableModel implements CrudTableModel<Transaction> {
@@ -80,7 +79,7 @@ public class TransactionTableModel extends AbstractTableModel implements CrudTab
     }
 
     @Override
-    public void updateRow(Transaction elem) throws SQLException, IOException { // TODO
+    public void updateRow(Transaction elem, Long itemId) throws SQLException, IOException { // TODO
         service.update(elem);
         refresh();
         fireTableDataChanged();

@@ -9,6 +9,6 @@ import java.sql.SQLException;
 public interface CrudTableModel<T> {
     void removeRow(int row) throws SQLException;
     void addRow(T elem, Long associatedId) throws SQLException, IOException;
-    void updateRow(T elem) throws SQLException, IOException;
+    void updateRow(T elem, Long associatedId) throws SQLException, IOException;
     T getRow(int row) throws SQLException, IOException;
 }

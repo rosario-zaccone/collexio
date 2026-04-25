@@ -1,7 +1,9 @@
 package org.collexio.presentation.model;
 
 import org.collexio.business.domain.ItemSpec;
+import org.collexio.business.service.InfoGenerationService;
 import org.collexio.business.service.ItemSpecService;
+import org.collexio.business.service.PriceService;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.IOException;
@@ -12,9 +14,13 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     private final static int COLUMNS = 7;
     private List<ItemSpec> data;
     private final ItemSpecService service;
+    private final PriceService priceService;
+    private final InfoGenerationService infoService;
 
-    public ItemSpecTableModel(ItemSpecService service) throws SQLException {
+    public ItemSpecTableModel(ItemSpecService service, PriceService priceService, InfoGenerationService infoService) throws SQLException {
         this.service = service;
+        this.priceService = priceService;
+        this.infoService = infoService;
         data = service.getAll();
     }
 
@@ -73,7 +79,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     @Override
-    public void updateRow(ItemSpec elem) throws SQLException {
+    public void updateRow(ItemSpec elem, Long associatedId) throws SQLException {
         service.update(elem);
         refresh();
         fireTableDataChanged();
@@ -85,7 +91,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     public double price(int row) {
-        return service.price(data.get(row));
+        return priceService.computePrice(data.get(row));
     }
 
     @Override
@@ -98,7 +104,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     public String generateDescription(ItemSpec spec) throws IOException, InterruptedException {
-        return service.generateDescriptionByAI(spec);
+        return infoService.generateDescriptionByAI(spec);
     }
 
 }

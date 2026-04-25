@@ -27,7 +27,7 @@ public class DBTransactionDAO implements TransactionDAO {
 
     @Override
     public TransactionEntity add(TransactionEntity transaction, Long itemId) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setDouble(1, transaction.getAmount());
             stmt.setInt(2, transaction.isIncome() ? 1 : 0);
             stmt.setString(3, transaction.getDate().toString());

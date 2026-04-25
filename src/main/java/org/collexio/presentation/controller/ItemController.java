@@ -142,7 +142,7 @@ public class ItemController {
                 Path path = Path.of(updateForm.getPhotoPath());
                 LocalDate date = LocalDate.parse(updateForm.getPhotoDate());
                 ItemSpec spec = model.getSpec(specId);
-                model.updateRowWithCollection(new Item(id, status, new ItemPhoto(photoId, path, date), spec), collectionId);
+                model.updateRow(new Item(id, status, new ItemPhoto(photoId, path, date), spec), collectionId);
                 updateForm.setMessageLabel("Item spec updated");
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());

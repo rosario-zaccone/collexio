@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-public class ConnectionFactory {
+public class ConnectionFactory { // TODO: singleton
     public static Connection getConnection() throws SQLException, IOException {
         var props = new Properties();
         try (Reader in = Files.newBufferedReader(

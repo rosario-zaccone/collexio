@@ -116,6 +116,10 @@ public class UpdateTransactionForm extends JDialog {
         idField.setText(id);
     }
 
+    public void setItemId(String itemId) {
+        itemIdField.setText(itemId);
+    }
+
     public void setAmount(String amount) {
         amountField.setText(amount);
     }

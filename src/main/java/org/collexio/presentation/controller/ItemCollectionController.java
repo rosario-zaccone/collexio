@@ -2,7 +2,6 @@ package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.ItemCollection;
 import org.collexio.presentation.model.ItemCollectionTableModel;
-import org.collexio.presentation.view.TabbedPanel;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.itemcollection.InsertItemCollectionForm;
 import org.collexio.presentation.view.itemcollection.ItemCollectionPanel;
@@ -77,7 +76,7 @@ public class ItemCollectionController {
             try {
                 Long id = Long.parseLong(updateForm.getId());
                 String name = updateForm.getName();
-                model.updateRow(new ItemCollection(id, name));
+                model.updateRow(new ItemCollection(id, name), null);
                 updateForm.setMessageLabel("Item Collection updated");
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());

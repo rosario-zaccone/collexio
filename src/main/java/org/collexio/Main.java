@@ -31,6 +31,8 @@ public class Main {
                 ItemSpecService itemSpecService = new ItemSpecService(specDAO);
                 ItemPhotoService itemPhotoService = new ItemPhotoService(photoDAO);
                 TransactionService transactionService = new TransactionService(transactionDAO);
+                PriceService priceService = new PriceService();
+                InfoGenerationService infoService = new InfoGenerationService();
 
                 ItemCollectionOrchestrator collectionOrchestrator =
                         new ItemCollectionOrchestrator(itemService, itemCollectionService);
@@ -39,8 +41,8 @@ public class Main {
                         new ItemOrchestrator(itemService, itemPhotoService, transactionService, itemSpecService);
 
                 ItemCollectionTableModel itemCollectionModel = new ItemCollectionTableModel(itemCollectionService, collectionOrchestrator);
-                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService);
-                ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService);
+                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService, priceService, infoService);
+                ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService, priceService);
                 TransactionTableModel transactionModel = new TransactionTableModel(transactionService);
 
                 var frame = new AppFrame(

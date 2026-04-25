@@ -89,7 +89,7 @@ public class DBItemPhotoDAO implements ItemPhotoDAO {
 
     @Override
     public ItemPhotoEntity add(ItemPhotoEntity photo, Long itemId) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setString(1, photo.getPath().toString());
             stmt.setString(2, photo.getDate().toString());
             stmt.setLong(3, itemId);

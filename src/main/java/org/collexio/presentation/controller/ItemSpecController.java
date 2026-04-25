@@ -74,7 +74,7 @@ public class ItemSpecController {
                 String name = updateForm.getName();
                 ItemType type = ItemType.fromInt(updateForm.getItemType());
                 String description = updateForm.getDescription();
-                model.updateRow(new ItemSpec(id, type, name, description));
+                model.updateRow(new ItemSpec(id, type, name, description), null);
                 updateForm.setMessageLabel("Item spec updated");
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());

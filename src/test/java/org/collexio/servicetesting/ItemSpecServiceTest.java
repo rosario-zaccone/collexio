@@ -2,10 +2,12 @@ package org.collexio.servicetesting;
 
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemSpecService;
+import org.collexio.business.service.PriceService;
 import org.collexio.persistence.dao.DBItemSpecDAO;
 import org.collexio.persistence.model.ItemType;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -81,7 +83,7 @@ public class ItemSpecServiceTest {
     @Test
     public void testPrice() throws SQLException {
         ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
-        System.out.println(service.price(tech));
+        //System.out.println(service.price(tech));
 
         //ItemSpec book = new ItemSpec(ItemType.BOOK, "Dragon Ball Super. Vol. 4", "desc");
         //System.out.println(service.price(book));
@@ -89,7 +91,8 @@ public class ItemSpecServiceTest {
 
     @Disabled
     @Test
-    public void testGenerator() throws SQLException {
+    public void testGenerator() throws SQLException, IOException, InterruptedException {
+        /*
         ItemSpec tech = new ItemSpec(ItemType.TECHITEM, "nintendo switch 2", "desc");
         System.out.println(service.generateDescriptionByAI(tech));
 
@@ -98,5 +101,7 @@ public class ItemSpecServiceTest {
 
         ItemSpec plant = new ItemSpec(ItemType.PLANT, "crassula ovata", "desc");
         System.out.println(service.generateDescriptionByAI(book));
+        */
     }
+         */
 }

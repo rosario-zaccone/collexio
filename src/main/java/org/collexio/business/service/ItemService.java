@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
-public class ItemService {
+public class ItemService { // method for item availability (move to another service for SRP
     private final ItemDAO dao;
 
     public ItemService(ItemDAO dao) {
@@ -36,10 +36,6 @@ public class ItemService {
         if (res.isEmpty())
             throw new NoSuchElementException("Item not found for id: " + id);
         return Item.fromEntity(res.get());
-    }
-
-    public void freeFromCollection(Item item) throws SQLException {
-        dao.update(item.toEntity(), null);
     }
 
     public List<Item> getByCollectionId(Long collectionId) throws SQLException {
@@ -75,36 +71,3 @@ public class ItemService {
         return ((DBItemDAO)dao).getConnection();
     }
 }
-
-/*
-public Item add(Item item, Long collectionId) throws SQLException, IOException {
-        // PRE: details and collection prev saved
-        Connection connection = ((DBItemDAO) dao).getConnection();
-        boolean transactionOwner = false;
-        if (connection.getAutoCommit()) {
-            connection.setAutoCommit(false);
-            transactionOwner = true;
-        }
-        Item res;
-        try {
-            connection.setAutoCommit(false);
-            ItemEntity entity = dao.add(item.toEntity(), collectionId);
-            res = Item.fromEntity(entity);
-            res.setPhoto(photoService.add(item.getPhoto(), entity.getId()));
-            for (Transaction e : item.getTransactions()) {
-                res.addTransaction(transactionService.addTransaction(e, entity.getId()));
-            }
-            if (transactionOwner)
-                connection.commit();
-        } catch (SQLException | IOException e) {
-            if (transactionOwner)
-                connection.rollback();
-            throw e;
-        } finally {
-            if (transactionOwner) {
-                connection.setAutoCommit(true);
-            }
-        }
-        return res;
-    }
- */

@@ -55,15 +55,5 @@ public class ItemSpecService {
         return res;
     }
 
-    public double price(ItemSpec spec) {
-        PriceScraper scraper = PriceScraperFactory.getPriceScraper(spec);
-        return scraper.computePrice(spec.getName());
-    }
-
-    public String generateDescriptionByAI(ItemSpec spec) throws IOException, InterruptedException {
-        InfoGenerator generator = InfoGeneratorFactory.getInfoGenerator(spec);
-        return generator.generateDescription(spec.getName());
-    }
-
 
 }

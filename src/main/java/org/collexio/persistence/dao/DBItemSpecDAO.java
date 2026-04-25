@@ -31,7 +31,7 @@ public class DBItemSpecDAO implements ItemSpecDAO {
 
     @Override
     public ItemSpecEntity add(ItemSpecEntity spec) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(insertSql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setInt(1, spec.getType().getValue());
             stmt.setString(2, spec.getName());
             stmt.setString(3, spec.getDescription());

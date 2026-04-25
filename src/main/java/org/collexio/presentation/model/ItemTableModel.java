@@ -1,11 +1,11 @@
 package org.collexio.presentation.model;
 
 import org.collexio.business.domain.Item;
-import org.collexio.business.domain.ItemCollection;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemOrchestrator;
 import org.collexio.business.service.ItemService;
 import org.collexio.business.service.ItemSpecService;
+import org.collexio.business.service.PriceService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -21,12 +21,14 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     private final ItemService service;
     private final ItemOrchestrator orchestrator;
     private final ItemSpecService specService;
+    private final PriceService priceService;
 
-    public ItemTableModel(ItemService service, ItemOrchestrator orchestrator, ItemSpecService specService) throws SQLException {
+    public ItemTableModel(ItemService service, ItemOrchestrator orchestrator, ItemSpecService specService, PriceService priceService) throws SQLException {
         this.service = service;
         this.orchestrator = orchestrator;
         data = orchestrator.getAllFullItems();
         this.specService = specService;
+        this.priceService = priceService;
     }
 
 
@@ -107,15 +109,9 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     }
 
 
+
     @Override
-    public void updateRow(Item elem) throws SQLException, IOException { // free from collection
-        orchestrator.updateWithPhoto(elem, null, elem.getPhoto());
-        refresh();
-        fireTableDataChanged();
-    }
-
-
-    public void updateRowWithCollection(Item elem, Long collectionId) throws SQLException, IOException {
+    public void updateRow(Item elem, Long collectionId) throws SQLException, IOException {
         orchestrator.updateWithPhoto(elem, collectionId, elem.getPhoto());
         service.update(elem, collectionId);
         refresh();
@@ -128,7 +124,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     }
 
     public double price(int row) {
-        return specService.price(data.get(row).getSpec());
+        return priceService.computePrice(data.get(row).getSpec());
     }
 
     @Override
