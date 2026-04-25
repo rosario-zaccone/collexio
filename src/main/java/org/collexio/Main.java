@@ -1,5 +1,6 @@
 package org.collexio;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.collexio.persistence.dao.*;
 import org.collexio.business.service.*;
 import org.collexio.presentation.model.ItemCollectionTableModel;
@@ -8,6 +9,13 @@ import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.model.TransactionTableModel;
 import org.collexio.presentation.view.AppFrame;
 import org.collexio.presentation.controller.*;
+import org.collexio.utilities.factory.AbstractFactory;
+import org.collexio.utilities.factory.BookProviderFactory;
+import org.collexio.utilities.factory.PlantProviderFactory;
+import org.collexio.utilities.factory.TechItemProviderFactory;
+import org.collexio.utilities.infogenerator.GeminiInfoGenerator;
+import org.collexio.utilities.pricecraper.SubitoScraper;
+
 import javax.swing.*;
 import java.sql.Connection;
 import java.io.IOException;
@@ -18,6 +26,11 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
+                Dotenv dotenv = Dotenv.load();
+                AbstractFactory plantProviderFactory = new PlantProviderFactory(dotenv);
+                AbstractFactory bookProviderFactory = new BookProviderFactory(dotenv);
+                AbstractFactory techItemProviderFactory = new TechItemProviderFactory(dotenv);
+
                 Connection connection = ConnectionFactory.getConnection();
 
                 ItemCollectionDAO collectionDAO = new DBItemCollectionDAO(connection);
@@ -31,8 +44,8 @@ public class Main {
                 ItemSpecService itemSpecService = new ItemSpecService(specDAO);
                 ItemPhotoService itemPhotoService = new ItemPhotoService(photoDAO);
                 TransactionService transactionService = new TransactionService(transactionDAO);
-                PriceService priceService = new PriceService();
-                InfoGenerationService infoService = new InfoGenerationService();
+                PriceService priceService = new PriceService(new SubitoScraper());
+                InfoGenerationService infoService = new InfoGenerationService(new GeminiInfoGenerator("", 50));
 
                 ItemCollectionOrchestrator collectionOrchestrator =
                         new ItemCollectionOrchestrator(itemService, itemCollectionService);
@@ -41,7 +54,7 @@ public class Main {
                         new ItemOrchestrator(itemService, itemPhotoService, transactionService, itemSpecService);
 
                 ItemCollectionTableModel itemCollectionModel = new ItemCollectionTableModel(itemCollectionService, collectionOrchestrator);
-                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService, priceService, infoService);
+                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService, priceService, infoService, plantProviderFactory, bookProviderFactory, techItemProviderFactory);
                 ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService, priceService);
                 TransactionTableModel transactionModel = new TransactionTableModel(transactionService);
 

@@ -3,12 +3,7 @@ package org.collexio.business.service;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.dao.ItemSpecDAO;
 import org.collexio.persistence.model.ItemSpecEntity;
-import org.collexio.utilities.InfoGenerator;
-import org.collexio.utilities.InfoGeneratorFactory;
-import org.collexio.utilities.PriceScraper;
-import org.collexio.utilities.PriceScraperFactory;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;

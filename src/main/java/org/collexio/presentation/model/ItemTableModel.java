@@ -124,7 +124,8 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     }
 
     public double price(int row) {
-        return priceService.computePrice(data.get(row).getSpec());
+        // TODO return priceService.computePrice(data.get(row).getSpec());
+        return 0.0;
     }
 
     @Override

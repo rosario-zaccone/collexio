@@ -1,10 +1,9 @@
-package org.collexio.utilities;
+package org.collexio.utilities.infogenerator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,20 +12,38 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class WikipediaInfoGenerator implements InfoGenerator {
-    private static final String baseUrl =  "https://en.wikipedia.org/w/rest.php/v1/search/page?q={ITEM_NAME}&limit=1";
-    private static final String infoUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&pageids={ITEM_ID}&exintro=true&explaintext=true";
+    private static final String MODEL = "gemini-2.5-flash";
+    private static final String WIKIPEDIA_SEARCH_URL =  "https://en.wikipedia.org/w/rest.php/v1/search/page?q={{itemName}}&limit=1";
+    private static final String WIKIPEDIA_EXTRACT_URL = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&pageids={{itemId}}&exintro=true&explaintext=true";
+    private static final String PROMPT = """
+            Generate a concise description of the following book in English. \
+            Maximum {{length}} words. \
+            Return plain text only — no bullet points, markdown, quotes, or special characters.
+            
+            Item data:
+             {{itemData}}
+            
+            Description:""";
+    private final String apiKey;
+    private final int descriptionMaxLength;
+    private final String contactMail;
+
+    public WikipediaInfoGenerator(String apiKey, int descriptionMaxLength, String contactMail) {
+        this.apiKey = apiKey;
+        this.descriptionMaxLength = descriptionMaxLength;
+        this.contactMail = contactMail;
+    }
 
     @Override
     public String generateDescription(String itemName) throws IOException, InterruptedException {
         String id;
-        Dotenv dotenv = Dotenv.load();
         try (Client geminiClient = Client.builder()
-                .apiKey(dotenv.get("GEMINI_AI_API_KEY"))
+                .apiKey(apiKey)
                 .build()) {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl.replace("{ITEM_NAME}", itemName.replace(" ", "%20"))))
-                    .header("User-Agent", "MyWikipediaBot/1.0 (contact: rosariozaccone999@gmail.com)")
+                    .uri(URI.create(WIKIPEDIA_SEARCH_URL.replace("{{itemName}}", itemName.replace(" ", "%20"))))
+                    .header("User-Agent", "MyWikipediaBot/1.0 (contact: " + contactMail + ")")
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             int statusCode = response.statusCode();
@@ -46,7 +63,7 @@ public class WikipediaInfoGenerator implements InfoGenerator {
             }
 
             request = HttpRequest.newBuilder()
-                    .uri(URI.create(infoUrl.replace("{ITEM_ID}", id )))
+                    .uri(URI.create(WIKIPEDIA_EXTRACT_URL.replace("{{itemId}}", id )))
                     .header("User-Agent", "MyWikipediaBot/1.0 (contact: rosariozaccone999@gmail.com)")
                     .build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -57,13 +74,11 @@ public class WikipediaInfoGenerator implements InfoGenerator {
             responseBody = response.body();
             root = mapper.readTree(responseBody);
             JsonNode node = root.path("query").path("pages").path(id);
-            String prompt = "Generate a concise description of the item, maximum 50 words, based on the following data: " +
-                    node.path("extract").toString() +
-                    "Provide the output as plain text without any special formatting or markup. " +
-                    "This content will be used as a Java String.";
+            String itemData = node.path("extract").toString();
             GenerateContentResponse responseGemini = geminiClient.models.generateContent(
-                    "gemini-2.5-flash",
-                    prompt,
+                    MODEL,
+                    PROMPT.replace("{{length}}", String.valueOf(descriptionMaxLength))
+                            .replace("{{itemData}}", itemData),
                     null);
             return responseGemini.text();
 

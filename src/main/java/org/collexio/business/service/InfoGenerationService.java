@@ -1,14 +1,22 @@
 package org.collexio.business.service;
 
-import org.collexio.business.domain.ItemSpec;
-import org.collexio.utilities.InfoGenerator;
-import org.collexio.utilities.InfoGeneratorFactory;
+import org.collexio.utilities.infogenerator.InfoGenerator;
 
 import java.io.IOException;
 
+// PATTERN: strategy (context)
 public class InfoGenerationService {
-    public String generateDescriptionByAI(ItemSpec spec) throws IOException, InterruptedException {
-        InfoGenerator generator = InfoGeneratorFactory.getInfoGenerator(spec);
-        return generator.generateDescription(spec.getName());
+    private InfoGenerator generator;
+
+    public InfoGenerationService(InfoGenerator generator) {
+        this.generator = generator;
+    }
+
+    public void setGenerator(InfoGenerator generator) {
+        this.generator = generator;
+    }
+
+    public String generateDescriptionByAI(String itemName) throws IOException, InterruptedException {
+        return generator.generateDescription(itemName);
     }
 }

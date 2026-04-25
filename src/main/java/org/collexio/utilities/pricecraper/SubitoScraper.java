@@ -1,4 +1,4 @@
-package org.collexio.utilities;
+package org.collexio.utilities.pricecraper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,18 +11,16 @@ import java.net.http.HttpResponse;
 import java.util.NoSuchElementException;
 
 public class SubitoScraper implements PriceScraper {
-    private static final String url = "https://www.subito.it/annunci-italia/vendita/usato/?q=";
+    private static final String URL = "https://www.subito.it/annunci-italia/vendita/usato/?q=";
 
 
     public double computePrice(String itemName) {
-        int value;
-        int count;
-        HttpClient client = HttpClient.newHttpClient();
-        value = 0;
-        count = 0;
+        int value = 0;
+        int count = 0;
         int page = 1;
+        HttpClient client = HttpClient.newHttpClient();
         while (true) {
-            String searchUrl = url + itemName.toLowerCase().replace(" ", "+") + "&qso=true&o=" + page;
+            String searchUrl = URL + itemName.toLowerCase().replace(" ", "+") + "&qso=true&o=" + page;
             page++;
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(searchUrl))
@@ -31,12 +29,12 @@ public class SubitoScraper implements PriceScraper {
                     .thenApply(HttpResponse::body)
                     .join();
             Document doc = Jsoup.parseBodyFragment(responseBody);
-            Elements items = doc.select("div article"); // to improve
+            Elements items = doc.select("div article");
             if (items.isEmpty())
                 break;
             for (Element item : items) {
                 String title = item.select("section h3").text();
-                if (title.length() <= itemName.length() + 4) { // considera gli annunci il cui titolo non supera di tanto la lunghezza del nome dell'articolo
+                if (title.length() <= itemName.length() + 4) {
                     String price = item.select("section div  p").text();
                     StringBuilder nPrice = new StringBuilder();
                     // price extraction

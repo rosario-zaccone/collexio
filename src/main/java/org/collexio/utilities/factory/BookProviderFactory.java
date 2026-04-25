@@ -1,0 +1,24 @@
+package org.collexio.utilities.factory;
+
+import io.github.cdimascio.dotenv.Dotenv;
+import org.collexio.utilities.infogenerator.InfoGenerator;
+import org.collexio.utilities.pricecraper.LibraccioScraper;
+import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.infogenerator.WikipediaInfoGenerator;
+
+public class BookProviderFactory extends AbstractFactory {
+    public BookProviderFactory(Dotenv dotenv) {
+        super(dotenv);
+    }
+
+    @Override
+    public InfoGenerator createInfoGenerator() {
+        return new WikipediaInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50, "rosariozaccone999@gmail.com");
+    }
+
+    @Override
+    public PriceScraper createPriceScraper() {
+        return new LibraccioScraper();
+    }
+
+}
