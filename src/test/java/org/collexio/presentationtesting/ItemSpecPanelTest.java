@@ -1,7 +1,7 @@
 package org.collexio.presentationtesting;
 
 import org.collexio.business.service.ItemSpecService;
-import org.collexio.persistence.dao.ConnectionFactory;
+import org.collexio.ConnectionFactory;
 import org.collexio.persistence.dao.DBItemSpecDAO;
 import org.collexio.presentation.controller.ItemSpecController;
 import org.collexio.presentation.model.ItemSpecTableModel;

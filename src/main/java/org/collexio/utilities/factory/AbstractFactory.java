@@ -5,14 +5,14 @@ import org.collexio.utilities.infogenerator.InfoGenerator;
 import org.collexio.utilities.pricecraper.PriceScraper;
 
 public abstract class AbstractFactory {
-    private final Dotenv dotenv;
+    private final String apiKey;
 
-    protected AbstractFactory(Dotenv dotenv) {
-        this.dotenv = dotenv;
+    protected AbstractFactory(String apiKey) {
+        this.apiKey = apiKey;
     }
 
-    public Dotenv getDotenv() {
-        return dotenv;
+    public String getApiKey() {
+        return apiKey;
     }
 
     public abstract InfoGenerator createInfoGenerator();

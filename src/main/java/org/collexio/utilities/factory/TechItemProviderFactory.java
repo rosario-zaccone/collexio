@@ -7,13 +7,13 @@ import org.collexio.utilities.pricecraper.PriceScraper;
 import org.collexio.utilities.pricecraper.SubitoScraper;
 
 public class TechItemProviderFactory extends AbstractFactory {
-    public TechItemProviderFactory(Dotenv dotenv) {
-        super(dotenv);
+    public TechItemProviderFactory(String apiKey) {
+        super(apiKey);
     }
 
     @Override
     public InfoGenerator createInfoGenerator() {
-        return new GeminiInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50);
+        return new GeminiInfoGenerator(getApiKey(), 50);
     }
 
     @Override

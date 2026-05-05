@@ -102,5 +102,4 @@ public class ItemSpecServiceTest {
         System.out.println(service.generateDescriptionByAI(book));
         */
     }
-         */
 }

@@ -7,13 +7,13 @@ import org.collexio.utilities.pricecraper.PriceScraper;
 import org.collexio.utilities.infogenerator.WikipediaInfoGenerator;
 
 public class BookProviderFactory extends AbstractFactory {
-    public BookProviderFactory(Dotenv dotenv) {
-        super(dotenv);
+    public BookProviderFactory(String apiKey) {
+        super(apiKey);
     }
 
     @Override
     public InfoGenerator createInfoGenerator() {
-        return new WikipediaInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50, "rosariozaccone999@gmail.com");
+        return new WikipediaInfoGenerator(getApiKey(), 50, "rosariozaccone999@gmail.com");
     }
 
     @Override

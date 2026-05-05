@@ -1,5 +1,6 @@
 package org.collexio.business.service;
 
+import org.collexio.AppConfig;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.persistence.dao.ItemPhotoDAO;
 import org.collexio.persistence.entity.ItemPhotoEntity;
@@ -19,11 +20,10 @@ public class ItemPhotoService {
         this.dao = dao;
     }
 
-    // return itemphoto because the path is updated
     public ItemPhoto add(ItemPhoto photo, Long itemId) throws SQLException, IOException {
-        // filesystem
-        Dotenv dotenv = Dotenv.load();
-        Path target = Path.of(dotenv.get("ITEM_PHOTO_DIR"), itemId.toString() + "." + photo.getPath().getFileName().toString().replaceFirst(".*\\.", ""));
+
+        Path target = AppConfig.getImagesDir()
+                .resolve(itemId.toString() + "." + photo.getPath().getFileName().toString().replaceFirst(".*\\.", ""));
         Files.copy(photo.getPath(), target, StandardCopyOption.REPLACE_EXISTING);
         // db
         try {
@@ -44,8 +44,8 @@ public class ItemPhotoService {
     }
 
     public ItemPhoto update(ItemPhoto photo, Long itemId) throws SQLException, IOException {
-        Dotenv dotenv = Dotenv.load();
-        Path target = Path.of(dotenv.get("ITEM_PHOTO_DIR"), itemId.toString() + "." + photo.getPath().getFileName().toString().replaceFirst(".*\\.", ""));
+        Path target = AppConfig.getImagesDir()
+                .resolve(itemId.toString() + "." + photo.getPath().getFileName().toString().replaceFirst(".*\\.", ""));
         Files.copy(photo.getPath(), target, StandardCopyOption.REPLACE_EXISTING);
 
         try {

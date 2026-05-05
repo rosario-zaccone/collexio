@@ -7,14 +7,14 @@ import org.collexio.utilities.infogenerator.PFAFInfoGenerator;
 import org.collexio.utilities.pricecraper.PriceScraper;
 
 public class PlantProviderFactory extends AbstractFactory {
-    public PlantProviderFactory(Dotenv dotenv) {
-        super(dotenv);
+    public PlantProviderFactory(String apiKey) {
+        super(apiKey);
     }
 
     @Override
     public InfoGenerator createInfoGenerator() {
         // TODO return new PFAFInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50);
-        return new GeminiInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50);
+        return new GeminiInfoGenerator(getApiKey(), 50);
     }
 
     @Override
