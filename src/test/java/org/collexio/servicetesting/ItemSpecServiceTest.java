@@ -2,9 +2,8 @@ package org.collexio.servicetesting;
 
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.ItemSpecService;
-import org.collexio.business.service.PriceService;
 import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemType;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

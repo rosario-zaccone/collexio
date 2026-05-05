@@ -2,7 +2,7 @@ package org.collexio.business.service;
 
 import org.collexio.business.domain.ItemCollection;
 import org.collexio.persistence.dao.ItemCollectionDAO;
-import org.collexio.persistence.model.ItemCollectionEntity;
+import org.collexio.persistence.entity.ItemCollectionEntity;
 
 import java.io.IOException;
 import java.sql.SQLException;

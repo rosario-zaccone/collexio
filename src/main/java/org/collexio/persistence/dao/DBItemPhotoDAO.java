@@ -1,5 +1,5 @@
 package org.collexio.persistence.dao;
-import org.collexio.persistence.model.ItemPhotoEntity;
+import org.collexio.persistence.entity.ItemPhotoEntity;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

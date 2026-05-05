@@ -1,7 +1,7 @@
 package org.collexio;
 
 
-import org.collexio.persistence.model.*;
+import org.collexio.persistence.entity.*;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

@@ -1,7 +1,7 @@
 package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.ItemSpec;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemType;
 import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.view.itemspec.InsertSpecForm;
 import org.collexio.presentation.view.itemspec.ItemSpecPanel;

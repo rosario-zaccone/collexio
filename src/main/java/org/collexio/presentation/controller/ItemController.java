@@ -3,7 +3,7 @@ package org.collexio.presentation.controller;
 import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.domain.ItemSpec;
-import org.collexio.persistence.model.ItemStatus;
+import org.collexio.persistence.entity.ItemStatus;
 import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.view.item.InsertItemForm;
 import org.collexio.presentation.view.item.ItemPanel;

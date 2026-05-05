@@ -6,7 +6,7 @@ import com.google.genai.types.GenerateContentResponse;
 public class GeminiInfoGenerator implements InfoGenerator {
     private static final String MODEL = "gemini-2.5-flash";
     private static final String PROMPT = """
-            Generate a concise description of the publication (book or comic) {{itemName}} in English. \
+            Generate a concise description of this item (can be a plant, book or comic) {{itemName}} in English. \
             Maximum {{length}} words. \
             Return plain text only — no bullet points, markdown, quotes, or special characters.
             

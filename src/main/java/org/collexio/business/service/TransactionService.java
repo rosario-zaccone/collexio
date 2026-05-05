@@ -2,7 +2,7 @@ package org.collexio.business.service;
 
 import org.collexio.business.domain.Transaction;
 import org.collexio.persistence.dao.TransactionDAO;
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.TransactionEntity;
 
 import java.sql.SQLException;
 import java.util.List;

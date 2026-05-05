@@ -1,6 +1,6 @@
 package org.collexio.persistence.dao;
 
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.TransactionEntity;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;

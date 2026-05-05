@@ -1,6 +1,6 @@
 package org.collexio.business.domain;
 
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.TransactionEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;

@@ -1,20 +1,15 @@
 package org.collexio;
 
-import org.collexio.business.domain.ItemCollection;
-import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.dao.DBItemCollectionDAO;
 import org.collexio.persistence.dao.DBItemDAO;
 import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.model.*;
-import org.junit.jupiter.api.Disabled;
+import org.collexio.persistence.entity.*;
 import org.junit.jupiter.api.*;
 
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 

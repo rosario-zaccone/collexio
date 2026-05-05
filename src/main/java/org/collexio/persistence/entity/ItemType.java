@@ -1,4 +1,4 @@
-package org.collexio.persistence.model;
+package org.collexio.persistence.entity;
 
 public enum ItemType {
     PLANT(0),

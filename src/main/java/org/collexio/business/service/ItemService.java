@@ -4,7 +4,7 @@ package org.collexio.business.service;
 import org.collexio.business.domain.Item;
 import org.collexio.persistence.dao.DBItemDAO;
 import org.collexio.persistence.dao.ItemDAO;
-import org.collexio.persistence.model.ItemEntity;
+import org.collexio.persistence.entity.ItemEntity;
 
 
 import java.io.IOException;
@@ -69,5 +69,9 @@ public class ItemService { // method for item availability (move to another serv
 
     public Connection getConnection() {
         return ((DBItemDAO)dao).getConnection();
+    }
+
+    public boolean isAvailable(Item item) {
+        return item.isAvailable();
     }
 }

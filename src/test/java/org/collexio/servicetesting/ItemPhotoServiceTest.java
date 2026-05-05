@@ -1,24 +1,18 @@
 package org.collexio.servicetesting;
 
-import org.collexio.business.domain.Item;
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.service.ItemPhotoService;
-import org.collexio.persistence.dao.DBItemCollectionDAO;
 import org.collexio.persistence.dao.DBItemPhotoDAO;
-import org.collexio.persistence.model.ItemCollectionEntity;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 

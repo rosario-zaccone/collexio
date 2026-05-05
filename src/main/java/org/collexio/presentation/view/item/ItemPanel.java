@@ -4,16 +4,16 @@ package org.collexio.presentation.view.item;
 
 import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemTableModel;
+import org.collexio.presentation.view.MyPanel;
 import org.collexio.presentation.view.ButtonColumn;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class ItemPanel extends JPanel{
+public class ItemPanel extends MyPanel {
     private final ItemTableModel model;
     private final JTable table;
     private final ItemCollectionTableModel collectionModel;
@@ -34,28 +34,43 @@ public class ItemPanel extends JPanel{
         filterField = new JComboBox<String>();
         this.model = model;
 
-        table = new JTable(model) {
+        table = createTable(model);
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
+            public Component getTableCellRendererComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column) {
 
-                if (c instanceof JComponent) {
-                    Object value = getValueAt(row, column);
-                    if (value != null) {
-                        String htmlText = "<html><body style='width: 300px;'>" + value + "</body></html>";
-                        ((JComponent) c).setToolTipText(htmlText);
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                int modelRow = table.convertRowIndexToModel(row);
+
+                try {
+                    var item = model.getRow(modelRow);
+
+                    boolean available = model.isAvailable(item);
+
+                    if (!isSelected) {
+                        c.setBackground(available ? Color.WHITE : new Color(255, 200, 200));
                     } else {
-                        ((JComponent) c).setToolTipText(null);
+                        c.setBackground(table.getSelectionBackground());
                     }
+
+                } catch (Exception e) {
+                    c.setBackground(Color.WHITE);
                 }
 
                 return c;
             }
-        };
+        });
+
         filter = new TableRowSorter<>(this.model);
         table.setRowSorter(filter);
-        table.setRowHeight(60);
-        table.getTableHeader().setReorderingAllowed(false);
         table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -73,6 +88,19 @@ public class ItemPanel extends JPanel{
                     label.setText("No image");
                 }
 
+                int modelRow = table.convertRowIndexToModel(row);
+                try {
+                    var item = model.getRow(modelRow);
+                    boolean available = model.isAvailable(item);
+                    if (!isSelected) {
+                        label.setBackground(available ? Color.WHITE : new Color(255, 200, 200));
+                    } else {
+                        label.setBackground(table.getSelectionBackground());
+                    }
+                } catch (Exception e) {
+                    label.setBackground(Color.WHITE);
+                }
+
                 return label;
             }
         });
@@ -86,39 +114,29 @@ public class ItemPanel extends JPanel{
         deleteButton = new ButtonColumn(table, null, 10);
 
 
-        JPanel filterPanel = new JPanel();
-        filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
-        filterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel filterLabel = new JLabel("Filter by Collection ID: ");
-        filterLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-        filterPanel.add(filterLabel);
-        filterPanel.add(Box.createHorizontalStrut(10));
-        filterPanel.add(filterField);
+        JPanel filterPanel = createFilterBar(filterField, "Filter by Collection ID:");
 
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = createScrollPane(table, 700, 300);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        addButton = new JButton("Add");
+        addButton = createButton("+ Add");
+        printButton = createButton("Print");
+
         addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
 
-        printButton = new JButton("Print");
         printButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         printButton.setFont(printButton.getFont().deriveFont(Font.BOLD, 14f));
 
-        setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
         add(filterPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         bottomPanel.add(addButton);
         bottomPanel.add(printButton);
         add(bottomPanel, BorderLayout.SOUTH);
-        filterPanel.setPreferredSize(new Dimension(0, 30));
         addButton.setPreferredSize(new Dimension(0, 50));
-        filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     }
 
     public ItemTableModel getModel() {

@@ -1,6 +1,7 @@
 package org.collexio.presentation.view.item;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 
@@ -61,6 +62,11 @@ public class InsertItemForm extends JDialog {
         browseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Image Files", "jpg", "jpeg", "png", "gif", "bmp"
+            );
+            chooser.setFileFilter(filter);
+            chooser.setAcceptAllFileFilterUsed(false);
             int result = chooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();

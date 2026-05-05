@@ -1,4 +1,4 @@
-package org.collexio.persistence.model;
+package org.collexio.persistence.entity;
 
 import java.util.Objects;
 

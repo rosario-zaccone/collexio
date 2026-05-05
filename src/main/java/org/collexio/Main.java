@@ -44,8 +44,8 @@ public class Main {
                 ItemSpecService itemSpecService = new ItemSpecService(specDAO);
                 ItemPhotoService itemPhotoService = new ItemPhotoService(photoDAO);
                 TransactionService transactionService = new TransactionService(transactionDAO);
-                PriceService priceService = new PriceService(new SubitoScraper());
-                InfoGenerationService infoService = new InfoGenerationService(new GeminiInfoGenerator("", 50));
+                PriceService priceService = new PriceService(new SubitoScraper(), plantProviderFactory, bookProviderFactory, techItemProviderFactory);
+                InfoGenerationService infoService = new InfoGenerationService(new GeminiInfoGenerator("", 50), plantProviderFactory, bookProviderFactory, techItemProviderFactory);
 
                 ItemCollectionOrchestrator collectionOrchestrator =
                         new ItemCollectionOrchestrator(itemService, itemCollectionService);
@@ -54,7 +54,7 @@ public class Main {
                         new ItemOrchestrator(itemService, itemPhotoService, transactionService, itemSpecService);
 
                 ItemCollectionTableModel itemCollectionModel = new ItemCollectionTableModel(itemCollectionService, collectionOrchestrator);
-                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService, priceService, infoService, plantProviderFactory, bookProviderFactory, techItemProviderFactory);
+                ItemSpecTableModel itemSpecModel = new ItemSpecTableModel(itemSpecService, priceService, infoService);
                 ItemTableModel itemModel = new ItemTableModel(itemService, itemOrchestrator, itemSpecService, priceService);
                 TransactionTableModel transactionModel = new TransactionTableModel(transactionService);
 

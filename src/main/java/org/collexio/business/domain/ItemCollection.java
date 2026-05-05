@@ -1,6 +1,6 @@
 package org.collexio.business.domain;
 
-import org.collexio.persistence.model.ItemCollectionEntity;
+import org.collexio.persistence.entity.ItemCollectionEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;

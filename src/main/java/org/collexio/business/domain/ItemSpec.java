@@ -1,7 +1,7 @@
 package org.collexio.business.domain;
 
-import org.collexio.persistence.model.ItemSpecEntity;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemSpecEntity;
+import org.collexio.persistence.entity.ItemType;
 
 import java.util.Objects;
 

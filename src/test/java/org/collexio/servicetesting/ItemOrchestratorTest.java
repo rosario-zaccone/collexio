@@ -6,8 +6,8 @@ import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.domain.Transaction;
 import org.collexio.business.service.*;
 import org.collexio.persistence.dao.*;
-import org.collexio.persistence.model.ItemStatus;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemStatus;
+import org.collexio.persistence.entity.ItemType;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

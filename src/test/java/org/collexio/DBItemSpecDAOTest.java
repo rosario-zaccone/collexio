@@ -1,8 +1,8 @@
 package org.collexio;
 
 import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.model.ItemSpecEntity;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemSpecEntity;
+import org.collexio.persistence.entity.ItemType;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;

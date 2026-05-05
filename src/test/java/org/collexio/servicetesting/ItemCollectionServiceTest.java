@@ -3,13 +3,11 @@ package org.collexio.servicetesting;
 import org.collexio.business.domain.*;
 import org.collexio.business.service.*;
 import org.collexio.persistence.dao.*;
-import org.collexio.persistence.model.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 

@@ -2,7 +2,7 @@ package org.collexio.business.service;
 
 import org.collexio.business.domain.ItemPhoto;
 import org.collexio.persistence.dao.ItemPhotoDAO;
-import org.collexio.persistence.model.ItemPhotoEntity;
+import org.collexio.persistence.entity.ItemPhotoEntity;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import java.nio.file.Files;

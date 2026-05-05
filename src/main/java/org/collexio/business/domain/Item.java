@@ -1,7 +1,7 @@
 package org.collexio.business.domain;
 
-import org.collexio.persistence.model.ItemEntity;
-import org.collexio.persistence.model.ItemStatus;
+import org.collexio.persistence.entity.ItemEntity;
+import org.collexio.persistence.entity.ItemStatus;
 
 import java.util.*;
 
@@ -92,7 +92,7 @@ public class Item {
     }
 
     public boolean isAvailable() {
-        return transactions.stream().filter(e -> !e.isIncome()).count() == 0; // no sell transaction
+        return transactions.stream().filter(e -> e.isIncome()).count() > 0; // no sell transaction
     }
 
 

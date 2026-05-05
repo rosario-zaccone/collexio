@@ -1,7 +1,7 @@
 package org.collexio.persistence.dao;
 
 
-import org.collexio.persistence.model.ItemCollectionEntity;
+import org.collexio.persistence.entity.ItemCollectionEntity;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -1,8 +1,6 @@
 package org.collexio.persistence.dao;
 
-import org.collexio.persistence.model.ItemCollectionEntity;
-import org.collexio.persistence.model.ItemEntity;
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.ItemCollectionEntity;
 
 import java.sql.*;
 import java.util.*;

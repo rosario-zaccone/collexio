@@ -40,3 +40,6 @@ target/
 .env
 
 data/*
+
+# Ignore all dotfiles
+.*

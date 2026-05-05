@@ -6,6 +6,7 @@ import org.collexio.business.service.ItemOrchestrator;
 import org.collexio.business.service.ItemService;
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.business.service.PriceService;
+import org.collexio.utilities.factory.AbstractFactory;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -29,6 +30,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
         data = orchestrator.getAllFullItems();
         this.specService = specService;
         this.priceService = priceService;
+
     }
 
 
@@ -123,9 +125,10 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
         return data.get(row);
     }
 
-    public double price(int row) {
-        // TODO return priceService.computePrice(data.get(row).getSpec());
-        return 0.0;
+    public double price(int row) throws SQLException {
+        ItemSpec spec = specService.getByItemId(data.get(row).getId());
+        priceService.setScraper(spec.getType());
+        return priceService.computePrice(spec.getName());
     }
 
     @Override
@@ -148,5 +151,9 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     public List<Long> getItemIds() throws SQLException {
         return service.getAll().stream().map(Item::getId).toList();
+    }
+
+    public boolean isAvailable(Item item) {
+        return service.isAvailable(item);
     }
 }

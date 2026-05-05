@@ -1,14 +1,12 @@
 package org.collexio;
 import org.collexio.persistence.dao.*;
-import org.collexio.persistence.model.*;
+import org.collexio.persistence.entity.*;
 import org.junit.jupiter.api.*;
-import java.nio.file.Path;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

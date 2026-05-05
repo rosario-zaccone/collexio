@@ -1,5 +1,5 @@
 package org.collexio.persistence.dao;
-import org.collexio.persistence.model.*;
+import org.collexio.persistence.entity.*;
 
 
 import java.sql.*;

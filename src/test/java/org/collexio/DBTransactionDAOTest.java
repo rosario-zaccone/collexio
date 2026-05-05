@@ -1,6 +1,6 @@
 package org.collexio;
 import org.collexio.persistence.dao.DBTransactionDAO;
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.TransactionEntity;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;

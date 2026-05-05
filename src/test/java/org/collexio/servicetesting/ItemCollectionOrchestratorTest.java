@@ -10,8 +10,8 @@ import org.collexio.business.service.ItemSpecService;
 import org.collexio.persistence.dao.DBItemCollectionDAO;
 import org.collexio.persistence.dao.DBItemDAO;
 import org.collexio.persistence.dao.DBItemSpecDAO;
-import org.collexio.persistence.model.ItemStatus;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemStatus;
+import org.collexio.persistence.entity.ItemType;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

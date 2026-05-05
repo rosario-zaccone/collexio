@@ -1,14 +1,7 @@
 package org.collexio.presentation.controller;
 
-import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.domain.Transaction;
-import org.collexio.persistence.model.ItemType;
-import org.collexio.presentation.model.ItemSpecTableModel;
-import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.model.TransactionTableModel;
-import org.collexio.presentation.view.itemspec.InsertSpecForm;
-import org.collexio.presentation.view.itemspec.ItemSpecPanel;
-import org.collexio.presentation.view.itemspec.UpdateSpecForm;
 import org.collexio.presentation.view.transaction.InsertTransactionForm;
 import org.collexio.presentation.view.transaction.TransactionPanel;
 import org.collexio.presentation.view.transaction.UpdateTransactionForm;
@@ -19,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class TransactionController {
     private final TransactionTableModel model;

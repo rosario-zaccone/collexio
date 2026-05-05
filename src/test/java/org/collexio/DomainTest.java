@@ -1,7 +1,7 @@
 package org.collexio;
 import org.collexio.business.domain.*;
-import org.collexio.persistence.model.ItemStatus;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemStatus;
+import org.collexio.persistence.entity.ItemType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

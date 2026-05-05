@@ -19,18 +19,12 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     private final ItemSpecService service;
     private final PriceService priceService;
     private final InfoGenerationService infoService;
-    private final AbstractFactory plantProviderFactory;
-    private final AbstractFactory bookProviderFactory;
-    private final AbstractFactory techItemProviderFactory;
 
-    public ItemSpecTableModel(ItemSpecService service, PriceService priceService, InfoGenerationService infoService, AbstractFactory plantProviderFactory, AbstractFactory bookProviderFactory, AbstractFactory techItemProviderFactory) throws SQLException {
+    public ItemSpecTableModel(ItemSpecService service, PriceService priceService, InfoGenerationService infoService) throws SQLException {
         this.service = service;
         this.priceService = priceService;
         this.infoService = infoService;
         data = service.getAll();
-        this.plantProviderFactory = plantProviderFactory;
-        this.bookProviderFactory = bookProviderFactory;
-        this.techItemProviderFactory = techItemProviderFactory;
     }
 
 
@@ -101,12 +95,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
 
     public double price(int row) {
         ItemSpec spec = data.get(row);
-        PriceScraper scraper = switch (spec.getType()) {
-            case PLANT -> plantProviderFactory.createPriceScraper();
-            case TECHITEM -> techItemProviderFactory.createPriceScraper();
-            case BOOK -> bookProviderFactory.createPriceScraper();
-        };
-        priceService.setScraper(scraper);
+        priceService.setScraper(spec.getType());
         return priceService.computePrice(spec.getName());
     }
 
@@ -120,12 +109,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     }
 
     public String generateDescription(ItemSpec spec) throws IOException, InterruptedException {
-        InfoGenerator infoGenerator = switch (spec.getType()) {
-            case PLANT -> plantProviderFactory.createInfoGenerator();
-            case TECHITEM -> techItemProviderFactory.createInfoGenerator();
-            case BOOK -> bookProviderFactory.createInfoGenerator();
-        };
-        infoService.setGenerator(infoGenerator);
+        infoService.setGenerator(spec.getType());
         return infoService.generateDescriptionByAI(spec.getName());
     }
 

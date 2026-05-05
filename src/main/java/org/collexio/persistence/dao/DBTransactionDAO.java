@@ -1,7 +1,6 @@
 package org.collexio.persistence.dao;
 
-import org.collexio.business.domain.Transaction;
-import org.collexio.persistence.model.TransactionEntity;
+import org.collexio.persistence.entity.TransactionEntity;
 
 import java.sql.*;
 import java.time.LocalDate;

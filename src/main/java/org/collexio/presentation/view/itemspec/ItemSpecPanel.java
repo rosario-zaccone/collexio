@@ -3,102 +3,92 @@ package org.collexio.presentation.view.itemspec;
 import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.model.CrudTableModel;
 import org.collexio.presentation.view.ButtonColumn;
+import org.collexio.presentation.view.MyPanel;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
-public class ItemSpecPanel extends JPanel{
-    private final ItemSpecTableModel model;
-    private final JTable table;
+public class ItemSpecPanel extends MyPanel {
+	private final ItemSpecTableModel model;
+	private final JTable table;
 
-    private final ButtonColumn deleteButton;
-    private final ButtonColumn updateButton;
-    private final ButtonColumn priceButton;
-    private final JButton addButton;
-    private final InsertSpecForm insertForm;
-    private final UpdateSpecForm updateSpecForm;
+	private final ButtonColumn deleteButton;
+	private final ButtonColumn updateButton;
+	private final ButtonColumn priceButton;
+	private final JButton addButton;
+	private final InsertSpecForm insertForm;
+	private final UpdateSpecForm updateSpecForm;
 
-    public ItemSpecPanel(ItemSpecTableModel model) {
-        this.model = model;
-        table = new JTable(model) {
+	public ItemSpecPanel(ItemSpecTableModel model) {
+		this.model = model;
+        table = createTable(model);
+        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
             @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
-
-                if (c instanceof JComponent) {
-                    Object value = getValueAt(row, column);
-                    if (value != null) {
-                        String htmlText = "<html><body style='width: 300px;'>" + value + "</body></html>";
-                        ((JComponent) c).setToolTipText(htmlText);
-                    } else {
-                        ((JComponent) c).setToolTipText(null);
-                    }
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (c instanceof JComponent jc) {
+                    jc.setToolTipText(value != null
+                            ? "<html><body style='width: 300px;'>" + value + "</body></html>"
+                            : null);
                 }
-
                 return c;
             }
-        };
+        });
 
-        table.setRowHeight(60);
-        table.getTableHeader().setReorderingAllowed(false);
+		priceButton = new ButtonColumn(table, null, 4);
+		updateButton = new ButtonColumn(table, null, 5);
+		deleteButton = new ButtonColumn(table, null, 6);
+		this.insertForm = new InsertSpecForm();
+		this.updateSpecForm = new UpdateSpecForm();
 
-        priceButton = new ButtonColumn(table, null, 4);
-        updateButton = new ButtonColumn(table, null, 5);
-        deleteButton = new ButtonColumn(table, null, 6);
-        this.insertForm = new InsertSpecForm();
-        this.updateSpecForm = new UpdateSpecForm();
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = createScrollPane(table, 700, 300);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollPane.setPreferredSize(new Dimension(700, 300));
 
-        addButton = new JButton("Add");
+        addButton = createButton("+ Add");
         addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        addButton.setMaximumSize(new Dimension(120, 35));
         addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
-
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        addButton.setPreferredSize(new Dimension(0, 50));
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
         add(scrollPane, BorderLayout.CENTER);
         add(addButton, BorderLayout.SOUTH);
-        addButton.setPreferredSize(new Dimension(0, 50));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-    }
+	}
 
-    public ItemSpecTableModel getModel() {
-        return model;
-    }
+	public ItemSpecTableModel getModel() {
+		return model;
+	}
 
-    public JTable getTable() {
-        return table;
-    }
+	public JTable getTable() {
+		return table;
+	}
 
-    public JButton getAddButton() {
-        return addButton;
-    }
+	public JButton getAddButton() {
+		return addButton;
+	}
 
-    public InsertSpecForm getInsertForm() {
-        return insertForm;
-    }
+	public InsertSpecForm getInsertForm() {
+		return insertForm;
+	}
 
-    public UpdateSpecForm getUpdateSpecForm() {
-        return updateSpecForm;
-    }
+	public UpdateSpecForm getUpdateSpecForm() {
+		return updateSpecForm;
+	}
 
-    public ButtonColumn getPriceButton() {
-        return priceButton;
-    }
+	public ButtonColumn getPriceButton() {
+		return priceButton;
+	}
 
-    public ButtonColumn getDeleteButton() {
-        return deleteButton;
-    }
+	public ButtonColumn getDeleteButton() {
+		return deleteButton;
+	}
 
-    public ButtonColumn getUpdateButton() {
-        return updateButton;
-    }
+	public ButtonColumn getUpdateButton() {
+		return updateButton;
+	}
 }

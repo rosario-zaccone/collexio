@@ -1,8 +1,7 @@
 package org.collexio.persistence.dao;
 
-import org.collexio.persistence.model.ItemPhotoEntity;
-import org.collexio.persistence.model.ItemSpecEntity;
-import org.collexio.persistence.model.ItemType;
+import org.collexio.persistence.entity.ItemSpecEntity;
+import org.collexio.persistence.entity.ItemType;
 
 import java.sql.*;
 import java.util.ArrayList;

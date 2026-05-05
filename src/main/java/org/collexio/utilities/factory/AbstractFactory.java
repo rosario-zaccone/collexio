@@ -7,7 +7,7 @@ import org.collexio.utilities.pricecraper.PriceScraper;
 public abstract class AbstractFactory {
     private final Dotenv dotenv;
 
-    public AbstractFactory(Dotenv dotenv) {
+    protected AbstractFactory(Dotenv dotenv) {
         this.dotenv = dotenv;
     }
 

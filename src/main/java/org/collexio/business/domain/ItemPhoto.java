@@ -1,6 +1,6 @@
 package org.collexio.business.domain;
 
-import org.collexio.persistence.model.ItemPhotoEntity;
+import org.collexio.persistence.entity.ItemPhotoEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-package org.collexio.persistence.model;
+package org.collexio.persistence.entity;
 
 import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;

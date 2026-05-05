@@ -1,6 +1,6 @@
 package org.collexio.persistence.dao;
 
-import org.collexio.persistence.model.ItemSpecEntity;
+import org.collexio.persistence.entity.ItemSpecEntity;
 
 import java.sql.SQLException;
 import java.util.List;
