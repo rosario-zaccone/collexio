@@ -26,7 +26,7 @@ public class PriceService {
         };
     }
 
-    public double computePrice(String itemName) {
+    public double computePrice(String itemName) throws InterruptedException {
         return scraper.computePrice(itemName);
     }
 }

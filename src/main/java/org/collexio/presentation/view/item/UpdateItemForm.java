@@ -1,11 +1,12 @@
 package org.collexio.presentation.view.item;
 
+import org.collexio.presentation.view.MyForm;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.io.File;
 
-public class UpdateItemForm extends JDialog {
+public class UpdateItemForm extends MyForm {
     private final JComboBox<String> statusCombo;
     private final JTextField idField;
     private final JTextField collectionField;
@@ -19,55 +20,31 @@ public class UpdateItemForm extends JDialog {
     private final JLabel messageLabel;
 
     public UpdateItemForm() {
-        JPanel contentPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        super("Update item");
 
-        // Id
-        contentPanel.add(new JLabel("Item id:"), gbc);
-        gbc.gridx = 1;
-        idField = new JTextField(20);
-        contentPanel.add(idField, gbc);
+        idField = createTextField();
+        idField.setEditable(false);
+        collectionField = createTextField();
+        specField = createTextField();
+        statusCombo = createComboBox(new String[]{"Bad", "Average", "Good"});
+        photoPath = createTextField();
+        JButton browseButton = createBrowseButton();
+        photoDate = createTextField();
+        photoIdField = createTextField();
+        photoIdField.setEditable(false);
+        photoIdField.setVisible(false);
+        messageLabel = createMessageLabel();
+        submitButton = createButton("Update");
+        cancelButton = createSecondaryButton("Cancel");
 
-        // Collection
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Collection Id (Leave empty if the item isn't part of a collection:"), gbc);
-        gbc.gridx = 1;
-        collectionField = new JTextField(20);
-        contentPanel.add(collectionField, gbc);
-
-        // Spec
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Item specification id:"), gbc);
-        gbc.gridx = 1;
-        specField = new JTextField(20);
-        contentPanel.add(specField, gbc);
-
-        // Status as JComboBox
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Status:"), gbc);
-        gbc.gridx = 1;
-        String[] statusOptions = {"Bad", "Average", "Good"};
-        statusCombo = new JComboBox<>(statusOptions);
-        contentPanel.add(statusCombo, gbc);
-
-        // Photo path with file chooser
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Photo:"), gbc);
-        gbc.gridx = 1;
-        photoPath = new JTextField(20);
-        contentPanel.add(photoPath, gbc);
-
-        gbc.gridx = 2;
-        JButton browseButton = new JButton("Browse...");
-        contentPanel.add(browseButton, gbc);
+        addField("Item id:", idField);
+        addField("Collection Id (Leave empty if the item isn't part of a collection):", collectionField);
+        addField("Item specification id:", specField);
+        addField("Status:", statusCombo);
+        addField("Photo:", photoPath, browseButton);
+        addField("Photo date (YYYY-MM-DD):", photoDate);
+        addMessage(messageLabel);
+        addButtonPanel(createButtonPanel(submitButton, cancelButton));
 
         browseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
@@ -84,43 +61,7 @@ public class UpdateItemForm extends JDialog {
             }
         });
 
-        // Photo date with format hint
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Photo date (YYYY-MM-DD):"), gbc);
-        gbc.gridx = 1;
-        photoDate = new JTextField(20);
-        contentPanel.add(photoDate, gbc);
-
-        // Hidden photo id field
-        photoIdField = new JTextField();
-        photoIdField.setEditable(false);
-        photoIdField.setVisible(false);
-        contentPanel.add(photoIdField);
-
-        // Message label
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 3;
-        messageLabel = new JLabel(" ");
-        messageLabel.setForeground(Color.RED);
-        contentPanel.add(messageLabel, gbc);
-
-        // Buttons
-        gbc.gridy++;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JPanel buttonPanel = new JPanel();
-        submitButton = new JButton("Update");
-        cancelButton = new JButton("Cancel");
-        buttonPanel.add(submitButton);
-        buttonPanel.add(cancelButton);
-        contentPanel.add(buttonPanel, gbc);
-
-        this.getContentPane().add(contentPanel);
-        this.pack();
-        this.setLocationRelativeTo(null);
+        finishForm();
     }
 
     public void clearForm() {

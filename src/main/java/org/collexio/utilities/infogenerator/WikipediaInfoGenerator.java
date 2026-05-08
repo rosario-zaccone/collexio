@@ -64,7 +64,7 @@ public class WikipediaInfoGenerator implements InfoGenerator {
 
             request = HttpRequest.newBuilder()
                     .uri(URI.create(WIKIPEDIA_EXTRACT_URL.replace("{{itemId}}", id )))
-                    .header("User-Agent", "MyWikipediaBot/1.0 (contact: rosariozaccone999@gmail.com)")
+                    .header("User-Agent", "MyWikipediaBot/1.0 (contact: " + contactMail + ")")
                     .build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             statusCode = response.statusCode();

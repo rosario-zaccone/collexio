@@ -1,9 +1,10 @@
 package org.collexio.presentation.view.itemcollection;
 
-import javax.swing.*;
-import java.awt.*;
+import org.collexio.presentation.view.MyForm;
 
-public class UpdateItemCollectionForm extends JDialog {
+import javax.swing.*;
+
+public class UpdateItemCollectionForm extends MyForm {
     private final JTextField idField;
     private final JTextField nameField;
 
@@ -12,46 +13,21 @@ public class UpdateItemCollectionForm extends JDialog {
     private final JLabel messageLabel;
 
     public UpdateItemCollectionForm() {
-        JPanel contentPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        super("Update collection");
 
-        // ID
-        contentPanel.add(new JLabel("ID:"), gbc);
-        gbc.gridx = 1;
-        idField = new JTextField(20);
+        idField = createTextField();
         idField.setEditable(false);
-        contentPanel.add(idField, gbc);
+        idField.setEditable(false);
+        nameField = createTextField();
+        messageLabel = createMessageLabel();
+        submitButton = createButton("Update");
+        cancelButton = createSecondaryButton("Cancel");
 
-        // Type
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Name:"), gbc);
-        gbc.gridx = 1;
-        nameField = new JTextField(20);
-        contentPanel.add(nameField, gbc);
-
-        // Message Label
-        gbc.gridy++;
-        messageLabel = new JLabel(" ");
-        messageLabel.setForeground(Color.RED);
-        contentPanel.add(messageLabel, gbc);
-
-        // Buttons
-        gbc.gridy++;
-        JPanel buttonPanel = new JPanel();
-        submitButton = new JButton("Update");
-        cancelButton = new JButton("Cancel");
-        buttonPanel.add(submitButton);
-        buttonPanel.add(cancelButton);
-        contentPanel.add(buttonPanel, gbc);
-
-        this.getContentPane().add(contentPanel);
-        this.pack();
-        this.setLocationRelativeTo(null);
+        addField("ID:", idField);
+        addField("Name:", nameField);
+        addMessage(messageLabel);
+        addButtonPanel(createButtonPanel(submitButton, cancelButton));
+        finishForm();
     }
 
     public void clearForm() {

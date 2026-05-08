@@ -13,8 +13,7 @@ public class PlantProviderFactory extends AbstractFactory {
 
     @Override
     public InfoGenerator createInfoGenerator() {
-        // TODO return new PFAFInfoGenerator(getDotenv().get("GEMINI_AI_API_KEY"), 50);
-        return new GeminiInfoGenerator(getApiKey(), 50);
+        return new PFAFInfoGenerator(getApiKey(), 100);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class Main {
                 // 2. Load config and ask for API key on first launch
                 ConfigManager config = new ConfigManager();
                 config.load();
-                config.ensureApiKey();
+                config.ensureInitialConfig();
 
                 // 3. Connect to SQLite
                 Connection connection = ConnectionFactory.getConnection();
@@ -98,13 +98,13 @@ public class Main {
                         itemCollectionModel,
                         tab.getItemCollectionPanel(),
                         tab.getItemPanel(),
-                        () -> tab.getTabbedPanel().setSelectedComponent(tab.getItemPanel())
+                        tab::selectItemPanel
                 );
                 new ItemController(
                         itemModel,
                         tab.getItemPanel(),
                         tab.getTransactionPanel(),
-                        () -> tab.getTabbedPanel().setSelectedComponent(tab.getTransactionPanel())
+                        tab::selectTransactionPanel
                 );
                 new TransactionController(transactionModel, tab.getTransactionPanel());
 

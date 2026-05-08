@@ -125,7 +125,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
         return data.get(row);
     }
 
-    public double price(int row) throws SQLException {
+    public double price(int row) throws SQLException, InterruptedException {
         ItemSpec spec = specService.getByItemId(data.get(row).getId());
         priceService.setScraper(spec.getType());
         return priceService.computePrice(spec.getName());

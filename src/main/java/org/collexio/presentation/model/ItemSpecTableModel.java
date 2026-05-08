@@ -93,7 +93,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
         return data.get(row);
     }
 
-    public double price(int row) {
+    public double price(int row) throws InterruptedException {
         ItemSpec spec = data.get(row);
         priceService.setScraper(spec.getType());
         return priceService.computePrice(spec.getName());

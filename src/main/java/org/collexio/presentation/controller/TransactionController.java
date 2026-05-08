@@ -67,6 +67,7 @@ public class TransactionController {
     class InsertButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             insertForm.setVisible(true);
+            insertForm.clearForm();
         }
     }
 
@@ -87,8 +88,9 @@ public class TransactionController {
                 insertForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
                 insertForm.setMessageLabel("IO Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                insertForm.setMessageLabel("Error: " + ex.getMessage());
             }
-
         }
     }
 
@@ -137,6 +139,8 @@ public class TransactionController {
                 updateForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
                 updateForm.setMessageLabel("IO Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                updateForm.setMessageLabel("Error: " + ex.getMessage());
             }
 
         }
@@ -146,6 +150,7 @@ public class TransactionController {
         @Override
         public void actionPerformed(ActionEvent e) {
             updateForm.setVisible(true);
+            updateForm.clearForm();
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
             Transaction transaction = model.getRow(modelRow);

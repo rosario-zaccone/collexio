@@ -70,7 +70,11 @@ public class TransactionPanel extends MyPanel {
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-		add(filterPanel, BorderLayout.NORTH);
+		JPanel topPanel = new JPanel(new BorderLayout(0, 8));
+		topPanel.setOpaque(false);
+		topPanel.add(createTitleBar("Transactions"), BorderLayout.NORTH);
+		topPanel.add(filterPanel, BorderLayout.CENTER);
+		add(topPanel, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(addButton, BorderLayout.SOUTH);
 	}

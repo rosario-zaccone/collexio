@@ -1,6 +1,5 @@
 package org.collexio;
 
-
 import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +25,8 @@ public class ConfigManager {
         }
     }
 
+    // ===================== API KEY =====================
+
     public String getApiKey() {
         return props.getProperty("api.key", "");
     }
@@ -34,27 +35,62 @@ public class ConfigManager {
         props.setProperty("api.key", key);
     }
 
+    // ===================== CONTACT EMAIL =====================
+
+    public String getContactEmail() {
+        return props.getProperty("contact.email", "");
+    }
+
+    public void setContactEmail(String email) {
+        props.setProperty("contact.email", email);
+    }
+
     /**
-     * Prompts the user for the Gemini API key on first launch.
-     * Throws IllegalStateException if the user cancels — app cannot run without it.
+     * Prompts the user for required configuration on first launch.
+     * Throws IllegalStateException if user cancels.
      */
-    public void ensureApiKey() throws IOException {
-        if (!getApiKey().isBlank()) return;
+    public void ensureInitialConfig() throws IOException {
 
-        String key = JOptionPane.showInputDialog(
-                null,
-                "Enter your Gemini API key:",
-                "Initial Setup",
-                JOptionPane.PLAIN_MESSAGE
-        );
+        if (getApiKey().isBlank() || getContactEmail().isBlank()) {
 
-        if (key == null || key.isBlank()) {
-            throw new IllegalStateException(
-                    "API key is required to run Collexio."
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            JTextField apiKeyField = new JTextField();
+            JTextField emailField = new JTextField();
+
+            panel.add(new JLabel("Enter your Gemini API key:"));
+            panel.add(apiKeyField);
+
+            panel.add(Box.createVerticalStrut(10));
+
+            panel.add(new JLabel("Enter contact email (for Wikipedia scraping):"));
+            panel.add(emailField);
+
+            int result = JOptionPane.showConfirmDialog(
+                    null,
+                    panel,
+                    "Initial Setup",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
             );
-        }
 
-        setApiKey(key.trim());
-        save();
+            if (result != JOptionPane.OK_OPTION) {
+                throw new IllegalStateException(
+                        "API key and contact email are required to run Collexio."
+                );
+            }
+
+            String apiKey = apiKeyField.getText().trim();
+            String email = emailField.getText().trim();
+
+            if (apiKey.isBlank() || email.isBlank()) {
+                throw new IllegalStateException("Both API key and email are required.");
+            }
+
+            setApiKey(apiKey);
+            setContactEmail(email);
+            save();
+        }
     }
 }

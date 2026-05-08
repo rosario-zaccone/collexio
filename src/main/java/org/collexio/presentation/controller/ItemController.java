@@ -74,6 +74,7 @@ public class ItemController {
     class InsertButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             insertForm.setVisible(true);
+            insertForm.clearForm();
         }
     }
 
@@ -126,6 +127,8 @@ public class ItemController {
                 insertForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
                 insertForm.setMessageLabel("IO Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                insertForm.setMessageLabel("Error: " + ex.getMessage());
             }
 
         }
@@ -150,6 +153,8 @@ public class ItemController {
                 updateForm.setMessageLabel("Database Error: " + ex.getMessage());
             } catch (IOException ex) {
                 updateForm.setMessageLabel("IO Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                updateForm.setMessageLabel("Error: " + ex.getMessage());
             }
 
         }
@@ -204,6 +209,7 @@ public class ItemController {
         @Override
         public void actionPerformed(ActionEvent e) {
             updateForm.setVisible(true);
+            updateForm.clearForm();
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
             Item item = model.getRow(modelRow);

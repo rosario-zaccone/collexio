@@ -37,10 +37,10 @@ public class ItemCollectionPanel extends MyPanel {
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+		add(createTitleBar("Item collections"), BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(addButton, BorderLayout.SOUTH);
 		addButton.setPreferredSize(new Dimension(0, 50));
-		scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
 	}
 

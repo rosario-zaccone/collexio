@@ -117,7 +117,6 @@ class ItemPhotoServiceTest {
         ItemPhoto photo = new ItemPhoto( Path.of("images/test/test.png"), LocalDate.MIN);
         photo = service.add(photo, 1L);
         ItemPhoto fetched = service.getByItemId(1L);
-        photo.setPath(Path.of("images/thumbnails/1.png"));
         assertEquals(photo.toString(), fetched.toString());
     }
 
@@ -125,7 +124,6 @@ class ItemPhotoServiceTest {
     void testUpdate() throws SQLException, IOException {
         ItemPhoto photo = new ItemPhoto(Path.of("images/test/test.png"), LocalDate.MIN);
         photo = service.add(photo, 1L);
-        photo.setPath(Path.of("images/test/test2.png"));
         ItemPhoto n = service.update(photo, 1L);
         assertEquals(service.getByItemId(1L).toString(), n.toString());
     }

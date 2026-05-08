@@ -21,6 +21,10 @@ public class LibraccioScraper implements PriceScraper {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL.replace("{{itemName}}", itemName.replace(" ", "+").toLowerCase())))
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .header("Accept-Language", "it-IT,it;q=0.9,en;q=0.8")
+                .GET()
                 .build();
         String responseBody = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)

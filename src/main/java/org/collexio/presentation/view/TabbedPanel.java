@@ -8,76 +8,142 @@ import org.collexio.presentation.view.transaction.TransactionPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TabbedPanel extends JPanel {
-	private final JTabbedPane tabbedPanel;
-	private final ItemCollectionPanel itemCollectionPanel;
-	private final ItemPanel itemPanel;
-	private final ItemSpecPanel itemSpecPanel;
-	private final TransactionPanel transactionPanel;
+    private final JPanel cards;
+    private final CardLayout cardLayout;
+    private final Map<String, JButton> navigation = new LinkedHashMap<>();
+    private final ItemCollectionPanel itemCollectionPanel;
+    private final ItemPanel itemPanel;
+    private final ItemSpecPanel itemSpecPanel;
+    private final TransactionPanel transactionPanel;
 
-	public TabbedPanel(ItemCollectionTableModel itemCollectionModel, ItemSpecTableModel itemSpecModel,
-			ItemTableModel itemModel, TransactionTableModel transactionModel) throws SQLException, IOException {
-		super(new GridLayout(1, 1));
+    public TabbedPanel(
+            ItemCollectionTableModel itemCollectionModel,
+            ItemSpecTableModel itemSpecModel,
+            ItemTableModel itemModel,
+            TransactionTableModel transactionModel
+    ) throws SQLException, IOException {
+        super(new BorderLayout());
+        setOpaque(false);
 
-		tabbedPanel = new JTabbedPane();
+        itemCollectionPanel = new ItemCollectionPanel(itemCollectionModel);
+        itemSpecPanel = new ItemSpecPanel(itemSpecModel);
+        itemPanel = new ItemPanel(itemModel, itemCollectionModel);
+        transactionPanel = new TransactionPanel(transactionModel, itemModel);
 
-		itemCollectionPanel = new ItemCollectionPanel(itemCollectionModel);
-		tabbedPanel.addTab("Item collections", null, itemCollectionPanel, "Item collections");
-		tabbedPanel.setMnemonicAt(0, KeyEvent.VK_1);
+        cardLayout = new CardLayout();
+        cards = new JPanel(cardLayout);
+        cards.setOpaque(false);
+        cards.add(itemCollectionPanel, "collections");
+        cards.add(itemSpecPanel, "specs");
+        cards.add(itemPanel, "items");
+        cards.add(transactionPanel, "transactions");
 
-		// Item Spec tab
-		itemSpecPanel = new ItemSpecPanel(itemSpecModel);
-		tabbedPanel.addTab("Item specifications", null, itemSpecPanel, "Item specifications");
-		tabbedPanel.setMnemonicAt(1, KeyEvent.VK_2);
+        add(createTopbar(), BorderLayout.NORTH);
+        add(cards, BorderLayout.CENTER);
+        select("collections");
+    }
 
-		// Item tab
-		itemPanel = new ItemPanel(itemModel, itemCollectionModel);
-		tabbedPanel.addTab("Items", null, itemPanel, "Items");
-		tabbedPanel.setMnemonicAt(2, KeyEvent.VK_3);
+    public void selectItemPanel() {
+        select("items");
+    }
 
-		// Transaction tab
-		transactionPanel = new TransactionPanel(transactionModel, itemModel);
-		tabbedPanel.addTab("Transactions", null, transactionPanel, "Transactions");
-		tabbedPanel.setMnemonicAt(2, KeyEvent.VK_4);
+    public void selectTransactionPanel() {
+        select("transactions");
+    }
 
-		tabbedPanel.addChangeListener(e -> {
-			int index = tabbedPanel.getSelectedIndex();
-			try {
-				switch (index) {
-				case 0 -> itemCollectionModel.refresh();
-				case 1 -> itemSpecModel.refresh();
-				case 2 -> itemModel.refresh();
-				}
-			} catch (SQLException ex) {
-				throw new RuntimeException(ex);
-			}
-		});
+    private JPanel createTopbar() {
+        JPanel topbar = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(new Color(255, 255, 255, 56));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 115));
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        topbar.setOpaque(false);
+        topbar.setPreferredSize(new Dimension(0, 44));
+        topbar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 8));
+        topbar.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 12));
 
-		tabbedPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		add(tabbedPanel);
-	}
+        addNav(topbar, "collections", "◌ Collections");
+        addNav(topbar, "specs", "◌ Specs");
+        addNav(topbar, "items", "◌ Items");
+        addNav(topbar, "transactions", "◌ Transactions");
 
-	public ItemCollectionPanel getItemCollectionPanel() {
-		return itemCollectionPanel;
-	}
+        return topbar;
+    }
 
-	public ItemPanel getItemPanel() {
-		return itemPanel;
-	}
+    private void addNav(JPanel topbar, String key, String text) {
+        JButton button = new NavButton(text);
+        button.addActionListener(e -> select(key));
+        navigation.put(key, button);
+        topbar.add(button);
+    }
 
-	public ItemSpecPanel getItemSpecPanel() {
-		return itemSpecPanel;
-	}
+    private void select(String key) {
+        cardLayout.show(cards, key);
+        navigation.forEach((name, button) -> {
+            boolean active = name.equals(key);
+            button.putClientProperty("active", active);
+            button.repaint();
+        });
+    }
 
-	public TransactionPanel getTransactionPanel() {
-		return transactionPanel;
-	}
+    public ItemCollectionPanel getItemCollectionPanel() {
+        return itemCollectionPanel;
+    }
 
-	public JTabbedPane getTabbedPanel() {
-		return tabbedPanel;
-	}
+    public ItemPanel getItemPanel() {
+        return itemPanel;
+    }
+
+    public ItemSpecPanel getItemSpecPanel() {
+        return itemSpecPanel;
+    }
+
+    public TransactionPanel getTransactionPanel() {
+        return transactionPanel;
+    }
+
+    private static class NavButton extends JButton {
+        NavButton(String text) {
+            super(text);
+            setFont(new Font("Segoe UI", Font.BOLD, 11));
+            setForeground(new Color(0x4a9ab0));
+            setHorizontalAlignment(SwingConstants.LEFT);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setOpaque(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setPreferredSize(new Dimension(110, 28));
+            setMargin(new Insets(0, 12, 1, 8));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            if (Boolean.TRUE.equals(getClientProperty("active"))) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(30, 110, 140, 35));
+                g2.fillRoundRect(3, 4, getWidth() - 6, getHeight() - 6, 22, 22);
+                g2.setColor(new Color(255, 255, 255, 145));
+                g2.fillRoundRect(1, 1, getWidth() - 5, getHeight() - 5, 22, 22);
+                g2.setColor(new Color(255, 255, 255, 190));
+                g2.drawRoundRect(1, 1, getWidth() - 6, getHeight() - 6, 22, 22);
+                g2.dispose();
+            }
+            super.paintComponent(g);
+        }
+    }
 }

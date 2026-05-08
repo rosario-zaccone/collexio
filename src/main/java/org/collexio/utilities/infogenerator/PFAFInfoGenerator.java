@@ -45,7 +45,7 @@ public class PFAFInfoGenerator implements InfoGenerator {
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL + itemName.replace("_", "+")))
+                    .uri(URI.create(URL + itemName.replace(" ", "+")))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -56,6 +56,7 @@ public class PFAFInfoGenerator implements InfoGenerator {
             String responseBody = response.body();
 
             Document doc = Jsoup.parseBodyFragment(responseBody);
+            System.out.println(doc);
 
             String tableContent = Optional.ofNullable(doc.selectFirst("table.table-hover.table-striped"))
                     .map(Element::text)

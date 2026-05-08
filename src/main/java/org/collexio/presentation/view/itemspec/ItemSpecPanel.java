@@ -54,9 +54,9 @@ public class ItemSpecPanel extends MyPanel {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+        add(createTitleBar("Item specifications"), BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(addButton, BorderLayout.SOUTH);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
 	}
 

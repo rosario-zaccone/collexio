@@ -45,6 +45,7 @@ public class ItemSpecController {
     class InsertButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             insertForm.setVisible(true);
+            insertForm.clearForm();
         }
     }
 
@@ -62,6 +63,8 @@ public class ItemSpecController {
                 insertForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
                 insertForm.setMessageLabel("Database Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                insertForm.setMessageLabel("Error: " + ex.getMessage());
             }
 
         }
@@ -80,6 +83,8 @@ public class ItemSpecController {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
                 updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+                updateForm.setMessageLabel("Error: " + ex.getMessage());
             }
 
         }
@@ -134,6 +139,7 @@ public class ItemSpecController {
         @Override
         public void actionPerformed(ActionEvent e) {
             updateForm.setVisible(true);
+            updateForm.clearForm();
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
             ItemSpec spec = model.getRow(modelRow);

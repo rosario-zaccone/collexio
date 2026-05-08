@@ -130,9 +130,14 @@ public class ItemPanel extends MyPanel {
         printButton.setFont(printButton.getFont().deriveFont(Font.BOLD, 14f));
 
 
-        add(filterPanel, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new BorderLayout(0, 8));
+        topPanel.setOpaque(false);
+        topPanel.add(createTitleBar("Items"), BorderLayout.NORTH);
+        topPanel.add(filterPanel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        bottomPanel.setOpaque(false);
         bottomPanel.add(addButton);
         bottomPanel.add(printButton);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -205,4 +210,3 @@ public class ItemPanel extends MyPanel {
         }
     }
 }
-

@@ -19,10 +19,10 @@ class DomainTest {
         item.addTransaction(new Transaction(1L, 50, false, LocalDate.now()));
         item.addTransaction(new Transaction(3L, 50, true, LocalDate.now()));
         System.out.println(item.isAvailable());
-        item.removeTransaction(new Transaction(1L, 50, true, LocalDate.now()));
+        item.removeTransaction(new Transaction(3L, 50, true, LocalDate.now()));
         System.out.println(item.isAvailable());
         System.out.println(item);
-        assertEquals(50, item.balance());
+        assertEquals(-50, item.balance());
     }
 
     @Test

@@ -1,9 +1,10 @@
 package org.collexio.presentation.view.transaction;
 
-import javax.swing.*;
-import java.awt.*;
+import org.collexio.presentation.view.MyForm;
 
-public class InsertTransactionForm extends JDialog {
+import javax.swing.*;
+
+public class InsertTransactionForm extends MyForm {
     private final JComboBox<String> typeCombo;
     private final JTextField itemIdField;
     private final JTextField amountField;
@@ -14,65 +15,23 @@ public class InsertTransactionForm extends JDialog {
     private final JLabel messageLabel;
 
     public InsertTransactionForm() {
-        JPanel contentPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        super("Insert transaction");
 
-        // Item id
-        contentPanel.add(new JLabel("Item id:"), gbc);
-        gbc.gridx = 1;
-        itemIdField = new JTextField(20);
-        contentPanel.add(itemIdField, gbc);
+        itemIdField = createTextField();
+        amountField = createTextField();
+        typeCombo = createComboBox(new String[]{"Expense", "Income"});
+        dateField = createTextField();
+        messageLabel = createMessageLabel();
+        submitButton = createButton("Insert");
+        cancelButton = createSecondaryButton("Cancel");
 
-        // Amount
-        gbc.gridy++;
-        gbc.gridx = 0;
-        contentPanel.add(new JLabel("Amount:"), gbc);
-        gbc.gridx = 1;
-        amountField = new JTextField(20);
-        contentPanel.add(amountField, gbc);
-
-        // Type
-        gbc.gridy++;
-        gbc.gridx = 0;
-        contentPanel.add(new JLabel("Type:"), gbc);
-        gbc.gridx = 1;
-        String[] statusOptions = {"Expense", "Income"};
-        typeCombo = new JComboBox<>(statusOptions);
-        contentPanel.add(typeCombo, gbc);
-
-        // date with format hint
-        gbc.gridx = 0;
-        gbc.gridy++;
-        contentPanel.add(new JLabel("Photo date (YYYY-MM-DD):"), gbc);
-        gbc.gridx = 1;
-        dateField = new JTextField(20);
-        contentPanel.add(dateField, gbc);
-
-        // Message label
-        gbc.gridy++;
-        messageLabel = new JLabel(" ");
-        messageLabel.setForeground(Color.RED);
-        contentPanel.add(messageLabel, gbc);
-
-        // Buttons
-        gbc.gridy++;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JPanel buttonPanel = new JPanel();
-        submitButton = new JButton("Insert");
-        cancelButton = new JButton("Cancel");
-        buttonPanel.add(submitButton);
-        buttonPanel.add(cancelButton);
-        contentPanel.add(buttonPanel, gbc);
-
-        this.getContentPane().add(contentPanel);
-        this.pack();
-        this.setLocationRelativeTo(null);
+        addField("Item id:", itemIdField);
+        addField("Amount:", amountField);
+        addField("Type:", typeCombo);
+        addField("Date (YYYY-MM-DD):", dateField);
+        addMessage(messageLabel);
+        addButtonPanel(createButtonPanel(submitButton, cancelButton));
+        finishForm();
     }
 
     public void clearForm() {
