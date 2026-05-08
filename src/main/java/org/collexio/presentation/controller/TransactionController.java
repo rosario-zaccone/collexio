@@ -2,6 +2,7 @@ package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.Transaction;
 import org.collexio.presentation.model.TransactionTableModel;
+import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.transaction.InsertTransactionForm;
 import org.collexio.presentation.view.transaction.TransactionPanel;
 import org.collexio.presentation.view.transaction.UpdateTransactionForm;
@@ -132,7 +133,7 @@ public class TransactionController {
                 Transaction transaction = new Transaction(amount, income, date);
                 Long id = Long.parseLong(updateForm.getId());
                 model.updateRow(new Transaction(id, amount, income, date), itemId);
-                updateForm.setMessageLabel("Item spec updated");
+                updateForm.setMessageLabel("Transaction updated");
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {

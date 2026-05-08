@@ -15,8 +15,17 @@ public class TransactionService {
     }
 
     public Transaction add(Transaction transaction, Long itemId) throws SQLException {
-        // can enter income only if there is expense
-        // can enter expense only if there are no transactions
+        // item can be bought, sold and rebought from the buyer
+        // can enter income only if the last transaction is an expense
+        // can enter expense only if there are no transactions or the last transaction is an income
+        List<Transaction> transactions = getByItemId(itemId);
+        if (transaction.isIncome()) {
+            if (transactions.isEmpty() || transactions.get(transactions.size() - 1).isIncome())
+                throw new IllegalArgumentException("The last transaction is an income, you can't enter another income transaction");
+        } else {
+            if (!transactions.isEmpty() && !transactions.get(transactions.size() - 1).isIncome())
+                throw new IllegalArgumentException("The last transaction is an expense, you can't enter another expense transaction");
+        }
         TransactionEntity entity = dao.add(transaction.toEntity(), itemId);
         return Transaction.fromEntity(entity);
     }

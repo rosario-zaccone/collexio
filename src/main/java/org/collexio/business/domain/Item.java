@@ -92,7 +92,7 @@ public class Item {
     }
 
     public boolean isAvailable() {
-        return transactions.stream().map(e -> e.isIncome()).count() == 0;
+        return transactions.isEmpty() || !transactions.get(transactions.size() - 1).isIncome();
     }
 
 

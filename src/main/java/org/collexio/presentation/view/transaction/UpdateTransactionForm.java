@@ -23,6 +23,7 @@ public class UpdateTransactionForm extends MyForm {
         itemIdField = createTextField();
         amountField = createTextField();
         typeCombo = createComboBox(new String[]{"Expense", "Income"});
+        typeCombo.setEnabled(false);
         dateField = createTextField();
         messageLabel = createMessageLabel();
         submitButton = createButton("Update");
