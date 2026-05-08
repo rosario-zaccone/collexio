@@ -33,6 +33,11 @@ public abstract class MyPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
     }
 
+
+    protected Color getRowBackground(JTable table, int row) {
+        return new Color(255, 255, 255, 185);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         paintAeroBackground((Graphics2D) g, getWidth(), getHeight());
@@ -61,7 +66,7 @@ public abstract class MyPanel extends JPanel {
 
                 c.setFont(col == 0 || col == 2 ? FONT_BOLD : FONT);
                 c.setForeground(col == 3 ? TEXT_MUTED : TEXT);
-                c.setBackground(selected ? ROW_SELECTED : new Color(255, 255, 255, 185));
+                c.setBackground(selected ? ROW_SELECTED : getRowBackground(this, row));
                 boolean badge = false;
 
                 if (c instanceof JLabel label) {

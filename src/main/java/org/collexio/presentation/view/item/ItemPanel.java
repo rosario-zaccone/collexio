@@ -35,39 +35,6 @@ public class ItemPanel extends MyPanel {
         this.model = model;
 
         table = createTable(model);
-        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(
-                    JTable table,
-                    Object value,
-                    boolean isSelected,
-                    boolean hasFocus,
-                    int row,
-                    int column) {
-
-                Component c = super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-
-                int modelRow = table.convertRowIndexToModel(row);
-
-                try {
-                    var item = model.getRow(modelRow);
-
-                    boolean available = model.isAvailable(item);
-
-                    if (!isSelected) {
-                        c.setBackground(available ? Color.WHITE : new Color(255, 200, 200));
-                    } else {
-                        c.setBackground(table.getSelectionBackground());
-                    }
-
-                } catch (Exception e) {
-                    c.setBackground(Color.WHITE);
-                }
-
-                return c;
-            }
-        });
 
         filter = new TableRowSorter<>(this.model);
         table.setRowSorter(filter);
@@ -92,11 +59,6 @@ public class ItemPanel extends MyPanel {
                 try {
                     var item = model.getRow(modelRow);
                     boolean available = model.isAvailable(item);
-                    if (!isSelected) {
-                        label.setBackground(available ? Color.WHITE : new Color(255, 200, 200));
-                    } else {
-                        label.setBackground(table.getSelectionBackground());
-                    }
                 } catch (Exception e) {
                     label.setBackground(Color.WHITE);
                 }
@@ -142,6 +104,17 @@ public class ItemPanel extends MyPanel {
         bottomPanel.add(printButton);
         add(bottomPanel, BorderLayout.SOUTH);
         addButton.setPreferredSize(new Dimension(0, 50));
+    }
+
+    @Override
+    protected Color getRowBackground(JTable table, int row) {
+        int modelRow = table.convertRowIndexToModel(row);
+        try {
+            var item = model.getRow(modelRow);
+            return model.isAvailable(item) ? new Color(255, 255, 255, 185) : new Color(255, 200, 200);
+        } catch (Exception e) {
+            return new Color(255, 255, 255, 185);
+        }
     }
 
     public ItemTableModel getModel() {

@@ -120,7 +120,8 @@ public class ItemController {
                 ItemPhoto photo = new ItemPhoto(path, date);
                 ItemSpec spec = model.getSpec(specId);
                 model.addRow(new Item(status, photo, spec), collectionId);
-                insertForm.setMessageLabel("Item spec inserted");
+                insertForm.setMessageLabel("Item inserted");
+                transactionView.refreshFilter();
             } catch (IllegalArgumentException ex) {
                 insertForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
@@ -138,7 +139,8 @@ public class ItemController {
         public void actionPerformed(ActionEvent e) {
             try {
                 Long id = Long.parseLong(updateForm.getId());
-                Long collectionId = Long.parseLong(updateForm.getCollection());
+                String collectionIdString = updateForm.getCollection();
+                Long collectionId = collectionIdString.isEmpty() ? null : Long.parseLong(collectionIdString);
                 Long specId = Long.parseLong(updateForm.getSpec());
                 ItemStatus status = ItemStatus.fromInt(updateForm.getStatus());
                 Long photoId = Long.parseLong(updateForm.getPhotoId());
@@ -146,7 +148,8 @@ public class ItemController {
                 LocalDate date = LocalDate.parse(updateForm.getPhotoDate());
                 ItemSpec spec = model.getSpec(specId);
                 model.updateRow(new Item(id, status, new ItemPhoto(photoId, path, date), spec), collectionId);
-                updateForm.setMessageLabel("Item spec updated");
+                updateForm.setMessageLabel("Item updated");
+                transactionView.refreshFilter();
             } catch (IllegalArgumentException ex) {
                 updateForm.setMessageLabel("Input Error: " + ex.getMessage());
             } catch (SQLException ex) {
@@ -192,6 +195,7 @@ public class ItemController {
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
                     model.removeRow(modelRow);
+                    transactionView.refreshFilter();
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             view.getTable(),

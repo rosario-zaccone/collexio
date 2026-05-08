@@ -15,6 +15,8 @@ public class TransactionService {
     }
 
     public Transaction add(Transaction transaction, Long itemId) throws SQLException {
+        // can enter income only if there is expense
+        // can enter expense only if there are no transactions
         TransactionEntity entity = dao.add(transaction.toEntity(), itemId);
         return Transaction.fromEntity(entity);
     }

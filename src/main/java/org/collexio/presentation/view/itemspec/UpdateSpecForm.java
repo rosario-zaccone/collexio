@@ -31,7 +31,7 @@ public class UpdateSpecForm extends MyForm {
 
         addField("ID:", idField);
         addField("Type:", typeCombo);
-        addField("Name:", nameField);
+        addField("Name (latin name for plants):", nameField);
         addWideField("Description:", createTextAreaScrollPane(descriptionField));
         addButtonPanel(createButtonPanel(generateDescButton));
         addMessage(messageLabel);
