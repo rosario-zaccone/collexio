@@ -1,17 +1,11 @@
 package org.collexio.presentation.view.transaction;
 
-import org.collexio.business.domain.Transaction;
-import org.collexio.presentation.model.ItemCollectionTableModel;
 import org.collexio.presentation.model.ItemTableModel;
 import org.collexio.presentation.model.TransactionTableModel;
 import org.collexio.presentation.view.ButtonColumn;
 import org.collexio.presentation.view.MyPanel;
-import org.collexio.presentation.view.item.InsertItemForm;
-import org.collexio.presentation.view.item.UpdateItemForm;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.sql.SQLException;
@@ -36,19 +30,6 @@ public class TransactionPanel extends MyPanel {
 		filterField = new JComboBox<String>();
 
 		table = createTable(model);
-		table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value,
-														   boolean isSelected, boolean hasFocus, int row, int column) {
-				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				if (c instanceof JComponent jc) {
-					jc.setToolTipText(value != null
-							? "<html><body style='width: 300px;'>" + value + "</body></html>"
-							: null);
-				}
-				return c;
-			}
-		});
 		filter = new TableRowSorter<>(this.model);
 		table.setRowSorter(filter);
 		refreshFilter();
@@ -65,14 +46,11 @@ public class TransactionPanel extends MyPanel {
 
 		addButton = createButton("+ Add");
 		addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
-		addButton.setPreferredSize(new Dimension(0, 50));
+		addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 15f));
+		addButton.setPreferredSize(new Dimension(0, 58));
 
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		JPanel topPanel = new JPanel(new BorderLayout(0, 8));
 		topPanel.setOpaque(false);
-		topPanel.add(createTitleBar("Transactions"), BorderLayout.NORTH);
 		topPanel.add(filterPanel, BorderLayout.CENTER);
 		add(topPanel, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);

@@ -4,6 +4,7 @@ import org.collexio.business.domain.ItemSpec;
 import org.collexio.business.service.InfoGenerationService;
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.business.service.PriceService;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.utilities.factory.AbstractFactory;
 import org.collexio.utilities.infogenerator.InfoGenerator;
 import org.collexio.utilities.pricecraper.PriceScraper;
@@ -43,12 +44,12 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
         ItemSpec spec = data.get(rowIndex);
         return switch (columnIndex) {
             case 0 -> spec.getId();
-            case 1 -> spec.getType();
+            case 1 -> PresentationText.text(spec.getType().toString());
             case 2 -> spec.getName();
             case 3 -> spec.getDescription();
-            case 4 -> "Scrape price";
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 4 -> PresentationText.text("Scrape price");
+            case 5 -> PresentationText.text("Update");
+            case 6 -> PresentationText.text("Delete");
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -56,13 +57,13 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case 0 -> "Id";
-            case 1 -> "Type";
-            case 2 -> "Name";
-            case 3 -> "Description";
-            case 4 -> "Scrape price";
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 0 -> PresentationText.text("Id");
+            case 1 -> PresentationText.text("Type");
+            case 2 -> PresentationText.text("Name");
+            case 3 -> PresentationText.text("Description");
+            case 4 -> PresentationText.text("Scrape price");
+            case 5 -> PresentationText.text("Update");
+            case 6 -> PresentationText.text("Delete");
             default -> "";
         };
     }
@@ -71,21 +72,18 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void addRow(ItemSpec elem, Long associatedId) throws SQLException {
         service.add(elem);
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void updateRow(ItemSpec elem, Long associatedId) throws SQLException {
         service.update(elem);
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
@@ -106,6 +104,7 @@ public class ItemSpecTableModel extends AbstractTableModel implements CrudTableM
 
     public void refresh() throws SQLException {
         data = service.getAll();
+        fireTableDataChanged();
     }
 
     public String generateDescription(ItemSpec spec) throws IOException, InterruptedException {

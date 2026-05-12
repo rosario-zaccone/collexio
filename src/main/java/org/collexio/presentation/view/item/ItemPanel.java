@@ -38,32 +38,15 @@ public class ItemPanel extends MyPanel {
 
         filter = new TableRowSorter<>(this.model);
         table.setRowSorter(filter);
+        table.setRowHeight(84);
+        table.getColumnModel().getColumn(1).setPreferredWidth(108);
         table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
                                                            int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-
-                if (value instanceof ImageIcon icon) {
-                    label.setIcon(icon);
-                    label.setText(null);
-                    label.setHorizontalAlignment(JLabel.CENTER);
-                } else {
-                    label.setIcon(null);
-                    label.setText("No image");
-                }
-
-                int modelRow = table.convertRowIndexToModel(row);
-                try {
-                    var item = model.getRow(modelRow);
-                    boolean available = model.isAvailable(item);
-                } catch (Exception e) {
-                    label.setBackground(Color.WHITE);
-                }
-
-                return label;
+                Color background = isSelected ? table.getSelectionBackground() : getRowBackground(table, row);
+                return new ImagePreview(value instanceof ImageIcon icon ? icon : null, background);
             }
         });
         refreshFilter();
@@ -86,15 +69,14 @@ public class ItemPanel extends MyPanel {
         printButton = createButton("Print");
 
         addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
+        addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 15f));
 
         printButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        printButton.setFont(printButton.getFont().deriveFont(Font.BOLD, 14f));
+        printButton.setFont(printButton.getFont().deriveFont(Font.BOLD, 15f));
 
 
         JPanel topPanel = new JPanel(new BorderLayout(0, 8));
         topPanel.setOpaque(false);
-        topPanel.add(createTitleBar("Items"), BorderLayout.NORTH);
         topPanel.add(filterPanel, BorderLayout.CENTER);
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
@@ -103,7 +85,8 @@ public class ItemPanel extends MyPanel {
         bottomPanel.add(addButton);
         bottomPanel.add(printButton);
         add(bottomPanel, BorderLayout.SOUTH);
-        addButton.setPreferredSize(new Dimension(0, 50));
+        addButton.setPreferredSize(new Dimension(0, 58));
+        printButton.setPreferredSize(new Dimension(0, 58));
     }
 
     @Override
@@ -111,9 +94,9 @@ public class ItemPanel extends MyPanel {
         int modelRow = table.convertRowIndexToModel(row);
         try {
             var item = model.getRow(modelRow);
-            return model.isAvailable(item) ? new Color(255, 255, 255, 185) : new Color(255, 200, 200);
+            return model.isAvailable(item) ? super.getRowBackground(table, row) : new Color(0xf4b1ac);
         } catch (Exception e) {
-            return new Color(255, 255, 255, 185);
+            return super.getRowBackground(table, row);
         }
     }
 
@@ -180,6 +163,54 @@ public class ItemPanel extends MyPanel {
             filterField.setModel(new DefaultComboBoxModel<>(ids.toArray(String[]::new)));
         } catch (SQLException e) {
             filterField.setModel(new DefaultComboBoxModel<>(new String[]{""}));
+        }
+    }
+
+    private static class ImagePreview extends JPanel {
+        private final ImageIcon icon;
+
+        ImagePreview(ImageIcon icon, Color background) {
+            this.icon = icon;
+            setOpaque(true);
+            setBackground(background);
+            setPreferredSize(new Dimension(96, 70));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            int boxWidth = 66;
+            int boxHeight = 54;
+            int x = (getWidth() - boxWidth) / 2;
+            int y = (getHeight() - boxHeight) / 2;
+
+            g2.setColor(Color.WHITE);
+            g2.fillRect(x, y, boxWidth, boxHeight);
+            g2.setColor(new Color(0xd0d0d0));
+            g2.drawRect(x, y, boxWidth, boxHeight);
+
+            if (icon != null) {
+                Image image = icon.getImage();
+                int imageWidth = icon.getIconWidth();
+                int imageHeight = icon.getIconHeight();
+                double scale = Math.min((double) (boxWidth - 10) / imageWidth, (double) (boxHeight - 10) / imageHeight);
+                int drawWidth = Math.max(1, (int) Math.round(imageWidth * scale));
+                int drawHeight = Math.max(1, (int) Math.round(imageHeight * scale));
+                int drawX = x + (boxWidth - drawWidth) / 2;
+                int drawY = y + (boxHeight - drawHeight) / 2;
+                g2.drawImage(image, drawX, drawY, drawWidth, drawHeight, this);
+            } else {
+                g2.setColor(MyPanel.LINK_BLUE);
+                g2.drawRect(x + 17, y + 14, 22, 16);
+                g2.fillOval(x + 24, y + 18, 5, 5);
+                g2.drawLine(x + 20, y + 29, x + 27, y + 24);
+                g2.drawLine(x + 27, y + 24, x + 36, y + 31);
+            }
+            g2.dispose();
         }
     }
 }

@@ -3,6 +3,7 @@ package org.collexio.presentation.model;
 import org.collexio.business.domain.ItemCollection;
 import org.collexio.business.service.ItemCollectionOrchestrator;
 import org.collexio.business.service.ItemCollectionService;
+import org.collexio.presentation.view.PresentationText;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.IOException;
@@ -39,9 +40,9 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
             case 0 -> coll.getId();
             case 1 -> coll.getName();
             case 2-> coll.length();
-            case 3 -> "Items";
-            case 4 -> "Update";
-            case 5 -> "Delete";
+            case 3 -> PresentationText.text("Items");
+            case 4 -> PresentationText.text("Update");
+            case 5 -> PresentationText.text("Delete");
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -49,12 +50,12 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case 0 -> "Id";
-            case 1 -> "Name";
-            case 2 -> "Total";
-            case 3-> "Items";
-            case 4 -> "Update";
-            case 5 -> "Delete";
+            case 0 -> PresentationText.text("Id");
+            case 1 -> PresentationText.text("Name");
+            case 2 -> PresentationText.text("Total");
+            case 3-> PresentationText.text("Items");
+            case 4 -> PresentationText.text("Update");
+            case 5 -> PresentationText.text("Delete");
             default -> "";
         };
     }
@@ -62,21 +63,18 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void addRow(ItemCollection elem, Long associatedId) throws SQLException, IOException {
         service.add(elem);
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void updateRow(ItemCollection elem, Long associatedId) throws SQLException, IOException {
         service.update(elem);
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
@@ -91,6 +89,7 @@ public class ItemCollectionTableModel extends AbstractTableModel implements Crud
 
     public void refresh() throws SQLException {
         data = orchestrator.getAllFullCollections();
+        fireTableDataChanged();
     }
 
     public List<Long> getCollectionIds() throws SQLException {

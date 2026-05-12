@@ -26,7 +26,7 @@ public class InsertTransactionForm extends MyForm {
         cancelButton = createSecondaryButton("Cancel");
 
         addField("Item id:", itemIdField);
-        addField("Amount:", amountField);
+        addField("Amount (€):", amountField);
         addField("Type:", typeCombo);
         addField("Date (YYYY-MM-DD):", dateField);
         addMessage(messageLabel);

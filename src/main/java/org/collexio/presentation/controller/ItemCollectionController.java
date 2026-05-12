@@ -2,6 +2,7 @@ package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.ItemCollection;
 import org.collexio.presentation.model.ItemCollectionTableModel;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.itemcollection.InsertItemCollectionForm;
 import org.collexio.presentation.view.itemcollection.ItemCollectionPanel;
@@ -58,17 +59,17 @@ public class ItemCollectionController {
                 String name = insertForm.getName();
                 ItemCollection collection = new ItemCollection(name);
                 model.addRow(collection, null);
-                insertForm.setMessageLabel("Item Collection inserted");
+                insertForm.setMessageLabel(PresentationText.text("Item Collection inserted"));
                 itemView.refreshFilter();
 
             } catch (IllegalArgumentException ex) {
-                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                insertForm.setMessageLabel("IO Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -80,15 +81,15 @@ public class ItemCollectionController {
                 Long id = Long.parseLong(updateForm.getId());
                 String name = updateForm.getName();
                 model.updateRow(new ItemCollection(id, name), null);
-                updateForm.setMessageLabel("Item Collection updated");
+                updateForm.setMessageLabel(PresentationText.text("Item Collection updated"));
             } catch (IllegalArgumentException ex) {
-                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                updateForm.setMessageLabel("IO Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -103,8 +104,8 @@ public class ItemCollectionController {
 
             int confirm = JOptionPane.showConfirmDialog(
                     view.getTable(),
-                    "Are you sure?",
-                    "Delete confirm",
+                    PresentationText.text("Are you sure?"),
+                    PresentationText.text("Delete confirm"),
                     JOptionPane.YES_NO_OPTION
             );
 
@@ -115,8 +116,8 @@ public class ItemCollectionController {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
-                            "Error",
-                            "Database Error " + ex.getMessage(),
+                            PresentationText.text("Error"),
+                            PresentationText.text("Database Error: ") + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }

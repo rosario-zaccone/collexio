@@ -1,4 +1,4 @@
-package org.collexio.presentationtesting;
+package org.collexio.presentation;
 
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.business.service.InfoGenerationService;

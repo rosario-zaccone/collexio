@@ -1,8 +1,11 @@
-package org.collexio;
+package org.collexio.persistence.dao;
 
-import org.collexio.persistence.dao.DBItemPhotoDAO;
 import org.collexio.persistence.entity.ItemPhotoEntity;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -12,7 +15,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DBItemPhotoDAOTest {

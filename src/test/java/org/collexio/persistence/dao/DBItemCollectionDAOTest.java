@@ -1,7 +1,11 @@
-package org.collexio;
-import org.collexio.persistence.dao.*;
-import org.collexio.persistence.entity.*;
-import org.junit.jupiter.api.*;
+package org.collexio.persistence.dao;
+
+import org.collexio.persistence.entity.ItemCollectionEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,8 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DBItemCollectionDAOTest {
@@ -24,7 +29,6 @@ class DBItemCollectionDAOTest {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("PRAGMA foreign_keys = ON");
 
-            // Collections
             stmt.execute("""
                 CREATE TABLE item_collections (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -100,31 +104,31 @@ class DBItemCollectionDAOTest {
     }
 
     @Test
-    void testAddGetCollection() throws SQLException {
+    void addAndGetCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Console");
         collection = collectionDAO.add(collection);
 
-        ItemCollectionEntity coll = collectionDAO.get(collection.getId()).get();
+        ItemCollectionEntity coll = collectionDAO.get(collection.getId()).orElseThrow();
         assertEquals(coll.toStringNoId(), collection.toStringNoId());
     }
 
 
     @Test
-    void testUpdateCollection() throws SQLException {
+    void updateCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "Old Name");
         collection = collectionDAO.add(collection);
 
-        ItemCollectionEntity saved = collectionDAO.get(collection.getId()).get();
+        ItemCollectionEntity saved = collectionDAO.get(collection.getId()).orElseThrow();
 
         collectionDAO.update(new ItemCollectionEntity(saved.getId(), "New Name"));
 
         Optional<ItemCollectionEntity> updated = collectionDAO.get(saved.getId());
         assertTrue(updated.isPresent());
-        assertEquals("New Name", updated.get().getName());
+        assertEquals("New Name", updated.orElseThrow().getName());
     }
 
     @Test
-    void testDeleteCollection() throws SQLException {
+    void deleteCollection() throws SQLException {
         ItemCollectionEntity collection = new ItemCollectionEntity(null, "To Delete");
         collectionDAO.add(collection);
 

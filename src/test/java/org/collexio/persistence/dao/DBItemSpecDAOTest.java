@@ -1,9 +1,12 @@
-package org.collexio;
+package org.collexio.persistence.dao;
 
-import org.collexio.persistence.dao.DBItemSpecDAO;
 import org.collexio.persistence.entity.ItemSpecEntity;
 import org.collexio.persistence.entity.ItemType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +15,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DBItemSpecDAOTest {
@@ -47,21 +51,25 @@ class DBItemSpecDAOTest {
     }
 
     @Test
-    void testAddAndGet() throws Exception {
+    void addAndGetSpec() throws Exception {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.BOOK, "Name", "Desc");
         ItemSpecEntity spec2 = new ItemSpecEntity(ItemType.BOOK, "Name2", "Desc");
         ItemSpecEntity spec3 = new ItemSpecEntity(ItemType.BOOK, "Name3", "Desc");
-        dao.add(spec); dao.add(spec2); dao.add(spec3);
-        ItemSpecEntity fetched = dao.get(2L).get();
+        dao.add(spec);
+        dao.add(spec2);
+        dao.add(spec3);
+        ItemSpecEntity fetched = dao.get(2L).orElseThrow();
         assertEquals(spec2.toStringNoId(), fetched.toStringNoId());
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void updateSpec() throws Exception {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.BOOK, "Name", "Desc");
         ItemSpecEntity spec2 = new ItemSpecEntity(ItemType.BOOK, "Name2", "Desc");
         ItemSpecEntity spec3 = new ItemSpecEntity(ItemType.BOOK, "Name3", "Desc");
-        dao.add(spec); dao.add(spec2); dao.add(spec3);
+        dao.add(spec);
+        dao.add(spec2);
+        dao.add(spec3);
 
         ItemSpecEntity saved = dao.getAll().get(0);
         ItemSpecEntity updated = new ItemSpecEntity(saved.getId(), saved.getType(), "Updated", saved.getDescription());
@@ -69,17 +77,19 @@ class DBItemSpecDAOTest {
         dao.update(updated);
 
         Optional<ItemSpecEntity> updated2 = dao.get(saved.getId());
-        assertEquals(updated.toStringNoId(), updated2.get().toStringNoId());
+        assertEquals(updated.toStringNoId(), updated2.orElseThrow().toStringNoId());
     }
 
     @Test
-    void testDelete() throws Exception {
+    void deleteSpec() throws Exception {
         ItemSpecEntity spec = new ItemSpecEntity(ItemType.BOOK, "Name", "Desc");
         ItemSpecEntity spec2 = new ItemSpecEntity(ItemType.BOOK, "Name2", "Desc");
         ItemSpecEntity spec3 = new ItemSpecEntity(ItemType.BOOK, "Name3", "Desc");
-        spec = dao.add(spec); spec2 = dao.add(spec2); spec3 = dao.add(spec3);
+        spec = dao.add(spec);
+        spec2 = dao.add(spec2);
+        spec3 = dao.add(spec3);
 
-        dao.delete(dao.get(spec2.getId()).get().getId());
+        dao.delete(dao.get(spec2.getId()).orElseThrow().getId());
 
         Optional<ItemSpecEntity> result = dao.get(spec2.getId());
         assertFalse(result.isPresent());
@@ -87,7 +97,7 @@ class DBItemSpecDAOTest {
     }
 
     @Test
-    void testGetAll() throws Exception {
+    void getAllSpecs() throws Exception {
         dao.add(new ItemSpecEntity(null, ItemType.BOOK, "A", "A"));
         dao.add(new ItemSpecEntity(null, ItemType.BOOK, "B", "B"));
 

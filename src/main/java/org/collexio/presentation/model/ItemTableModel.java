@@ -6,6 +6,7 @@ import org.collexio.business.service.ItemOrchestrator;
 import org.collexio.business.service.ItemService;
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.business.service.PriceService;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.utilities.factory.AbstractFactory;
 
 import javax.swing.*;
@@ -59,21 +60,23 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
                     yield null;
                 }
             }
-            case 2 -> item.getSpec().getType();
+            case 2 -> PresentationText.text(item.getSpec().getType().toString());
             case 3 -> item.getSpec().getName();
             case 4 -> item.getSpec().getDescription();
-            case 5 -> item.getStatus();
+            case 5 -> PresentationText.text(item.getStatus().toString());
             case 6 -> {
                 try {
-                    yield service.getCollectionId(item.getId()).isEmpty() ? "No collection" : service.getCollectionId(item.getId()).get() ;
+                    yield service.getCollectionId(item.getId()).isEmpty()
+                            ? PresentationText.text("No collection")
+                            : service.getCollectionId(item.getId()).get();
                 } catch (SQLException e) {
-                    yield "Not available";
+                    yield PresentationText.text("Not available");
                 }
             }
-            case 7 -> "Transactions";
-            case 8 -> "Scrape price";
-            case 9 -> "Update";
-            case 10 -> "Delete";
+            case 7 -> PresentationText.text("Transactions");
+            case 8 -> PresentationText.text("Scrape price");
+            case 9 -> PresentationText.text("Update");
+            case 10 -> PresentationText.text("Delete");
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -81,17 +84,17 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case 0 -> "Id";
-            case 1 -> "Photo";
-            case 2 -> "Type";
-            case 3 -> "Name";
-            case 4 -> "Description";
-            case 5 -> "Status";
-            case 6 -> "Collection id";
-            case 7 -> "Transactions";
-            case 8 -> "Scrape price";
-            case 9 -> "Update";
-            case 10 -> "Delete";
+            case 0 -> PresentationText.text("Id");
+            case 1 -> PresentationText.text("Photo");
+            case 2 -> PresentationText.text("Type");
+            case 3 -> PresentationText.text("Name");
+            case 4 -> PresentationText.text("Description");
+            case 5 -> PresentationText.text("Status");
+            case 6 -> PresentationText.text("Collection id");
+            case 7 -> PresentationText.text("Transactions");
+            case 8 -> PresentationText.text("Scrape price");
+            case 9 -> PresentationText.text("Update");
+            case 10 -> PresentationText.text("Delete");
             default -> "";
         };
     }
@@ -100,14 +103,12 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void addRow(Item elem, Long collectionId) throws SQLException, IOException {
         orchestrator.addWithPhoto(elem, collectionId, elem.getPhoto());
         refresh();
-        fireTableDataChanged();
     }
 
 
@@ -117,7 +118,6 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
         orchestrator.updateWithPhoto(elem, collectionId, elem.getPhoto());
         service.update(elem, collectionId);
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
@@ -138,6 +138,7 @@ public class ItemTableModel extends AbstractTableModel implements CrudTableModel
 
     public void refresh() throws SQLException {
         data = orchestrator.getAllFullItems();
+        fireTableDataChanged();
     }
 
     public ItemSpec getSpec(Long specId) throws SQLException {

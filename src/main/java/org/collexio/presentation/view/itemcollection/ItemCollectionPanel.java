@@ -33,14 +33,14 @@ public class ItemCollectionPanel extends MyPanel {
 
 		addButton = createButton("+ Add");
 		addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 14f));
+		addButton.setFont(addButton.getFont().deriveFont(Font.BOLD, 15f));
 
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-		add(createTitleBar("Item collections"), BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
-		add(addButton, BorderLayout.SOUTH);
-		addButton.setPreferredSize(new Dimension(0, 50));
+		JPanel bottomPanel = new JPanel(new BorderLayout());
+		bottomPanel.setOpaque(false);
+		bottomPanel.add(addButton, BorderLayout.CENTER);
+		add(bottomPanel, BorderLayout.SOUTH);
+		addButton.setPreferredSize(new Dimension(0, 58));
 
 	}
 

@@ -5,6 +5,8 @@ import org.collexio.business.domain.ItemPhoto;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.entity.ItemStatus;
 import org.collexio.presentation.model.ItemTableModel;
+import org.collexio.presentation.view.BusyDialog;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.presentation.view.item.InsertItemForm;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.item.UpdateItemForm;
@@ -63,8 +65,8 @@ public class ItemController {
             } catch (PrinterException ex) {
                 JOptionPane.showMessageDialog(
                         view.getTable(),
-                        "Error",
-                        "Printer Error " + ex.getMessage(),
+                        PresentationText.text("Error"),
+                        PresentationText.text("Printer Error: ") + ex.getMessage(),
                         JOptionPane.INFORMATION_MESSAGE
                 );
             }
@@ -120,16 +122,16 @@ public class ItemController {
                 ItemPhoto photo = new ItemPhoto(path, date);
                 ItemSpec spec = model.getSpec(specId);
                 model.addRow(new Item(status, photo, spec), collectionId);
-                insertForm.setMessageLabel("Item inserted");
+                insertForm.setMessageLabel(PresentationText.text("Item inserted"));
                 transactionView.refreshFilter();
             } catch (IllegalArgumentException ex) {
-                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                insertForm.setMessageLabel("IO Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -148,16 +150,16 @@ public class ItemController {
                 LocalDate date = LocalDate.parse(updateForm.getPhotoDate());
                 ItemSpec spec = model.getSpec(specId);
                 model.updateRow(new Item(id, status, new ItemPhoto(photoId, path, date), spec), collectionId);
-                updateForm.setMessageLabel("Item updated");
+                updateForm.setMessageLabel(PresentationText.text("Item updated"));
                 transactionView.refreshFilter();
             } catch (IllegalArgumentException ex) {
-                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                updateForm.setMessageLabel("IO Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -187,8 +189,8 @@ public class ItemController {
 
             int confirm = JOptionPane.showConfirmDialog(
                     view.getTable(),
-                    "Are you sure?",
-                    "Delete confirm",
+                    PresentationText.text("Are you sure?"),
+                    PresentationText.text("Delete confirm"),
                     JOptionPane.YES_NO_OPTION
             );
 
@@ -199,8 +201,8 @@ public class ItemController {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
-                            "Error",
-                            "Database Error " + ex.getMessage(),
+                            PresentationText.text("Error"),
+                            PresentationText.text("Database Error: ") + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }
@@ -241,21 +243,25 @@ public class ItemController {
         public void actionPerformed(ActionEvent e) {
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
-            String message = "Sorry, no price available";
-            try {
-                double price = model.price(modelRow);
-                message = price + " €";
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            JOptionPane.showMessageDialog(
+            BusyDialog.run(
                     view.getTable(),
-                    message,
-                    "Price scraped",
-                    JOptionPane.INFORMATION_MESSAGE
+                    "Please wait",
+                    "Scraping price, please wait...",
+                    () -> model.price(modelRow),
+                    price -> JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            price + " €",
+                            PresentationText.text("Price scraped"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    ),
+                    ex -> JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            PresentationText.text("Sorry, no price available"),
+                            PresentationText.text("Price scraped"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    )
             );
         }
     }
 
 }
-

@@ -1,4 +1,9 @@
 dist/
+
+# Markdown files
+*.md
+!README.md
+
 # Compiled class file
 *.class
 

@@ -2,6 +2,7 @@ package org.collexio.presentation.controller;
 
 import org.collexio.business.domain.Transaction;
 import org.collexio.presentation.model.TransactionTableModel;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.presentation.view.item.ItemPanel;
 import org.collexio.presentation.view.transaction.InsertTransactionForm;
 import org.collexio.presentation.view.transaction.TransactionPanel;
@@ -82,15 +83,15 @@ public class TransactionController {
                 LocalDate date = LocalDate.parse(insertForm.getDate());
                 Transaction transaction = new Transaction(amount, income, date);
                 model.addRow(transaction, itemId);
-                insertForm.setMessageLabel("Transaction inserted");
+                insertForm.setMessageLabel(PresentationText.text("Transaction inserted"));
             } catch (IllegalArgumentException ex) {
-                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                insertForm.setMessageLabel("IO Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
         }
     }
@@ -103,8 +104,8 @@ public class TransactionController {
 
             int confirm = JOptionPane.showConfirmDialog(
                     view.getTable(),
-                    "Are you sure?",
-                    "Delete confirm",
+                    PresentationText.text("Are you sure?"),
+                    PresentationText.text("Delete confirm"),
                     JOptionPane.YES_NO_OPTION
             );
 
@@ -114,8 +115,8 @@ public class TransactionController {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
-                            "Error",
-                            "Database Error " + ex.getMessage(),
+                            PresentationText.text("Error"),
+                            PresentationText.text("Database Error: ") + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }
@@ -133,15 +134,15 @@ public class TransactionController {
                 Transaction transaction = new Transaction(amount, income, date);
                 Long id = Long.parseLong(updateForm.getId());
                 model.updateRow(new Transaction(id, amount, income, date), itemId);
-                updateForm.setMessageLabel("Transaction updated");
+                updateForm.setMessageLabel(PresentationText.text("Transaction updated"));
             } catch (IllegalArgumentException ex) {
-                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (IOException ex) {
-                updateForm.setMessageLabel("IO Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("IO Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }

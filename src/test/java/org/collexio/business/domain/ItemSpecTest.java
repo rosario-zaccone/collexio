@@ -31,7 +31,7 @@ class ItemSpecTest {
 
     @Test
     void convertsToAndFromEntity() {
-        ItemSpecEntity entity = new ItemSpecEntity(1L, ItemType.PLANT, "Plant", "Desc");
+        ItemSpecEntity entity = new ItemSpecEntity(1L, ItemType.PLANT, "Populus alba", "Desc");
 
         ItemSpec spec = ItemSpec.fromEntity(entity);
 

@@ -7,35 +7,110 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.util.function.IntFunction;
 
 public abstract class MyPanel extends JPanel {
 
-    protected static final Color BG_TOP = new Color(0xb8e4f7);
-    protected static final Color BG_BOTTOM = new Color(0xc8f0e0);
-    protected static final Color GLASS = new Color(255, 255, 255, 90);
-    protected static final Color GLASS_STRONG = new Color(255, 255, 255, 150);
-    protected static final Color GLASS_BORDER = new Color(255, 255, 255, 155);
-    protected static final Color TEXT = new Color(0x0a3a5a);
-    protected static final Color TEXT_MUTED = new Color(0x4a7a8a);
-    protected static final Color TEAL = new Color(0x64bedd);
-    protected static final Color SKY = new Color(0x3ca0d2);
-    protected static final Color MINT = new Color(0x9fe6c8);
-    protected static final Color CORAL = new Color(0xff8f86);
-    protected static final Color ROW_SELECTED = new Color(120, 210, 255, 52);
-    protected static final Font FONT = new Font("Segoe UI", Font.PLAIN, 12);
-    protected static final Font FONT_BOLD = new Font("Segoe UI", Font.BOLD, 12);
-    protected static final Font FONT_SMALL_BOLD = new Font("Segoe UI", Font.BOLD, 10);
-    protected static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 13);
+    public enum ThemeStyle {
+        YEAR_2000,
+        FLAT
+    }
+
+    private static ThemeStyle themeStyle = ThemeStyle.FLAT;
+
+    protected static Color BG_BOTTOM = new Color(0x8eddf2);
+    protected static Color SURFACE = new Color(0xeaf8ff);
+    protected static Color SURFACE_SOFT = new Color(0xd9f4ed);
+    protected static Color FIELD = Color.WHITE;
+    protected static Color HABBO_BLUE = new Color(0x168ad8);
+    protected static Color HABBO_BLUE_DARK = new Color(0x075d96);
+    protected static Color HABBO_BORDER = new Color(0x79c6df);
+    protected static Color TEXT = new Color(0x143448);
+    protected static Color TEXT_MUTED = new Color(0x4a6978);
+    protected static Color LINK_BLUE = new Color(0x168ad8);
+    protected static Color OTHER_AZURE = new Color(0x4ebf63);
+    protected static Color UPDATE_YELLOW = new Color(0x2d9fe0);
+    protected static Color DELETE_RED = new Color(0xd94242);
+    protected static Color ROW_SELECTED = new Color(0xcff5ff);
+    protected static Font FONT = new Font("Segoe UI", Font.PLAIN, 12);
+    protected static Font FONT_BOLD = new Font("Segoe UI", Font.BOLD, 12);
+    protected static Font FONT_SMALL_BOLD = new Font("Segoe UI", Font.BOLD, 11);
+    protected static Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 14);
+
+    static {
+        setThemeStyle(themeStyle);
+    }
 
     protected MyPanel() {
         setOpaque(false);
-        setLayout(new BorderLayout(0, 12));
+        setLayout(new BorderLayout(0, 10));
         setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
     }
 
+    public static ThemeStyle getThemeStyle() {
+        return themeStyle;
+    }
+
+    public static boolean isFlatTheme() {
+        return themeStyle == ThemeStyle.FLAT;
+    }
+
+    public static void setThemeStyle(ThemeStyle style) {
+        themeStyle = style;
+        if (style == ThemeStyle.FLAT) {
+            BG_BOTTOM = new Color(0xf7f7f8);
+            SURFACE = Color.WHITE;
+            SURFACE_SOFT = new Color(0xf1f1f4);
+            FIELD = new Color(0xf8f8fa);
+            HABBO_BLUE = new Color(0x7450e8);
+            HABBO_BLUE_DARK = new Color(0x5630bf);
+            HABBO_BORDER = new Color(0x000000, true);
+            TEXT = new Color(0x25232d);
+            TEXT_MUTED = new Color(0x77727f);
+            LINK_BLUE = new Color(0x7450e8);
+            OTHER_AZURE = new Color(0x7450e8);
+            UPDATE_YELLOW = new Color(0x7450e8);
+            DELETE_RED = new Color(0xd94655);
+            ROW_SELECTED = new Color(0xeee9ff);
+            FONT = new Font("Dialog", Font.PLAIN, 12);
+            FONT_BOLD = new Font("Dialog", Font.BOLD, 12);
+            FONT_SMALL_BOLD = new Font("Dialog", Font.BOLD, 11);
+            FONT_TITLE = new Font("Dialog", Font.BOLD, 14);
+        } else {
+            BG_BOTTOM = new Color(0x8eddf2);
+            SURFACE = new Color(0xeaf8ff);
+            SURFACE_SOFT = new Color(0xd9f4ed);
+            FIELD = Color.WHITE;
+            HABBO_BLUE = new Color(0x168ad8);
+            HABBO_BLUE_DARK = new Color(0x075d96);
+            HABBO_BORDER = new Color(0x79c6df);
+            TEXT = new Color(0x143448);
+            TEXT_MUTED = new Color(0x4a6978);
+            LINK_BLUE = new Color(0x168ad8);
+            OTHER_AZURE = new Color(0x4ebf63);
+            UPDATE_YELLOW = new Color(0x2d9fe0);
+            DELETE_RED = new Color(0xd94242);
+            ROW_SELECTED = new Color(0xcff5ff);
+            FONT = new Font("Segoe UI", Font.PLAIN, 12);
+            FONT_BOLD = new Font("Segoe UI", Font.BOLD, 12);
+            FONT_SMALL_BOLD = new Font("Segoe UI", Font.BOLD, 11);
+            FONT_TITLE = new Font("Segoe UI", Font.BOLD, 14);
+        }
+    }
+
+    protected static Color tableGridColor() {
+        return isFlatTheme() ? new Color(0x000000, true) : new Color(0xa8dfee);
+    }
+
+    protected static Color neutralButtonColor() {
+        return isFlatTheme() ? new Color(0x8a8792) : new Color(0x5fbf6f);
+    }
 
     protected Color getRowBackground(JTable table, int row) {
-        return new Color(255, 255, 255, 185);
+        if (isFlatTheme()) {
+            return row % 2 == 0 ? SURFACE : SURFACE_SOFT;
+        }
+        return row % 2 == 0 ? new Color(0xf7fdff) : new Color(0xe9f8fb);
     }
 
     @Override
@@ -44,16 +119,9 @@ public abstract class MyPanel extends JPanel {
     }
 
     protected JPanel createTitleBar(String title) {
-        JPanel bar = new GlassPanel(10, new Color(255, 255, 255, 80));
-        bar.setLayout(new BorderLayout());
-        bar.setPreferredSize(new Dimension(0, 38));
-
-        JLabel label = new JLabel(title);
-        label.setFont(FONT_TITLE);
-        label.setForeground(TEXT);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
-
-        bar.add(label, BorderLayout.CENTER);
+        JPanel bar = new JPanel();
+        bar.setOpaque(false);
+        bar.setPreferredSize(new Dimension(0, 0));
         return bar;
     }
 
@@ -66,38 +134,47 @@ public abstract class MyPanel extends JPanel {
 
                 c.setFont(col == 0 || col == 2 ? FONT_BOLD : FONT);
                 c.setForeground(col == 3 ? TEXT_MUTED : TEXT);
-                c.setBackground(selected ? ROW_SELECTED : getRowBackground(this, row));
+                Color rowBackground = selected ? ROW_SELECTED : getRowBackground(this, row);
+                c.setBackground(rowBackground);
                 boolean badge = false;
 
                 if (c instanceof JLabel label) {
                     label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
                     label.setVerticalAlignment(SwingConstants.CENTER);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
                 }
 
                 if (isStatusValue(getValueAt(row, col))) {
-                    c = createBadge(getValueAt(row, col).toString(), isActiveValue(getValueAt(row, col)));
+                    c = createBadge(
+                            getValueAt(row, col).toString(),
+                            isActiveValue(getValueAt(row, col)),
+                            rowBackground
+                    );
                     badge = true;
                 } else if (col == 0) {
-                    c = createAvatarCell(getValueAt(row, col), selected);
+                    c = createAvatarCell(getValueAt(row, col), rowBackground);
                 }
 
-                if (c instanceof JComponent jc && !badge) {
-                    jc.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(255, 255, 255, 90)));
+                if (c instanceof JComponent jc && !badge && !isFlatTheme()) {
+                    jc.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, tableGridColor()));
                 }
                 return c;
             }
         };
 
-        table.setOpaque(false);
-        table.setRowHeight(42);
-        table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setOpaque(true);
+        table.setBackground(isFlatTheme() ? SURFACE : Color.WHITE);
+        table.setRowHeight(isFlatTheme() ? 62 : 64);
+        table.setShowGrid(!isFlatTheme());
+        table.setGridColor(tableGridColor());
+        table.setIntercellSpacing(isFlatTheme() ? new Dimension(0, 0) : new Dimension(1, 1));
         table.setFont(FONT);
         table.setForeground(TEXT);
         table.setSelectionBackground(ROW_SELECTED);
         table.setSelectionForeground(TEXT);
         table.getTableHeader().setReorderingAllowed(false);
         table.setFillsViewportHeight(true);
+        table.putClientProperty("rowBackgroundProvider", (IntFunction<Color>) row -> getRowBackground(table, row));
 
         applyHeader(table.getTableHeader());
         return table;
@@ -106,35 +183,47 @@ public abstract class MyPanel extends JPanel {
     protected JScrollPane createScrollPane(JTable table, int width, int height) {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(new RoundedGlassBorder(10, GLASS_BORDER));
-        scrollPane.setBackground(GLASS);
+        scrollPane.getViewport().setOpaque(true);
+        scrollPane.getViewport().setBackground(isFlatTheme() ? SURFACE : Color.WHITE);
+        scrollPane.setBorder(isFlatTheme()
+                ? BorderFactory.createEmptyBorder()
+                : new RoundedGlassBorder(18, HABBO_BORDER));
+        scrollPane.setBackground(isFlatTheme() ? SURFACE : new Color(0xd9f4ed));
         scrollPane.setPreferredSize(new Dimension(width, height));
         return scrollPane;
     }
 
     protected JButton createButton(String text) {
-        JButton button = createAeroButton(text, new Color(255, 255, 255), MINT);
-        button.setPreferredSize(new Dimension(0, 40));
+        JButton button = createAeroButton(PresentationText.text(text), Color.WHITE, buttonColorFor(text));
+        button.putClientProperty("text.key", text);
+        button.setPreferredSize(new Dimension(0, isFlatTheme() ? 54 : 46));
         return button;
     }
 
     protected JPanel createFilterBar(JComboBox<String> combo, String labelText) {
-        JPanel bar = new GlassPanel(12, new Color(255, 255, 255, 80));
-        bar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 9));
+        JPanel bar = new GlassPanel(isFlatTheme() ? 8 : 2);
+        bar.setLayout(new FlowLayout(FlowLayout.LEFT, 12, isFlatTheme() ? 10 : 7));
+        bar.setPreferredSize(new Dimension(0, isFlatTheme() ? 56 : 46));
 
-        JLabel label = new JLabel(labelText);
+        JLabel label = new JLabel(PresentationText.text(labelText));
+        label.putClientProperty("text.key", labelText);
         label.setFont(FONT_SMALL_BOLD);
         label.setForeground(TEXT_MUTED);
 
         combo.setFont(FONT);
         combo.setForeground(TEXT);
-        combo.setBackground(new Color(255, 255, 255, 165));
-        combo.setBorder(new RoundedGlassBorder(20, new Color(255, 255, 255, 205)));
-        combo.setPreferredSize(new Dimension(190, 30));
+        combo.setBackground(FIELD);
+        combo.setBorder(new RoundedGlassBorder(12, HABBO_BORDER));
+        combo.setPreferredSize(new Dimension(200, isFlatTheme() ? 34 : 30));
 
         bar.add(label);
         bar.add(combo);
+        return bar;
+    }
+
+    protected JPanel createEmptyFilterBar() {
+        JPanel bar = new GlassPanel(isFlatTheme() ? 8 : 2);
+        bar.setPreferredSize(new Dimension(0, isFlatTheme() ? 56 : 46));
         return bar;
     }
 
@@ -143,56 +232,168 @@ public abstract class MyPanel extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                int shift = getModel().isPressed() ? 1 : 0;
-                int w = getWidth() - 4;
-                int h = getHeight() - 5;
-
-                g2.setColor(new Color(30, 110, 140, 35));
-                g2.fillRoundRect(3, 4, w, h, 22, 22);
-
-                Color actualTop = getClientProperty("aero.top") instanceof Color cTop ? cTop : top;
-                Color actualBottom = getClientProperty("aero.bottom") instanceof Color cBottom ? cBottom : bottom;
-                g2.setPaint(new GradientPaint(0, shift, actualTop, 0, h + shift, actualBottom));
-                g2.fillRoundRect(1 + shift, 1 + shift, w, h, 22, 22);
-                g2.setColor(new Color(255, 255, 255, 215));
-                g2.drawRoundRect(1 + shift, 1 + shift, w - 1, h - 1, 22, 22);
-                g2.setColor(new Color(actualBottom.getRed(), actualBottom.getGreen(), actualBottom.getBlue(), 115));
-                g2.drawLine(10 + shift, h - 2 + shift, w - 9 + shift, h - 2 + shift);
+                int shift = getModel().isPressed() ? 2 : 0;
+                Color color = getClientProperty("button.color") instanceof Color clientColor ? clientColor : bottom;
+                if (getModel().isRollover()) {
+                    color = brighten(color);
+                }
+                if (isFlatTheme()) {
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(color);
+                    g2.fillRoundRect(shift, shift, getWidth() - 1 - shift, getHeight() - 1 - shift, 12, 12);
+                } else {
+                    int width = getWidth() - 1 - shift;
+                    int height = getHeight() - 1 - shift;
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setPaint(new GradientPaint(
+                            0,
+                            shift,
+                            brighten(color, 74),
+                            0,
+                            getHeight(),
+                            darken(color, 22)
+                    ));
+                    g2.fillRoundRect(shift, shift, width, height, 18, 18);
+                    g2.setPaint(new GradientPaint(
+                            0,
+                            shift + 1,
+                            new Color(0xff, 0xff, 0xff, 170),
+                            0,
+                            Math.max(2, getHeight() / 2),
+                            new Color(0xff, 0xff, 0xff, 35)
+                    ));
+                    g2.fillRoundRect(shift + 2, shift + 2, width - 4, Math.max(8, height / 2), 16, 16);
+                    g2.setColor(new Color(0xff, 0xff, 0xff, 155));
+                    g2.drawRoundRect(shift + 1, shift + 1, width - 2, height - 2, 17, 17);
+                    g2.setColor(borderFor(color));
+                    g2.drawRoundRect(shift, shift, width, height, 18, 18);
+                }
                 g2.dispose();
+                setForeground(Color.WHITE);
                 super.paintComponent(g);
             }
         };
 
         button.setFont(FONT_BOLD);
-        button.setForeground(TEXT);
+        button.setForeground(Color.WHITE);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setOpaque(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setMargin(new Insets(0, 14, 1, 14));
+        button.setMargin(isFlatTheme() ? new Insets(0, 14, 1, 14) : new Insets(0, 12, 2, 12));
         return button;
     }
 
+    public static Color actionColorFor(String text) {
+        return buttonColorFor(text);
+    }
+
     protected static JPanel createGlassPanel(int radius) {
-        return new GlassPanel(radius, GLASS);
+        return new GlassPanel(radius);
     }
 
     protected static Border createGlassBorder(int radius) {
-        return new RoundedGlassBorder(radius, GLASS_BORDER);
+        return new RoundedGlassBorder(radius, HABBO_BORDER);
     }
 
     protected static void paintAeroBackground(Graphics2D g2, int width, int height) {
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setPaint(new GradientPaint(0, 0, BG_TOP, width, height, BG_BOTTOM));
-        g2.fillRect(0, 0, width, height);
+        if (isFlatTheme()) {
+            g2.setColor(BG_BOTTOM);
+            g2.fillRect(0, 0, width, height);
+            return;
+        }
 
-        g2.setColor(new Color(100, 210, 180, 72));
-        g2.fillOval(width - 260, -90, 340, 260);
-        g2.setColor(new Color(90, 180, 230, 56));
-        g2.fillOval(-130, height - 230, 330, 270);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setPaint(new GradientPaint(0, 0, new Color(0x4aa4ec), 0, height, BG_BOTTOM));
+        g2.fillRect(0, 0, width, height);
+        g2.setPaint(new GradientPaint(
+                0,
+                Math.max(1, height / 2),
+                new Color(0x63, 0xc9, 0x6d, 110),
+                0,
+                height,
+                new Color(0x2f, 0xae, 0x66, 165)
+        ));
+        g2.fillRoundRect(-80, Math.max(0, height / 2), width + 160, height, 90, 90);
+        g2.setPaint(new GradientPaint(
+                0,
+                0,
+                new Color(0xff, 0xff, 0xff, 130),
+                0,
+                Math.max(1, height / 3),
+                new Color(0xff, 0xff, 0xff, 15)
+        ));
+        g2.fillRect(0, 0, width, Math.max(1, height / 3));
+    }
+
+    private static Color buttonColorFor(String text) {
+        String normalized = text == null ? "" : text.toLowerCase();
+        if (normalized.contains("delete") || normalized.contains("elimina")) {
+            return DELETE_RED;
+        }
+        if (isFlatTheme()) {
+            if (normalized.contains("print") || normalized.contains("cancel")) {
+                return neutralButtonColor();
+            }
+            return LINK_BLUE;
+        }
+        if (normalized.contains("add")
+                || normalized.contains("insert")
+                || normalized.contains("aggiungi")
+                || normalized.contains("inserisci")) {
+            return OTHER_AZURE;
+        }
+        if (normalized.contains("update")
+                || normalized.contains("edit")
+                || normalized.contains("price")
+                || normalized.contains("aggiorna")
+                || normalized.contains("prezzo")
+                || normalized.contains("stima")) {
+            return UPDATE_YELLOW;
+        }
+        if (normalized.contains("browse")
+                || normalized.contains("print")
+                || normalized.contains("cancel")
+                || normalized.contains("sfoglia")
+                || normalized.contains("stampa")
+                || normalized.contains("annulla")) {
+            return OTHER_AZURE;
+        }
+        return LINK_BLUE;
+    }
+
+    private static Color borderFor(Color color) {
+        return new Color(
+                Math.max(color.getRed() - 75, 0),
+                Math.max(color.getGreen() - 75, 0),
+                Math.max(color.getBlue() - 75, 0)
+        );
+    }
+
+    private static Color brighten(Color color) {
+        return brighten(color, 20);
+    }
+
+    private static Color brighten(Color color, int amount) {
+        return new Color(
+                Math.min(color.getRed() + amount, 255),
+                Math.min(color.getGreen() + amount, 255),
+                Math.min(color.getBlue() + amount, 255)
+        );
+    }
+
+    private static Color darken(Color color, int amount) {
+        return new Color(
+                Math.max(color.getRed() - amount, 0),
+                Math.max(color.getGreen() - amount, 0),
+                Math.max(color.getBlue() - amount, 0)
+        );
+    }
+
+    protected static boolean usesDarkText(Color color) {
+        return (color.getRed() * 299 + color.getGreen() * 587 + color.getBlue() * 114) / 1000 > 170;
     }
 
     private void applyHeader(JTableHeader header) {
@@ -200,23 +401,24 @@ public abstract class MyPanel extends JPanel {
                 value != null ? value.toString().toUpperCase() : ""
         ));
         header.setOpaque(false);
-        header.setPreferredSize(new Dimension(0, 30));
+        header.setPreferredSize(new Dimension(0, isFlatTheme() ? 38 : 30));
     }
 
-    private Component createAvatarCell(Object value, boolean selected) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 9));
+    private Component createAvatarCell(Object value, Color rowBackground) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 9));
         panel.setOpaque(true);
-        panel.setBackground(selected ? ROW_SELECTED : new Color(255, 255, 255, 185));
+        panel.setBackground(rowBackground);
         panel.add(new AvatarLabel(value != null ? value.toString() : ""));
         return panel;
     }
 
-    private Component createBadge(String value, boolean active) {
+    private Component createBadge(String value, boolean active, Color rowBackground) {
         JLabel label = new JLabel(value);
         label.setFont(FONT_SMALL_BOLD);
-        label.setForeground(active ? new Color(0x267a4a) : new Color(0x6f7f88));
+        label.setForeground(active ? OTHER_AZURE : TEXT_MUTED);
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setOpaque(false);
+        label.setOpaque(true);
+        label.setBackground(rowBackground);
         label.setBorder(new BadgeBorder(active));
         return label;
     }
@@ -235,21 +437,41 @@ public abstract class MyPanel extends JPanel {
 
     private static class GlassPanel extends JPanel {
         private final int radius;
-        private final Color fill;
 
-        GlassPanel(int radius, Color fill) {
+        GlassPanel(int radius) {
             this.radius = radius;
-            this.fill = fill;
             setOpaque(false);
-            setBorder(new RoundedGlassBorder(radius, GLASS_BORDER));
+            setBorder(new RoundedGlassBorder(radius, HABBO_BORDER));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(fill);
-            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            if (isFlatTheme()) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(SURFACE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+            } else {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(new GradientPaint(
+                        0,
+                        0,
+                        new Color(0xff, 0xff, 0xff, 235),
+                        0,
+                        getHeight(),
+                        new Color(0xd8, 0xf5, 0xfb, 225)
+                ));
+                g2.fillRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 18, 18);
+                g2.setPaint(new GradientPaint(
+                        0,
+                        2,
+                        new Color(0xff, 0xff, 0xff, 170),
+                        0,
+                        Math.max(3, getHeight() / 2),
+                        new Color(0xff, 0xff, 0xff, 35)
+                ));
+                g2.fillRoundRect(3, 3, getWidth() - 7, Math.max(8, getHeight() / 2), 16, 16);
+            }
             g2.dispose();
             super.paintComponent(g);
         }
@@ -266,24 +488,33 @@ public abstract class MyPanel extends JPanel {
 
         @Override
         public Insets getBorderInsets(Component c) {
-            return new Insets(1, 1, 1, 1);
+            return isFlatTheme() ? new Insets(0, 0, 0, 0) : new Insets(1, 1, 1, 1);
         }
 
         @Override
         public Insets getBorderInsets(Component c, Insets insets) {
-            insets.top = 1;
-            insets.left = 1;
-            insets.bottom = 1;
-            insets.right = 1;
+            int size = isFlatTheme() ? 0 : 1;
+            insets.top = size;
+            insets.left = size;
+            insets.bottom = size;
+            insets.right = size;
             return insets;
         }
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(color);
-            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+            if (isFlatTheme()) {
+                g2.dispose();
+                return;
+            } else {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(0xff, 0xff, 0xff, 185));
+                g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+                g2.setColor(color);
+                int innerRadius = Math.max(0, radius - 2);
+                g2.drawRoundRect(x + 1, y + 1, width - 3, height - 3, innerRadius, innerRadius);
+            }
             g2.dispose();
         }
     }
@@ -291,17 +522,34 @@ public abstract class MyPanel extends JPanel {
     private static class HeaderLabel extends JLabel {
         HeaderLabel(String text) {
             super(text);
-            setFont(new Font("Segoe UI", Font.BOLD, 9));
-            setForeground(new Color(0x2a6a8a));
+            setFont(FONT_SMALL_BOLD);
+            setForeground(isFlatTheme() ? TEXT_MUTED : Color.WHITE);
             setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+            setHorizontalAlignment(SwingConstants.CENTER);
             setOpaque(false);
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, getHeight(), new Color(0xd8f0ff)));
-            g2.fillRect(0, 0, getWidth(), getHeight());
+            if (isFlatTheme()) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(SURFACE_SOFT);
+                g2.fillRoundRect(0, 4, getWidth(), getHeight() - 6, 10, 10);
+            } else {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(new GradientPaint(0, 0, new Color(0x30b6f0), 0, getHeight(), HABBO_BLUE_DARK));
+                g2.fillRoundRect(0, 2, getWidth(), getHeight() - 4, 10, 10);
+                g2.setPaint(new GradientPaint(
+                        0,
+                        2,
+                        new Color(0xff, 0xff, 0xff, 175),
+                        0,
+                        Math.max(3, getHeight() / 2),
+                        new Color(0xff, 0xff, 0xff, 25)
+                ));
+                g2.fillRoundRect(2, 4, getWidth() - 4, Math.max(6, getHeight() / 2), 8, 8);
+            }
             g2.dispose();
             super.paintComponent(g);
         }
@@ -311,19 +559,32 @@ public abstract class MyPanel extends JPanel {
         AvatarLabel(String value) {
             super(initials(value));
             setFont(FONT_SMALL_BOLD);
-            setForeground(TEXT);
+            setForeground(Color.WHITE);
             setHorizontalAlignment(SwingConstants.CENTER);
-            setPreferredSize(new Dimension(22, 22));
+            setPreferredSize(new Dimension(26, 26));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(100, 210, 180, 90));
-            g2.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
-            g2.setColor(new Color(255, 255, 255, 160));
-            g2.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
+            if (isFlatTheme()) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(OTHER_AZURE);
+                g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+            } else {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(new GradientPaint(0, 0, new Color(0x6eea83), 0, getHeight(), OTHER_AZURE));
+                g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
+                g2.setPaint(new GradientPaint(
+                        0,
+                        1,
+                        new Color(0xff, 0xff, 0xff, 160),
+                        0,
+                        Math.max(3, getHeight() / 2),
+                        new Color(0xff, 0xff, 0xff, 35)
+                ));
+                g2.fillRoundRect(2, 2, getWidth() - 5, Math.max(6, getHeight() / 2), 10, 10);
+            }
             g2.dispose();
             super.paintComponent(g);
         }
@@ -361,11 +622,25 @@ public abstract class MyPanel extends JPanel {
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(active ? new Color(80, 210, 140, 78) : new Color(140, 160, 170, 70));
-            g2.fillRoundRect(x, y + 2, width - 1, height - 5, 18, 18);
-            g2.setColor(new Color(255, 255, 255, 150));
-            g2.drawRoundRect(x, y + 2, width - 1, height - 5, 18, 18);
+            if (isFlatTheme()) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(active ? new Color(0xf0ebff) : SURFACE_SOFT);
+                g2.fillRoundRect(x, y + 2, width - 1, height - 5, 10, 10);
+            } else {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Color fill = active ? new Color(0xcff5df) : new Color(0xe5f7fb);
+                g2.setColor(fill);
+                g2.fillRoundRect(x, y + 2, width - 1, height - 5, 12, 12);
+                g2.setPaint(new GradientPaint(
+                        0,
+                        y + 2,
+                        new Color(0xff, 0xff, 0xff, 150),
+                        0,
+                        y + Math.max(3, height / 2),
+                        new Color(0xff, 0xff, 0xff, 25)
+                ));
+                g2.fillRoundRect(x + 2, y + 4, width - 5, Math.max(6, height / 2), 10, 10);
+            }
             g2.dispose();
         }
     }

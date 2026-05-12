@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.*;
+import java.util.function.IntFunction;
 
 public class ButtonColumn extends AbstractCellEditor
         implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener {
@@ -23,17 +24,17 @@ public class ButtonColumn extends AbstractCellEditor
         this.action = action;
 
         renderPanel = new JPanel(new GridBagLayout());
-        renderPanel.setOpaque(false);
+        renderPanel.setOpaque(true);
         renderButton = createButton("");
         editButton = createButton("");
         editButton.addActionListener(this);
-        setFocusBorder(MyPanel.createGlassBorder(18));
+        setFocusBorder(MyPanel.createGlassBorder(8));
 
         TableColumnModel columnModel = table.getColumnModel();
         columnModel.getColumn(column).setCellRenderer(this);
         columnModel.getColumn(column).setCellEditor(this);
-        columnModel.getColumn(column).setPreferredWidth(98);
-        columnModel.getColumn(column).setMinWidth(78);
+        columnModel.getColumn(column).setPreferredWidth(MyPanel.isFlatTheme() ? 124 : 112);
+        columnModel.getColumn(column).setMinWidth(MyPanel.isFlatTheme() ? 104 : 96);
         table.addMouseListener(this);
     }
 
@@ -77,16 +78,17 @@ public class ButtonColumn extends AbstractCellEditor
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         renderPanel.removeAll();
-        renderPanel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+        renderPanel.setBackground(getRowBackground(table, row, isSelected));
         applyValue(renderButton, value);
         renderButton.setBorder(hasFocus ? focusBorder : BorderFactory.createEmptyBorder());
+        renderButton.setHorizontalAlignment(SwingConstants.CENTER);
         renderPanel.add(renderButton);
         return renderPanel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int row = table.convertRowIndexToModel(table.getEditingRow());
+        int row = table.getEditingRow();
         fireEditingStopped();
 
         if (action != null) {
@@ -121,22 +123,36 @@ public class ButtonColumn extends AbstractCellEditor
     public void mouseExited(MouseEvent e) {}
 
     private JButton createButton(String text) {
-        JButton button = MyPanel.createAeroButton(text, Color.WHITE, new Color(0xaedfff));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        button.setPreferredSize(new Dimension(76, 28));
-        button.setMargin(new Insets(0, 7, 1, 7));
+        JButton button = MyPanel.createAeroButton(text, Color.WHITE, MyPanel.actionColorFor(text));
+        button.setFont(MyPanel.FONT_SMALL_BOLD);
+        button.setPreferredSize(MyPanel.isFlatTheme() ? new Dimension(104, 36) : new Dimension(96, 30));
+        button.setMargin(MyPanel.isFlatTheme() ? new Insets(0, 10, 1, 10) : new Insets(0, 7, 2, 7));
         return button;
     }
 
     private void applyValue(JButton button, Object value) {
         String text = value == null ? "" : value.toString();
-        button.setText(text);
+        button.setText(PresentationText.text(text));
         button.setIcon(null);
 
         if (text.toLowerCase().contains("delete")) {
-            button.putClientProperty("aero.bottom", new Color(0xffb1a8));
+            button.putClientProperty("button.color", MyPanel.actionColorFor("delete"));
         } else {
-            button.putClientProperty("aero.bottom", new Color(0xaedfff));
+            button.putClientProperty("button.color", MyPanel.actionColorFor(text));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Color getRowBackground(JTable table, int row, boolean isSelected) {
+        if (isSelected) {
+            return table.getSelectionBackground();
+        }
+
+        Object provider = table.getClientProperty("rowBackgroundProvider");
+        if (provider instanceof IntFunction<?>) {
+            return ((IntFunction<Color>) provider).apply(row);
+        }
+
+        return table.getBackground();
     }
 }

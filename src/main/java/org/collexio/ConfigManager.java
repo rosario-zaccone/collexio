@@ -51,21 +51,26 @@ public class ConfigManager {
      */
     public void ensureInitialConfig() throws IOException {
 
-        if (getApiKey().isBlank() || getContactEmail().isBlank()) {
+        if (getContactEmail().isBlank()) {
 
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
             JTextField apiKeyField = new JTextField();
             JTextField emailField = new JTextField();
+            JCheckBox skipApiKey = new JCheckBox("Continue without Gemini API key");
+            skipApiKey.addActionListener(e -> apiKeyField.setEnabled(!skipApiKey.isSelected()));
 
-            panel.add(new JLabel("Enter your Gemini API key:"));
+            panel.add(new JLabel("Gemini API key (optional):"));
             panel.add(apiKeyField);
+            panel.add(new JLabel("Used only to generate item descriptions with AI."));
+            panel.add(skipApiKey);
 
             panel.add(Box.createVerticalStrut(10));
 
-            panel.add(new JLabel("Enter contact email (for Wikipedia scraping):"));
+            panel.add(new JLabel("Contact email:"));
             panel.add(emailField);
+            panel.add(new JLabel("Required for scraping requests."));
 
             int result = JOptionPane.showConfirmDialog(
                     null,
@@ -77,15 +82,15 @@ public class ConfigManager {
 
             if (result != JOptionPane.OK_OPTION) {
                 throw new IllegalStateException(
-                        "API key and contact email are required to run Collexio."
+                        "Contact email is required to run Collexio."
                 );
             }
 
             String apiKey = apiKeyField.getText().trim();
             String email = emailField.getText().trim();
 
-            if (apiKey.isBlank() || email.isBlank()) {
-                throw new IllegalStateException("Both API key and email are required.");
+            if (email.isBlank()) {
+                throw new IllegalStateException("Contact email is required.");
             }
 
             setApiKey(apiKey);

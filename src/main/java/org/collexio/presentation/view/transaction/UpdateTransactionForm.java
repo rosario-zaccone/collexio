@@ -31,7 +31,7 @@ public class UpdateTransactionForm extends MyForm {
 
         addField("Transaction id:", idField);
         addField("Item id:", itemIdField);
-        addField("Amount:", amountField);
+        addField("Amount (€):", amountField);
         addField("Type:", typeCombo);
         addField("Date (YYYY-MM-DD):", dateField);
         addMessage(messageLabel);

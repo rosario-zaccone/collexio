@@ -21,10 +21,10 @@ public class TransactionService {
         List<Transaction> transactions = getByItemId(itemId);
         if (transaction.isIncome()) {
             if (transactions.isEmpty() || transactions.get(transactions.size() - 1).isIncome())
-                throw new IllegalArgumentException("The last transaction is an income, you can't enter another income transaction");
+                throw new InvalidIncomeTransactionException();
         } else {
             if (!transactions.isEmpty() && !transactions.get(transactions.size() - 1).isIncome())
-                throw new IllegalArgumentException("The last transaction is an expense, you can't enter another expense transaction");
+                throw new InvalidExpenseTransactionException();
         }
         TransactionEntity entity = dao.add(transaction.toEntity(), itemId);
         return Transaction.fromEntity(entity);

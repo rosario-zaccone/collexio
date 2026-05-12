@@ -1,11 +1,13 @@
 package org.collexio.presentation.model;
 import org.collexio.business.domain.Transaction;
 import org.collexio.business.service.TransactionService;
+import org.collexio.presentation.view.PresentationText;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 
 public class TransactionTableModel extends AbstractTableModel implements CrudTableModel<Transaction> {
@@ -38,14 +40,14 @@ public class TransactionTableModel extends AbstractTableModel implements CrudTab
                 try {
                     yield service.getItemId(transaction.getId());
                 } catch (SQLException e) {
-                    yield "Not available";
+                    yield PresentationText.text("Not available");
                 }
             }
-            case 2 -> transaction.getAmount();
-            case 3 -> transaction.isIncome() ? "Income" : "Expense";
+            case 2 -> String.format(Locale.ROOT, "%.2f €", transaction.getAmount());
+            case 3 -> transaction.isIncome() ? PresentationText.text("Income") : PresentationText.text("Expense");
             case 4 -> transaction.getDate();
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 5 -> PresentationText.text("Update");
+            case 6 -> PresentationText.text("Delete");
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
@@ -53,13 +55,13 @@ public class TransactionTableModel extends AbstractTableModel implements CrudTab
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case 0 -> "Id";
-            case 1 -> "Item Id";
-            case 2 -> "Amount";
-            case 3 -> "Type";
-            case 4 -> "Date";
-            case 5 -> "Update";
-            case 6 -> "Delete";
+            case 0 -> PresentationText.text("Id");
+            case 1 -> PresentationText.text("Item Id");
+            case 2 -> PresentationText.text("Amount");
+            case 3 -> PresentationText.text("Type");
+            case 4 -> PresentationText.text("Date");
+            case 5 -> PresentationText.text("Update");
+            case 6 -> PresentationText.text("Delete");
             default -> "";
         };
     }
@@ -68,21 +70,18 @@ public class TransactionTableModel extends AbstractTableModel implements CrudTab
     public void removeRow(int row) throws SQLException {
         service.delete(data.get(row).getId());
         refresh();
-        fireTableRowsDeleted(row, row);
     }
 
     @Override
     public void addRow(Transaction elem, Long itemId) throws SQLException, IOException {
         service.add(elem, itemId); // associatedId = itemId
         refresh();
-        fireTableDataChanged();
     }
 
     @Override
     public void updateRow(Transaction elem, Long itemId) throws SQLException, IOException { // TODO
         service.update(elem);
         refresh();
-        fireTableDataChanged();
     }
 
 
@@ -102,6 +101,7 @@ public class TransactionTableModel extends AbstractTableModel implements CrudTab
 
     public void refresh() throws SQLException {
         data = service.getAll();
+        fireTableDataChanged();
     }
 
 }

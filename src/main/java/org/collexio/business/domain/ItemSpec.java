@@ -16,7 +16,10 @@ public class ItemSpec {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive or null");
         if (name.isEmpty())
-            throw new IllegalArgumentException("Name can't be empty");
+            throw new EmptyNameException();
+        if (type == ItemType.PLANT && !isValidLatinName(name)) {
+            throw new InvalidLatinNameException(name);
+        }
         this.id = id;
         this.type = type;
         this.name = name;
@@ -77,5 +80,9 @@ public class ItemSpec {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    private boolean isValidLatinName(String name) {
+        return name != null && name.matches("[A-Za-z]+ [A-Za-z]+");
     }
 }

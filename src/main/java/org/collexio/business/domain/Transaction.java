@@ -20,7 +20,7 @@ public class Transaction implements Comparable<Transaction> {
         if (id != null && id <= 0)
             throw new IllegalArgumentException("Id must be positive");
         if (amount < 0)
-            throw new IllegalArgumentException("Amount must be non negative");
+            throw new NegativeAmountException(amount);
         this.id = id;
         this.amount = amount;
         this.income = income;

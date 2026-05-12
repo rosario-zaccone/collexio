@@ -1,10 +1,15 @@
-package org.collexio;
+package org.collexio.bootstrap;
 
-import org.collexio.persistence.dao.*;
+import org.collexio.AppConfig;
+import org.collexio.ConfigManager;
+import org.collexio.ConnectionFactory;
+import org.collexio.DatabaseInitializer;
 import org.collexio.business.service.*;
+import org.collexio.persistence.dao.*;
+import org.collexio.presentation.controller.*;
 import org.collexio.presentation.model.*;
 import org.collexio.presentation.view.AppFrame;
-import org.collexio.presentation.controller.*;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.utilities.factory.AbstractFactory;
 import org.collexio.utilities.factory.BookProviderFactory;
 import org.collexio.utilities.factory.PlantProviderFactory;
@@ -109,11 +114,20 @@ public class Main {
                 new TransactionController(transactionModel, tab.getTransactionPanel());
 
             } catch (IllegalStateException e) {
-                // User cancelled API key dialog
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Startup Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        null,
+                        e.getMessage(),
+                        PresentationText.text("Startup Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
                 System.exit(1);
             } catch (SQLException | IOException e) {
-                JOptionPane.showMessageDialog(null, "Startup failed:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        null,
+                        PresentationText.text("Startup failed:\n") + e.getMessage(),
+                        PresentationText.text("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
                 throw new RuntimeException(e);
             }
         });

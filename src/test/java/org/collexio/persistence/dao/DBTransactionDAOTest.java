@@ -1,16 +1,25 @@
-package org.collexio;
-import org.collexio.persistence.dao.DBTransactionDAO;
+package org.collexio.persistence.dao;
+
 import org.collexio.persistence.entity.TransactionEntity;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DBTransactionDAOTest {
@@ -119,16 +128,16 @@ class DBTransactionDAOTest {
     }
 
     @Test
-    void testAddGetTransaction() throws SQLException {
+    void addAndGetTransaction() throws SQLException {
         TransactionEntity t = new TransactionEntity(100.0, true, LocalDate.now());
         TransactionEntity t2 = new TransactionEntity(1000.0, true, LocalDate.now());
         t = transactionDAO.add(t, 1L);
         t2 = transactionDAO.add(t2, 1L);
 
-        TransactionEntity fetched = transactionDAO.get(t.getId()).get();
+        TransactionEntity fetched = transactionDAO.get(t.getId()).orElseThrow();
         assertEquals(t.toString(), fetched.toString());
 
-        fetched = transactionDAO.get(t2.getId()).get();
+        fetched = transactionDAO.get(t2.getId()).orElseThrow();
         assertEquals(t2.toString(), fetched.toString());
 
         Optional<TransactionEntity> empty = transactionDAO.get(4L);
@@ -136,23 +145,27 @@ class DBTransactionDAOTest {
     }
 
     @Test
-    void testGetAllTransactions() throws SQLException {
+    void getAllTransactions() throws SQLException {
         TransactionEntity t1 = new TransactionEntity(50.0, false, LocalDate.now().minusDays(1));
         TransactionEntity t2 = new TransactionEntity(200.0, true, LocalDate.now());
-        Set<String> set = new HashSet<>(); set.add(t1.toStringNoId()); set.add(t2.toStringNoId());
+        Set<String> set = new HashSet<>();
+        set.add(t1.toStringNoId());
+        set.add(t2.toStringNoId());
         transactionDAO.add(t1, 1L);
         transactionDAO.add(t2, 1L);
 
 
         List<TransactionEntity> all = transactionDAO.getAll();
-        Set<String> fetched = new HashSet<>(); fetched.add(all.get(0).toStringNoId()); fetched.add(all.get(1).toStringNoId());
+        Set<String> fetched = new HashSet<>();
+        fetched.add(all.get(0).toStringNoId());
+        fetched.add(all.get(1).toStringNoId());
         assertEquals(2, all.size());
         assertEquals(fetched, set);
 
     }
 
     @Test
-    void testGetByItemId() throws SQLException {
+    void getByItemIdReturnsMatchingTransactions() throws SQLException {
         TransactionEntity t1 = new TransactionEntity(10.0, true, LocalDate.now());
         TransactionEntity t2 = new TransactionEntity(20.0, false, LocalDate.now());
         TransactionEntity t3 = new TransactionEntity(20.0, false, LocalDate.now());
@@ -160,13 +173,17 @@ class DBTransactionDAOTest {
         transactionDAO.add(t2, 1L);
         transactionDAO.add(t3, 2L);
 
-        Set<String> set = new HashSet<>(); set.add(t1.toStringNoId()); set.add(t2.toStringNoId());
+        Set<String> set = new HashSet<>();
+        set.add(t1.toStringNoId());
+        set.add(t2.toStringNoId());
 
 
         List<TransactionEntity> item1Tx = transactionDAO.getByItemId(1L);
         List<TransactionEntity> item2Tx = transactionDAO.getByItemId(2L);
 
-        Set<String> fetchedSet = new HashSet<>(); fetchedSet.add(item1Tx.get(0).toStringNoId()); fetchedSet.add(item1Tx.get(1).toStringNoId());
+        Set<String> fetchedSet = new HashSet<>();
+        fetchedSet.add(item1Tx.get(0).toStringNoId());
+        fetchedSet.add(item1Tx.get(1).toStringNoId());
         assertEquals(2, item1Tx.size());
         assertEquals(fetchedSet, set);
 
@@ -174,7 +191,7 @@ class DBTransactionDAOTest {
     }
 
     @Test
-    void testUpdateTransaction() throws SQLException {
+    void updateTransaction() throws SQLException {
         TransactionEntity t = new TransactionEntity(75.0, false, LocalDate.now());
         t = transactionDAO.add(t, 1L);
 
@@ -186,11 +203,11 @@ class DBTransactionDAOTest {
 
         Optional<TransactionEntity> fetched = transactionDAO.get(saved.getId());
         assertTrue(fetched.isPresent());
-        assertEquals(updated.toString(), fetched.get().toString());
+        assertEquals(updated.toString(), fetched.orElseThrow().toString());
     }
 
     @Test
-    void testDeleteTransaction() throws SQLException {
+    void deleteTransaction() throws SQLException {
         TransactionEntity t = new TransactionEntity(100.0, true, LocalDate.now());
         TransactionEntity t2 = new TransactionEntity(1000.0, true, LocalDate.now());
         t = transactionDAO.add(t, 1L);

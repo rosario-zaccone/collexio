@@ -1,6 +1,5 @@
-package org.collexio.servicetesting;
+package org.collexio.business.service;
 
-import org.collexio.business.service.PriceService;
 import org.collexio.persistence.entity.ItemType;
 import org.collexio.utilities.factory.AbstractFactory;
 import org.collexio.utilities.infogenerator.InfoGenerator;

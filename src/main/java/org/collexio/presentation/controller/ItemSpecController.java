@@ -3,6 +3,8 @@ package org.collexio.presentation.controller;
 import org.collexio.business.domain.ItemSpec;
 import org.collexio.persistence.entity.ItemType;
 import org.collexio.presentation.model.ItemSpecTableModel;
+import org.collexio.presentation.view.BusyDialog;
+import org.collexio.presentation.view.PresentationText;
 import org.collexio.presentation.view.itemspec.InsertSpecForm;
 import org.collexio.presentation.view.itemspec.ItemSpecPanel;
 import org.collexio.presentation.view.itemspec.UpdateSpecForm;
@@ -58,13 +60,13 @@ public class ItemSpecController {
                 String description = insertForm.getDescription();
                 ItemSpec spec = new ItemSpec(type, name, description);
                 model.addRow(spec, null);
-                insertForm.setMessageLabel("Item spec inserted");
+                insertForm.setMessageLabel(PresentationText.text("Item spec inserted"));
             } catch (IllegalArgumentException ex) {
-                insertForm.setMessageLabel("Input Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                insertForm.setMessageLabel("Database Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                insertForm.setMessageLabel("Error: " + ex.getMessage());
+                insertForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -78,13 +80,13 @@ public class ItemSpecController {
                 ItemType type = ItemType.fromInt(updateForm.getItemType());
                 String description = updateForm.getDescription();
                 model.updateRow(new ItemSpec(id, type, name, description), null);
-                updateForm.setMessageLabel("Item spec updated");
+                updateForm.setMessageLabel(PresentationText.text("Item spec updated"));
             } catch (IllegalArgumentException ex) {
-                updateForm.setMessageLabel("Input Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Input Error: ") + ex.getMessage());
             } catch (SQLException ex) {
-                updateForm.setMessageLabel("Database Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Database Error: ") + ex.getMessage());
             } catch (RuntimeException ex) {
-                updateForm.setMessageLabel("Error: " + ex.getMessage());
+                updateForm.setMessageLabel(PresentationText.text("Error: ") + ex.getMessage());
             }
 
         }
@@ -92,17 +94,24 @@ public class ItemSpecController {
 
     class GenerateDescriptionButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            try {
-                String desc = model.generateDescription(new ItemSpec(Long.parseLong(updateForm.getId()), ItemType.fromInt(updateForm.getItemType()), updateForm.getName(), updateForm.getDescription()));
-                updateForm.setDescription(desc);
-            } catch (IOException | InterruptedException ex) {
-                JOptionPane.showMessageDialog(
-                        view.getTable(),
-                        "Error during description generation " + ex.getMessage(),
-                        "Error",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
+            BusyDialog.run(
+                    updateForm,
+                    "Please wait",
+                    "Generating description, please wait...",
+                    () -> model.generateDescription(new ItemSpec(
+                            Long.parseLong(updateForm.getId()),
+                            ItemType.fromInt(updateForm.getItemType()),
+                            updateForm.getName(),
+                            updateForm.getDescription()
+                    )),
+                    updateForm::setDescription,
+                    ex -> JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            PresentationText.text("Error during description generation: ") + ex.getMessage(),
+                            PresentationText.text("Error"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    )
+            );
         }
     }
 
@@ -114,8 +123,8 @@ public class ItemSpecController {
 
             int confirm = JOptionPane.showConfirmDialog(
                     view.getTable(),
-                    "Are you sure?",
-                    "Delete confirm",
+                    PresentationText.text("Are you sure?"),
+                    PresentationText.text("Delete confirm"),
                     JOptionPane.YES_NO_OPTION
             );
 
@@ -125,8 +134,8 @@ public class ItemSpecController {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(
                             view.getTable(),
-                            "Error",
-                            "Database Error " + ex.getMessage(),
+                            PresentationText.text("Error"),
+                            PresentationText.text("Database Error: ") + ex.getMessage(),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 }
@@ -156,18 +165,23 @@ public class ItemSpecController {
         public void actionPerformed(ActionEvent e) {
             int viewRow = Integer.parseInt(e.getActionCommand());
             int modelRow = view.getTable().convertRowIndexToModel(viewRow);
-            String message = "Sorry, no price available";
-            try {
-                double price = model.price(modelRow);
-                message = price + " €";
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            JOptionPane.showMessageDialog(
+            BusyDialog.run(
                     view.getTable(),
-                    message,
-                    "Price scraped",
-                    JOptionPane.INFORMATION_MESSAGE
+                    "Please wait",
+                    "Scraping price, please wait...",
+                    () -> model.price(modelRow),
+                    price -> JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            price + " €",
+                            PresentationText.text("Price scraped"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    ),
+                    ex -> JOptionPane.showMessageDialog(
+                            view.getTable(),
+                            PresentationText.text("Sorry, no price available"),
+                            PresentationText.text("Price scraped"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    )
             );
         }
     }
