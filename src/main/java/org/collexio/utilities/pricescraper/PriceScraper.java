@@ -1,4 +1,4 @@
-package org.collexio.utilities.pricecraper;
+package org.collexio.utilities.pricescraper;
 
 // PATTERN: Strategy
 public interface PriceScraper {

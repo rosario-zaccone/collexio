@@ -1,10 +1,8 @@
 package org.collexio.utilities.factory;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import org.collexio.utilities.infogenerator.GeminiInfoGenerator;
 import org.collexio.utilities.infogenerator.InfoGenerator;
 import org.collexio.utilities.infogenerator.PFAFInfoGenerator;
-import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.pricescraper.PriceScraper;
 
 public class PlantProviderFactory extends AbstractFactory {
     public PlantProviderFactory(String apiKey) {

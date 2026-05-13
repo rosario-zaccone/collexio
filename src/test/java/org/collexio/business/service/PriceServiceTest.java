@@ -3,7 +3,7 @@ package org.collexio.business.service;
 import org.collexio.persistence.entity.ItemType;
 import org.collexio.utilities.factory.AbstractFactory;
 import org.collexio.utilities.infogenerator.InfoGenerator;
-import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.pricescraper.PriceScraper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

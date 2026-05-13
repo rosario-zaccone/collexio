@@ -5,9 +5,6 @@ import org.collexio.business.service.InfoGenerationService;
 import org.collexio.business.service.ItemSpecService;
 import org.collexio.business.service.PriceService;
 import org.collexio.presentation.view.PresentationText;
-import org.collexio.utilities.factory.AbstractFactory;
-import org.collexio.utilities.infogenerator.InfoGenerator;
-import org.collexio.utilities.pricecraper.PriceScraper;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.IOException;

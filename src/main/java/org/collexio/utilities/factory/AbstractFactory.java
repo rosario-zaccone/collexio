@@ -1,8 +1,7 @@
 package org.collexio.utilities.factory;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.collexio.utilities.infogenerator.InfoGenerator;
-import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.pricescraper.PriceScraper;
 
 public abstract class AbstractFactory {
     private final String apiKey;

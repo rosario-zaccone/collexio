@@ -2,7 +2,7 @@ package org.collexio.business.service;
 
 import org.collexio.persistence.entity.ItemType;
 import org.collexio.utilities.factory.AbstractFactory;
-import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.pricescraper.PriceScraper;
 
 // PATTERN: Strategy(context)
 public class PriceService {

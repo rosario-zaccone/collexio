@@ -10,7 +10,7 @@ import org.collexio.presentation.model.ItemSpecTableModel;
 import org.collexio.presentation.view.itemspec.ItemSpecPanel;
 import org.collexio.utilities.factory.AbstractFactory;
 import org.collexio.utilities.infogenerator.InfoGenerator;
-import org.collexio.utilities.pricecraper.PriceScraper;
+import org.collexio.utilities.pricescraper.PriceScraper;
 
 import javax.swing.*;
 import java.sql.SQLException;

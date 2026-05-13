@@ -15,7 +15,7 @@ import org.collexio.utilities.factory.BookProviderFactory;
 import org.collexio.utilities.factory.PlantProviderFactory;
 import org.collexio.utilities.factory.TechItemProviderFactory;
 import org.collexio.utilities.infogenerator.GeminiInfoGenerator;
-import org.collexio.utilities.pricecraper.SubitoScraper;
+import org.collexio.utilities.pricescraper.SubitoScraper;
 
 import javax.swing.*;
 import java.io.IOException;

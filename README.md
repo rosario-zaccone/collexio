@@ -160,3 +160,7 @@ dist/collexio-1.0.0.jar
 dist/collexio-1.0.0.jar.sha256
 dist/collexio_1.0.0_amd64.deb
 ```
+
+## License
+
+Apache 2.0
