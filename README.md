@@ -39,6 +39,10 @@ The app also supports:
 ### Alternative theme: 2000 (Frutiger Aero)
 <img src="docs/screen/aero.png" alt="Aero theme interface preview" width="500"/>
 
+## Architecture and Design
+The architectue adopted is a layered architexctuee (perosstence business presentation), where
+in presentation layer is used the MVC pattern. Design patterns are also used.
+<img src="docs/design_pattern.png" alt="Design patterns"/>
 
 ## Terminology
 
