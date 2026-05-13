@@ -1,3 +1,9 @@
+dist/
+
+# Markdown files
+*.md
+!README.md
+
 # Compiled class file
 *.class
 
@@ -22,3 +28,24 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+.en
+images/*
+
+/src/main/resources/*
+src/test/java/org/collexio/DBAnimalDAOTest.java
+
+/src/main/java/org/collexio/business/Animal.java
+/src/main/java/org/collexio/persistence/AnimalDAO.java
+/src/main/java/org/collexio/persistence/DBAnimalDAO.java
+
+!/src/main/resources/.gitkeep
+
+target/
+
+.env
+
+data/*
+
+# Ignore all dotfiles
+.*

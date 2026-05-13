@@ -1,0 +1,97 @@
+package org.collexio.business.domain;
+
+import org.collexio.persistence.entity.ItemPhotoEntity;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.Objects;
+
+public class ItemPhoto implements Comparable<ItemPhoto> {
+    private final Long id;
+    private Path path;
+    private final LocalDate date;
+
+    public ItemPhoto(Long id, Path path, LocalDate date) {
+        if (id != null && id <= 0)
+            throw new IllegalArgumentException("Id must be positive");
+        this.id = id;
+        this.path = path;
+        this.date = date;
+    }
+
+    public ItemPhoto(ItemPhoto photo) {
+        this.id = photo.id;
+        this.path = photo.path;
+        this.date = photo.date;
+    }
+
+
+
+    public ItemPhoto(Long id, Path path) {
+        this(null, path, LocalDate.MIN);
+    }
+
+    public ItemPhoto(Path path, LocalDate date) {
+        this(null, path, date);
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ItemPhoto{" +
+                "id='" + id + '\'' +
+                ", path=" + path +
+                ", date=" + date +
+                '}';
+    }
+
+    public String toStringNoId() {
+        return "ItemPhoto{" +
+                "path=" + path +
+                ", date=" + date +
+                '}';
+    }
+
+    public static ItemPhoto fromEntity(ItemPhotoEntity entity) {
+        return new ItemPhoto(entity.getId(), entity.getPath(), entity.getDate());
+    }
+
+    public ItemPhotoEntity toEntity() {
+        return new ItemPhotoEntity(this.id, this.path, this.date);
+    }
+
+    @Override
+    public int compareTo(@NotNull ItemPhoto o) {
+        return date.compareTo(o.getDate());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPhoto itemPhoto = (ItemPhoto) o;
+        return Objects.equals(path, itemPhoto.path) && Objects.equals(date, itemPhoto.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, date);
+    }
+}
