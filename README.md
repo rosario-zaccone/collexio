@@ -40,10 +40,9 @@ The app also supports:
 <img src="docs/screen/aero.png" alt="Aero theme interface preview" width="500"/>
 
 ## Architecture and Design
-The architectue adopted is a layered architexctuee (perosstence business presentation), where
-in presentation layer is used the MVC pattern. Design patterns are also used.
-<img src="docs/design_pattern.png" alt="Design patterns"/>
+The architecture adopted is a layered architecture (persistence, business, and presentation), where the presentation layer uses the MVC pattern. Several design patterns are also used throughout the application.
 
+<img src="docs/design_pattern.png" alt="Design patterns"/>
 ## Terminology
 
 - **Item specification**: the general object description, such as "Nintendo DS", "The Hobbit", or "Ficus elastica"
